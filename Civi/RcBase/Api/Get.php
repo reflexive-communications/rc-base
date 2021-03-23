@@ -2,11 +2,13 @@
 
 namespace Civi\RcBase\Api;
 
+use API_Exception;
 use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\ActivityContact;
 use Civi\Api4\Address;
 use Civi\Api4\Contact;
 use Civi\Api4\Email;
+use Civi\Api4\Generic\Result;
 use Civi\Api4\LocationType;
 use Civi\Api4\Phone;
 use Civi\Api4\Relationship;
@@ -22,6 +24,32 @@ use Civi\Api4\Relationship;
  */
 class Get
 {
+    /**
+     * Parse result set, return first row
+     *
+     * @param Result $results Api4 Result set
+     * @param string $field Field to return
+     *
+     * @return mixed|null
+     */
+    protected static function parseResultsFirst(Result $results, string $field = "")
+    {
+        // Get first result row
+        $result = $results->first();
+
+        // Empty result
+        if (!is_array($result)) {
+            return null;
+        }
+
+        // No field specified --> return all fields
+        if (empty($field)) {
+            return $result;
+        }
+
+        return $result[$field];
+    }
+
     /**
      * Get contact ID from email
      *
@@ -41,7 +69,7 @@ class Get
             ->setLimit(1)
             ->execute();
 
-        return $results->first()['contact_id'];
+        return self::parseResultsFirst($results, 'contact_id');
     }
 
     /**
