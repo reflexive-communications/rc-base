@@ -1,5 +1,7 @@
 <?php
 
+namespace Civi\RcBase\Api;
+
 use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\ActivityContact;
 use Civi\Api4\Address;
@@ -18,7 +20,7 @@ use Civi\Api4\Relationship;
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class CRM_RcBase_Api_Get
+class Get
 {
     /**
      * Get contact ID from email

@@ -1,5 +1,7 @@
 <?php
 
+namespace Civi\RcBase\Api;
+
 use Civi\API\Exception\NotImplementedException;
 use Civi\Api4\Generic\Result;
 
@@ -12,7 +14,7 @@ use Civi\Api4\Generic\Result;
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class CRM_RcBase_Api_Update
+class Update
 {
     /**
      * Check if update operation succeeded and return updated data

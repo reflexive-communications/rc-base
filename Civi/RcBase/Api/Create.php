@@ -1,7 +1,10 @@
 <?php
 
+namespace Civi\RcBase\Api;
+
 use Civi\API\Exception\NotImplementedException;
 use Civi\Api4\Generic\Result;
+
 
 /**
  * Common Create Actions
@@ -12,7 +15,7 @@ use Civi\Api4\Generic\Result;
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class CRM_RcBase_Api_Create
+class Create
 {
     /**
      * Check if create operation succeeded
@@ -199,5 +202,10 @@ class CRM_RcBase_Api_Create
         $values['target_contact_id'] = $contact_id;
 
         return self::entity('Activity', $values, $check_permissions);
+    }
+
+    public static function majom()
+    {
+        return "gezamacska";
     }
 }
