@@ -63,7 +63,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends TestCase implements HeadlessInte
             ],
         ];
         $user = cv("api4 Contact.create '".json_encode($contact_data)."'");
-        $this->testContactId = $user[0]['id'];
+        $this->testContactId = (int)$user[0]['id'];
     }
 
     /**
@@ -271,7 +271,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends TestCase implements HeadlessInte
             ],
         ];
         $user_other = cv("api4 Contact.create '".json_encode($contact_other)."'");
-        $contact_id_other = $user_other[0]['id'];
+        $contact_id_other = (int)$user_other[0]['id'];
 
         // Create another contact
         $contact_other_new = [
@@ -281,7 +281,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends TestCase implements HeadlessInte
             ],
         ];
         $user_other_new = cv("api4 Contact.create '".json_encode($contact_other_new)."'");
-        $contact_id_other_new = $user_other_new[0]['id'];
+        $contact_id_other_new = (int)$user_other_new[0]['id'];
 
         // Create relationship
         $relationship_data = [

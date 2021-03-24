@@ -262,7 +262,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
             ],
         ];
         $user_other = cv("api4 Contact.create '".json_encode($contact_other)."'");
-        $contact_id_other = $user_other[0]['id'];
+        $contact_id_other = (int)$user_other[0]['id'];
 
         $relationship = [
             'contact_id_b' => $contact_id_other,

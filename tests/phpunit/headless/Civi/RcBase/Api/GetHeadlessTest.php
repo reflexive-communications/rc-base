@@ -66,7 +66,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
 
         // Create user & add email
         $user = cv("api4 Contact.create '".json_encode($contact)."'");
-        $id = $user[0]['id'];
+        $id = (int)$user[0]['id'];
         $email['values']['contact_id'] = $id;
         cv("api4 Email.create '".json_encode($email)."'");
 
@@ -106,7 +106,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
 
         // Create user
         $user = cv("api4 Contact.create '".json_encode($contact)."'");
-        $id = $user[0]['id'];
+        $id = (int)$user[0]['id'];
 
         // Check valid external ID
         $this->assertSame(
