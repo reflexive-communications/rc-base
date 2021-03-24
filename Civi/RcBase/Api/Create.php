@@ -2,9 +2,7 @@
 
 namespace Civi\RcBase\Api;
 
-use Civi\API\Exception\NotImplementedException;
-use Civi\Api4\Generic\Result;
-
+use CRM_Core_Exception;
 
 /**
  * Common Create Actions
@@ -18,29 +16,6 @@ use Civi\Api4\Generic\Result;
 class Create
 {
     /**
-     * Check if create operation succeeded
-     *
-     * @param Result $results API call results
-     * @param string $action Operation name (for logging & reporting)
-     *
-     * @return int ID of created entity
-     *
-     * @throws CRM_Core_Exception
-     */
-    protected static function parseResults(Civi\Api4\Generic\Result $results, string $action): int
-    {
-        // Get entity ID from results
-        $id = $results->first()['id'];
-
-        // If there is a valid ID --> successful insert
-        if ((int)$id < 1) {
-            throw new CRM_Core_Exception(sprintf('Failed to %s', $action));
-        }
-
-        return (int)$id;
-    }
-
-    /**
      * Add new generic entity
      *
      * @param string $entity Name of entity
@@ -49,22 +24,25 @@ class Create
      *
      * @return int ID of created entity
      *
-     * @throws API_Exception
      * @throws CRM_Core_Exception
-     * @throws NotImplementedException
      */
     public static function entity(string $entity, array $values = [], bool $check_permissions = false): int
     {
-        $results = civicrm_api4(
-            $entity,
-            'create',
-            [
-                'values' => $values,
-                'checkPermissions' => $check_permissions,
-            ]
-        );
+        try {
+            $results = civicrm_api4(
+                $entity,
+                'create',
+                [
+                    'values' => $values,
+                    'checkPermissions' => $check_permissions,
+                ]
+            );
+        } catch (\Throwable $ex) {
+            throw new CRM_Core_Exception(sprintf('Failed to create %s, reason: %s', $entity, $ex->getMessage()));
+        }
 
-        return self::parseResults($results, sprintf('create new %s', $entity));
+        // No exception --> create was successful and we have an ID
+        return (int)$results->first()['id'];
     }
 
     /**
@@ -75,8 +53,6 @@ class Create
      *
      * @return int Contact ID
      *
-     * @throws API_Exception
-     * @throws NotImplementedException
      * @throws CRM_Core_Exception
      */
     public static function contact(array $values = [], bool $check_permissions = false): int
@@ -93,12 +69,14 @@ class Create
      *
      * @return int Email ID
      *
-     * @throws API_Exception
      * @throws CRM_Core_Exception
-     * @throws NotImplementedException
      */
     public static function email(int $contact_id, array $values = [], bool $check_permissions = false): int
     {
+        if ($contact_id < 1) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
+
         $values['contact_id'] = $contact_id;
 
         return self::entity('Email', $values, $check_permissions);
@@ -113,12 +91,14 @@ class Create
      *
      * @return int Phone ID
      *
-     * @throws API_Exception
      * @throws CRM_Core_Exception
-     * @throws NotImplementedException
      */
     public static function phone(int $contact_id, array $values = [], bool $check_permissions = false): int
     {
+        if ($contact_id < 1) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
+
         $values['contact_id'] = $contact_id;
 
         return self::entity('Phone', $values, $check_permissions);
@@ -133,12 +113,14 @@ class Create
      *
      * @return int Address ID
      *
-     * @throws API_Exception
      * @throws CRM_Core_Exception
-     * @throws NotImplementedException
      */
     public static function address(int $contact_id, array $values = [], bool $check_permissions = false): int
     {
+        if ($contact_id < 1) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
+
         $values['contact_id'] = $contact_id;
 
         return self::entity('Address', $values, $check_permissions);
@@ -153,12 +135,14 @@ class Create
      *
      * @return int Relationship ID
      *
-     * @throws API_Exception
      * @throws CRM_Core_Exception
-     * @throws NotImplementedException
      */
     public static function relationship(int $contact_id, array $values = [], bool $check_permissions = false): int
     {
+        if ($contact_id < 1) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
+
         $values['contact_id_a'] = $contact_id;
 
         return self::entity('Relationship', $values, $check_permissions);
@@ -173,12 +157,14 @@ class Create
      *
      * @return int Contribution ID
      *
-     * @throws API_Exception
      * @throws CRM_Core_Exception
-     * @throws NotImplementedException
      */
     public static function contribution(int $contact_id, array $values = [], bool $check_permissions = false): int
     {
+        if ($contact_id < 1) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
+
         $values['contact_id'] = $contact_id;
 
         return self::entity('Contribution', $values, $check_permissions);
@@ -193,19 +179,16 @@ class Create
      *
      * @return int Activity ID
      *
-     * @throws API_Exception
      * @throws CRM_Core_Exception
-     * @throws NotImplementedException
      */
     public static function activity(int $contact_id, array $values = [], bool $check_permissions = false): int
     {
+        if ($contact_id < 1) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
+
         $values['target_contact_id'] = $contact_id;
 
         return self::entity('Activity', $values, $check_permissions);
-    }
-
-    public static function majom()
-    {
-        return "gezamacska";
     }
 }
