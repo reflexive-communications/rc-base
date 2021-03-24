@@ -12,6 +12,7 @@ use Civi\Api4\Generic\Result;
 use Civi\Api4\LocationType;
 use Civi\Api4\Phone;
 use Civi\Api4\Relationship;
+use CRM_Core_Exception;
 
 /**
  * Common Get Actions
@@ -24,6 +25,21 @@ use Civi\Api4\Relationship;
  */
 class Get
 {
+    /**
+     * Record type id when contact is the assignee of the activity
+     */
+    public const ACTIVITY_RECORD_TYPE_ASSIGNEE = 1;
+
+    /**
+     * Record type id when contact is the source of the activity
+     */
+    public const ACTIVITY_RECORD_TYPE_SOURCE = 2;
+
+    /**
+     * Record type id when contact is the target of the activity
+     */
+    public const ACTIVITY_RECORD_TYPE_TARGET = 3;
+
     /**
      * Parse result set, return first row
      *
@@ -63,6 +79,11 @@ class Get
      */
     public static function contactIDFromEmail(string $email, bool $check_permissions = false): ?int
     {
+        // Return early
+        if (empty($email)) {
+            return null;
+        }
+
         $results = Email::get($check_permissions)
             ->addSelect('contact_id')
             ->addWhere('email', '=', $email)
@@ -85,13 +106,18 @@ class Get
      */
     public static function contactIDFromExternalID(string $external_id, bool $check_permissions = false): ?int
     {
+        // Return early
+        if (empty($external_id)) {
+            return null;
+        }
+
         $results = Contact::get($check_permissions)
             ->addSelect('id')
             ->addWhere('external_identifier', '=', $external_id)
             ->setLimit(1)
             ->execute();
 
-        return $results->first()['id'];
+        return self::parseResultsFirst($results, 'id');
     }
 
     /**
@@ -108,7 +134,9 @@ class Get
      */
     public static function contactData(int $contact_id, bool $check_permissions = false): ?array
     {
-        CRM_Wrapi_Processor_Base::validateInput($contact_id, 'id', 'Contact ID');
+        if ($contact_id < 1) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
 
         $results = Contact::get($check_permissions)
             ->addSelect('*')
@@ -116,7 +144,7 @@ class Get
             ->setLimit(1)
             ->execute();
 
-        return $results->first();
+        return self::parseResultsFirst($results);
     }
 
     /**
@@ -130,9 +158,14 @@ class Get
      *
      * @throws API_Exception
      * @throws UnauthorizedException
+     * @throws CRM_Core_Exception
      */
     public static function emailID(int $contact_id, int $loc_type_id, bool $check_permissions = false): ?int
     {
+        if ($contact_id < 1 || $loc_type_id < 1) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
+
         $results = Email::get($check_permissions)
             ->addSelect('id')
             ->addWhere('contact_id', '=', $contact_id)
@@ -140,7 +173,7 @@ class Get
             ->setLimit(1)
             ->execute();
 
-        return $results->first()['id'];
+        return self::parseResultsFirst($results, 'id');
     }
 
     /**
@@ -154,9 +187,14 @@ class Get
      *
      * @throws API_Exception
      * @throws UnauthorizedException
+     * @throws CRM_Core_Exception
      */
     public static function phoneID(int $contact_id, int $loc_type_id, bool $check_permissions = false): ?int
     {
+        if ($contact_id < 1 || $loc_type_id < 1) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
+
         $results = Phone::get($check_permissions)
             ->addSelect('id')
             ->addWhere('contact_id', '=', $contact_id)
@@ -164,7 +202,7 @@ class Get
             ->setLimit(1)
             ->execute();
 
-        return $results->first()['id'];
+        return self::parseResultsFirst($results, 'id');
     }
 
     /**
@@ -178,9 +216,14 @@ class Get
      *
      * @throws API_Exception
      * @throws UnauthorizedException
+     * @throws CRM_Core_Exception
      */
     public static function addressID(int $contact_id, int $loc_type_id, bool $check_permissions = false): ?int
     {
+        if ($contact_id < 1 || $loc_type_id < 1) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
+
         $results = Address::get($check_permissions)
             ->addSelect('id')
             ->addWhere('contact_id', '=', $contact_id)
@@ -188,7 +231,7 @@ class Get
             ->setLimit(1)
             ->execute();
 
-        return $results->first()['id'];
+        return self::parseResultsFirst($results, 'id');
     }
 
     /**
@@ -203,6 +246,7 @@ class Get
      *
      * @throws API_Exception
      * @throws UnauthorizedException
+     * @throws CRM_Core_Exception
      */
     public static function relationshipID(
         int $contact_id,
@@ -210,6 +254,11 @@ class Get
         int $relationship_type_id,
         bool $check_permissions = false
     ): ?int {
+
+        if ($contact_id < 1 || $other_contact_id < 1 || $relationship_type_id < 1) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
+
         $results = Relationship::get($check_permissions)
             ->addSelect('id')
             ->addWhere('contact_id_a', '=', $contact_id)
@@ -218,7 +267,7 @@ class Get
             ->setLimit(1)
             ->execute();
 
-        return $results->first()['id'];
+        return self::parseResultsFirst($results, 'id');
     }
 
     /**
@@ -239,13 +288,14 @@ class Get
             ->setLimit(1)
             ->execute();
 
-        return $results->first()['id'];
+        return self::parseResultsFirst($results, 'id');
     }
 
     /**
-     * Get All Activity for a contact, where the contact is the target of activity
+     * Get All Activity for a contact
      *
      * @param int $contact_id Contact ID
+     * @param int $record_type_id Contact role in activity (source, target, assignee)
      * @param int $activity_type_id Optionally filter activities by this type
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
@@ -253,19 +303,25 @@ class Get
      *
      * @throws API_Exception
      * @throws UnauthorizedException
+     * @throws CRM_Core_Exception
      */
     public static function allActivity(
         int $contact_id,
+        int $record_type_id,
         int $activity_type_id = 0,
         bool $check_permissions = false
     ): array {
         $activities = [];
 
+        if ($contact_id < 1 || $record_type_id < 1 || $activity_type_id < 0) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
+
         // record_type_id=3 means contact is the target of activity
         $query = ActivityContact::get($check_permissions)
             ->addSelect('activity.*')
             ->addWhere('contact_id', '=', $contact_id)
-            ->addWhere('record_type_id', '=', 3);
+            ->addWhere('record_type_id', '=', $record_type_id);
 
         // Add filter
         if ($activity_type_id > 0) {
