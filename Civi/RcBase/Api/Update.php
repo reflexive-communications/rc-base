@@ -2,8 +2,7 @@
 
 namespace Civi\RcBase\Api;
 
-use Civi\API\Exception\NotImplementedException;
-use Civi\Api4\Generic\Result;
+use CRM_Core_Exception;
 
 /**
  * Common Update Actions
@@ -17,27 +16,6 @@ use Civi\Api4\Generic\Result;
 class Update
 {
     /**
-     * Check if update operation succeeded and return updated data
-     *
-     * @param Result $results API call results
-     * @param string $action Operation name (for logging & reporting)
-     *
-     * @return array Data
-     *
-     * @throws CRM_Core_Exception
-     */
-    protected static function parseResults(Civi\Api4\Generic\Result $results, string $action): array
-    {
-        $data = $results->first();
-
-        if (is_null($data) || !is_array($data)) {
-            throw new CRM_Core_Exception(sprintf('Failed to %s', $action));
-        }
-
-        return $data;
-    }
-
-    /**
      * Update generic entity
      *
      * @param string $entity Name of entity
@@ -47,9 +25,7 @@ class Update
      *
      * @return array Updated entity data
      *
-     * @throws API_Exception
      * @throws CRM_Core_Exception
-     * @throws NotImplementedException
      */
     public static function entity(
         string $entity,
@@ -57,20 +33,30 @@ class Update
         array $values = [],
         bool $check_permissions = false
     ): array {
-        $results = civicrm_api4(
-            $entity,
-            'update',
-            [
-                'where' => [
-                    ['id', '=', $entity_id],
-                ],
-                'values' => $values,
-                'limit' => 1,
-                'checkPermissions' => $check_permissions,
-            ]
-        );
 
-        return self::parseResults($results, sprintf('update %s (ID: %s)', $entity, $entity_id));
+        if ($entity_id < 1) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
+
+        try {
+            $results = civicrm_api4(
+                $entity,
+                'update',
+                [
+                    'where' => [
+                        ['id', '=', $entity_id],
+                    ],
+                    'values' => $values,
+                    'limit' => 1,
+                    'checkPermissions' => $check_permissions,
+                ]
+            );
+
+        } catch (\Throwable $ex) {
+            throw new CRM_Core_Exception(sprintf('Failed to update %s, reason: %s', $entity, $ex->getMessage()));
+        }
+
+        return $results->first();
     }
 
     /**
@@ -82,9 +68,7 @@ class Update
      *
      * @return array Updated Contact data
      *
-     * @throws API_Exception
      * @throws CRM_Core_Exception
-     * @throws NotImplementedException
      */
     public static function contact(int $contact_id, array $values = [], bool $check_permissions = false): array
     {
@@ -100,9 +84,7 @@ class Update
      *
      * @return array Updated Email data
      *
-     * @throws API_Exception
      * @throws CRM_Core_Exception
-     * @throws NotImplementedException
      */
     public static function email(int $email_id, array $values = [], bool $check_permissions = false): array
     {
@@ -118,9 +100,7 @@ class Update
      *
      * @return array Updated Phone data
      *
-     * @throws API_Exception
      * @throws CRM_Core_Exception
-     * @throws NotImplementedException
      */
     public static function phone(int $phone_id, array $values = [], bool $check_permissions = false): array
     {
@@ -136,9 +116,7 @@ class Update
      *
      * @return array Updated Address data
      *
-     * @throws API_Exception
      * @throws CRM_Core_Exception
-     * @throws NotImplementedException
      */
     public static function address(int $address_id, array $values = [], bool $check_permissions = false): array
     {
@@ -154,9 +132,7 @@ class Update
      *
      * @return array Updated Relationship data
      *
-     * @throws API_Exception
      * @throws CRM_Core_Exception
-     * @throws NotImplementedException
      */
     public static function relationship(
         int $relationship_id,
@@ -175,9 +151,7 @@ class Update
      *
      * @return array Updated Activity data
      *
-     * @throws API_Exception
      * @throws CRM_Core_Exception
-     * @throws NotImplementedException
      */
     public static function activity(int $activity_id, array $values = [], bool $check_permissions = false): array
     {
