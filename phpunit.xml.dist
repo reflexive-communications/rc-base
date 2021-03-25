@@ -11,8 +11,7 @@
          testdox="true">
     <testsuites>
         <testsuite name="all">
-            <directory>./tests/phpunit/unit</directory>
-            <directory>./tests/phpunit/headless</directory>
+            <directory>./tests/phpunit</directory>
         </testsuite>
     </testsuites>
     <filter>
