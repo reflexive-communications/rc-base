@@ -78,7 +78,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         ];
 
         // Create user
-        $contact_id = Civi\RcBase\Api\Create::contact($contact);
+        $contact_id = CRM_RcBase_Api_Create::contact($contact);
 
         // Get data
         $id = cv(
@@ -108,11 +108,11 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         ];
 
         // Create contact
-        Civi\RcBase\Api\Create::contact($contact);
+        CRM_RcBase_Api_Create::contact($contact);
 
         // Create same contact
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Create::contact($contact);
+        CRM_RcBase_Api_Create::contact($contact);
     }
 
     /**
@@ -130,7 +130,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         ];
 
         // Create user
-        $contact_id = Civi\RcBase\Api\Create::contact($contact);
+        $contact_id = CRM_RcBase_Api_Create::contact($contact);
 
         // Get data
         $id = cv(
@@ -159,7 +159,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         ];
 
         // Create email
-        $email_id = Civi\RcBase\Api\Create::email($this->testContactId, $email);
+        $email_id = CRM_RcBase_Api_Create::email($this->testContactId, $email);
 
         // Get data
         $id = cv("api4 Email.get +s id +w email=".$email['email']);
@@ -174,7 +174,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Create::email(0, $email);
+        CRM_RcBase_Api_Create::email(0, $email);
     }
 
     /**
@@ -188,7 +188,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
 
         // Create email
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Create::email($this->testContactId, $email);
+        CRM_RcBase_Api_Create::email($this->testContactId, $email);
     }
 
     /**
@@ -202,7 +202,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         ];
 
         // Create phone
-        $phone_id = Civi\RcBase\Api\Create::phone($this->testContactId, $phone);
+        $phone_id = CRM_RcBase_Api_Create::phone($this->testContactId, $phone);
 
         // Get data
         $id = cv("api4 Phone.get +s id +w phone=".$phone['phone']);
@@ -217,7 +217,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Create::phone(-4, $phone);
+        CRM_RcBase_Api_Create::phone(-4, $phone);
     }
 
     /**
@@ -231,7 +231,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         ];
 
         // Create address
-        $address_id = Civi\RcBase\Api\Create::address($this->testContactId, $address);
+        $address_id = CRM_RcBase_Api_Create::address($this->testContactId, $address);
 
         // Get data
         $id = cv("api4 Address.get +s id +w city=".$address['city']);
@@ -246,7 +246,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Create::address(0, $address);
+        CRM_RcBase_Api_Create::address(0, $address);
     }
 
     /**
@@ -271,7 +271,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         ];
 
         // Create relationship
-        $relationship_id = Civi\RcBase\Api\Create::relationship($this->testContactId, $relationship);
+        $relationship_id = CRM_RcBase_Api_Create::relationship($this->testContactId, $relationship);
 
         // Get data
         $id = cv("api4 Relationship.get +s id +w description=".$relationship['description']);
@@ -288,7 +288,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Create::relationship(0, $relationship);
+        CRM_RcBase_Api_Create::relationship(0, $relationship);
     }
 
     /**
@@ -303,7 +303,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         ];
 
         // Create contribution
-        $contribution_id = Civi\RcBase\Api\Create::contribution($this->testContactId, $contribution);
+        $contribution_id = CRM_RcBase_Api_Create::contribution($this->testContactId, $contribution);
 
         // Get data
         $id = cv("api4 Contribution.get +s id +w trxn_id=".$contribution['trxn_id']);
@@ -320,7 +320,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Create::contribution(-20, $contribution);
+        CRM_RcBase_Api_Create::contribution(-20, $contribution);
     }
 
     /**
@@ -344,7 +344,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         ];
 
         // Create activity
-        $activity_id = Civi\RcBase\Api\Create::activity($this->testContactId, $activity);
+        $activity_id = CRM_RcBase_Api_Create::activity($this->testContactId, $activity);
 
         // Get data
         $id = cv("api4 Activity.get +s id +w subject=".$activity['subject']);
@@ -360,6 +360,6 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Create::activity(-5, $activity);
+        CRM_RcBase_Api_Create::activity(-5, $activity);
     }
 }

@@ -1,9 +1,5 @@
 <?php
 
-namespace Civi\RcBase\Api;
-
-use CRM_Core_Exception;
-
 /**
  * Common Create Actions
  *
@@ -13,7 +9,7 @@ use CRM_Core_Exception;
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class Create
+class CRM_RcBase_Api_Create
 {
     /**
      * Add new generic entity

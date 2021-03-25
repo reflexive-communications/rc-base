@@ -1,8 +1,5 @@
 <?php
 
-namespace Civi\RcBase\Api;
-
-use API_Exception;
 use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\ActivityContact;
 use Civi\Api4\Address;
@@ -12,7 +9,6 @@ use Civi\Api4\Generic\Result;
 use Civi\Api4\LocationType;
 use Civi\Api4\Phone;
 use Civi\Api4\Relationship;
-use CRM_Core_Exception;
 
 /**
  * Common Get Actions
@@ -23,7 +19,7 @@ use CRM_Core_Exception;
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class Get
+class CRM_RcBase_Api_Get
 {
     /**
      * Record type id when contact is the assignee of the activity

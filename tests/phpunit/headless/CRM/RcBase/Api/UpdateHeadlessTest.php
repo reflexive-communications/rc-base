@@ -76,7 +76,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends TestCase implements HeadlessInte
             'contact_type' => 'Invalid contact type',
         ];
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Update::entity('Contact', -5, $contact);
+        CRM_RcBase_Api_Update::entity('Contact', -5, $contact);
     }
 
     /**
@@ -114,7 +114,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends TestCase implements HeadlessInte
                 'job_title' => null,
             ],
         ];
-        Civi\RcBase\Api\Update::contact($id, $contact['values']);
+        CRM_RcBase_Api_Update::contact($id, $contact['values']);
 
         $data_new = cv(
             "api4 Contact.get +s contact_type,first_name,last_name,middle_name,external_identifier,job_title +w id=".$id
@@ -138,7 +138,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends TestCase implements HeadlessInte
             'contact_type' => 'Invalid contact type',
         ];
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Update::contact($this->testContactId, $contact);
+        CRM_RcBase_Api_Update::contact($this->testContactId, $contact);
     }
 
     /**
@@ -161,7 +161,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends TestCase implements HeadlessInte
             'external_identifier' => '3333',
         ];
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Update::contact($this->testContactId, $contact);
+        CRM_RcBase_Api_Update::contact($this->testContactId, $contact);
     }
 
     /**
@@ -184,7 +184,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends TestCase implements HeadlessInte
         // Change data & update
         $email_data['values']['email'] = 'julius@senate.rome';
         $email_data['values']['location_type_id'] = 2;
-        Civi\RcBase\Api\Update::email($id, $email_data['values']);
+        CRM_RcBase_Api_Update::email($id, $email_data['values']);
 
         $data_new = cv("api4 Email.get +s contact_id,email,location_type_id +w id=".$id);
 
@@ -215,7 +215,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends TestCase implements HeadlessInte
 
         // Change data & update
         $phone_data['values']['phone'] = '+98765';
-        Civi\RcBase\Api\Update::phone($id, $phone_data['values']);
+        CRM_RcBase_Api_Update::phone($id, $phone_data['values']);
 
         $data_new = cv("api4 Phone.get +s contact_id,phone,location_type_id +w id=".$id);
 
@@ -246,7 +246,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends TestCase implements HeadlessInte
 
         // Change data & update
         $address_data['values']['city'] = 'Alexandria';
-        Civi\RcBase\Api\Update::address($id, $address_data['values']);
+        CRM_RcBase_Api_Update::address($id, $address_data['values']);
 
         $data_new = cv("api4 Address.get +s contact_id,city,location_type_id +w id=".$id);
 
@@ -302,7 +302,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends TestCase implements HeadlessInte
         $relationship_data['values']['contact_id_b'] = $contact_id_other_new;
 
         // Update contact
-        Civi\RcBase\Api\Update::relationship($id, $relationship_data['values']);
+        CRM_RcBase_Api_Update::relationship($id, $relationship_data['values']);
 
         $data_new = cv(
             "api4 Relationship.get +s contact_id_a,contact_id_b,relationship_type_id,description +w id=".$id
@@ -348,7 +348,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends TestCase implements HeadlessInte
         $activity_data['values']['activity_type_id'] = 2;
 
         // Update contact
-        Civi\RcBase\Api\Update::activity($id, $activity_data['values']);
+        CRM_RcBase_Api_Update::activity($id, $activity_data['values']);
 
         $data_new = cv("api4 Activity.get +s activity_type_id,subject +w id=".$id);
 

@@ -73,19 +73,19 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
         // Check valid email
         $this->assertSame(
             $id,
-            Civi\RcBase\Api\Get::contactIDFromEmail($email['values']['email']),
+            CRM_RcBase_Api_Get::contactIDFromEmail($email['values']['email']),
             'Bad contact ID returned'
         );
 
         // Check empty email
         $this->assertTrue(
-            is_null(Civi\RcBase\Api\Get::contactIDFromEmail("")),
+            is_null(CRM_RcBase_Api_Get::contactIDFromEmail("")),
             'Not null returned on non-existent email'
         );
 
         // Check non-existent email
         $this->assertTrue(
-            is_null(Civi\RcBase\Api\Get::contactIDFromEmail("nonexistent@rome.com")),
+            is_null(CRM_RcBase_Api_Get::contactIDFromEmail("nonexistent@rome.com")),
             'Not null returned on non-existent email'
         );
     }
@@ -111,19 +111,19 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
         // Check valid external ID
         $this->assertSame(
             $id,
-            Civi\RcBase\Api\Get::contactIDFromExternalID($contact['values']['external_identifier']),
+            CRM_RcBase_Api_Get::contactIDFromExternalID($contact['values']['external_identifier']),
             'Bad contact ID returned'
         );
 
         // Check empty ID
         $this->assertTrue(
-            is_null(Civi\RcBase\Api\Get::contactIDFromExternalID("")),
+            is_null(CRM_RcBase_Api_Get::contactIDFromExternalID("")),
             'Not null returned on non-existent email'
         );
 
         // Check non-existent ID
         $this->assertTrue(
-            is_null(Civi\RcBase\Api\Get::contactIDFromExternalID("11-nonexistent")),
+            is_null(CRM_RcBase_Api_Get::contactIDFromExternalID("11-nonexistent")),
             'Not null returned on non-existent external ID'
         );
     }
@@ -136,7 +136,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
     public function testGetContactDataWithInvalidId()
     {
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Get::contactData(-5);
+        CRM_RcBase_Api_Get::contactData(-5);
     }
 
     /**
@@ -173,26 +173,26 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
         // Check if valid
         $this->assertSame(
             $data[0],
-            Civi\RcBase\Api\Get::contactData($id_1),
+            CRM_RcBase_Api_Get::contactData($id_1),
             'Invalid contact data returned on valid contact ID.'
         );
 
         // Check for different
         $this->assertNotSame(
             $data[0],
-            Civi\RcBase\Api\Get::contactData($id_2),
+            CRM_RcBase_Api_Get::contactData($id_2),
             'Invalid contact data returned for different contact ID.'
         );
 
         // Check non-existent contact ID
         $this->assertTrue(
-            is_null(Civi\RcBase\Api\Get::contactData(9999)),
+            is_null(CRM_RcBase_Api_Get::contactData(9999)),
             'Not null returned on non-existent contact ID'
         );
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Get::contactData(0);
+        CRM_RcBase_Api_Get::contactData(0);
     }
 
     /**
@@ -226,25 +226,25 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
         // Check valid email
         $this->assertSame(
             $email_id,
-            Civi\RcBase\Api\Get::emailID($contact_id, $email_data['values']['location_type_id']),
+            CRM_RcBase_Api_Get::emailID($contact_id, $email_data['values']['location_type_id']),
             'Bad email ID returned'
         );
 
         // Check non-existent location type
         $this->assertTrue(
-            is_null(Civi\RcBase\Api\Get::emailID($contact_id, 5)),
+            is_null(CRM_RcBase_Api_Get::emailID($contact_id, 5)),
             'Not null returned on non-existent location type ID'
         );
 
         // Check non-existent contact ID
         $this->assertTrue(
-            is_null(Civi\RcBase\Api\Get::emailID(9999, $email_data['values']['location_type_id'])),
+            is_null(CRM_RcBase_Api_Get::emailID(9999, $email_data['values']['location_type_id'])),
             'Not null returned on non-existent contact ID'
         );
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Get::emailID(-1, $email_data['values']['location_type_id']);
+        CRM_RcBase_Api_Get::emailID(-1, $email_data['values']['location_type_id']);
     }
 
     /**
@@ -278,25 +278,25 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
         // Check valid phone
         $this->assertSame(
             $phone_id,
-            Civi\RcBase\Api\Get::phoneID($contact_id, $phone_data['values']['location_type_id']),
+            CRM_RcBase_Api_Get::phoneID($contact_id, $phone_data['values']['location_type_id']),
             'Bad phone ID returned'
         );
 
         // Check non-existent location type
         $this->assertTrue(
-            is_null(Civi\RcBase\Api\Get::phoneID($contact_id, 5)),
+            is_null(CRM_RcBase_Api_Get::phoneID($contact_id, 5)),
             'Not null returned on non-existent location type ID'
         );
 
         // Check non-existent contact ID
         $this->assertTrue(
-            is_null(Civi\RcBase\Api\Get::phoneID(9999, $phone_data['values']['location_type_id'])),
+            is_null(CRM_RcBase_Api_Get::phoneID(9999, $phone_data['values']['location_type_id'])),
             'Not null returned on non-existent contact ID'
         );
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Get::phoneID(-5, $phone_data['values']['location_type_id']);
+        CRM_RcBase_Api_Get::phoneID(-5, $phone_data['values']['location_type_id']);
     }
 
     /**
@@ -330,25 +330,25 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
         // Check valid address
         $this->assertSame(
             $address_id,
-            Civi\RcBase\Api\Get::addressID($contact_id, $address_data['values']['location_type_id']),
+            CRM_RcBase_Api_Get::addressID($contact_id, $address_data['values']['location_type_id']),
             'Bad address ID returned'
         );
 
         // Check non-existent location type
         $this->assertTrue(
-            is_null(Civi\RcBase\Api\Get::addressID($contact_id, 5)),
+            is_null(CRM_RcBase_Api_Get::addressID($contact_id, 5)),
             'Not null returned on non-existent location type ID'
         );
 
         // Check non-existent contact ID
         $this->assertTrue(
-            is_null(Civi\RcBase\Api\Get::addressID(9999, $address_data['values']['location_type_id'])),
+            is_null(CRM_RcBase_Api_Get::addressID(9999, $address_data['values']['location_type_id'])),
             'Not null returned on non-existent contact ID'
         );
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Get::addressID($contact_id, 0);
+        CRM_RcBase_Api_Get::addressID($contact_id, 0);
     }
 
     /**
@@ -392,7 +392,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
         // Check valid relationship
         $this->assertSame(
             $relationship_id,
-            Civi\RcBase\Api\Get::relationshipID(
+            CRM_RcBase_Api_Get::relationshipID(
                 $contact_id,
                 $contact_id_other,
                 $relationship_data['values']['relationship_type_id']
@@ -402,14 +402,14 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
 
         // Check non-existent relationship type
         $this->assertTrue(
-            is_null(Civi\RcBase\Api\Get::relationshipID($contact_id, $contact_id, 5)),
+            is_null(CRM_RcBase_Api_Get::relationshipID($contact_id, $contact_id, 5)),
             'Not null returned on non-existent relationship type ID'
         );
 
         // Check non-existent contact ID
         $this->assertTrue(
             is_null(
-                Civi\RcBase\Api\Get::relationshipID(
+                CRM_RcBase_Api_Get::relationshipID(
                     9999,
                     $contact_id_other,
                     $relationship_data['values']['relationship_type_id']
@@ -420,7 +420,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Get::relationshipID($contact_id, $contact_id, -5);
+        CRM_RcBase_Api_Get::relationshipID($contact_id, $contact_id, -5);
     }
 
     /**
@@ -433,7 +433,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
 
         $this->assertSame(
             $def_loc_type,
-            Civi\RcBase\Api\Get::defaultLocationTypeID(),
+            CRM_RcBase_Api_Get::defaultLocationTypeID(),
             'Bad default location type ID returned'
         );
     }
@@ -524,48 +524,48 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
         cv("api4 Activity.create '".json_encode($activity_data_b)."'");
 
         // Check activities when contact is target
-        $activities = Civi\RcBase\Api\Get::allActivity(
+        $activities = CRM_RcBase_Api_Get::allActivity(
             $contact_id_target,
-            Civi\RcBase\Api\Get::ACTIVITY_RECORD_TYPE_TARGET
+            CRM_RcBase_Api_Get::ACTIVITY_RECORD_TYPE_TARGET
         );
         $this->assertCount(9, $activities, 'Bad number of all activities when contact is the target');
 
         // Check activities when contact is target with filtering
-        $activities = Civi\RcBase\Api\Get::allActivity(
+        $activities = CRM_RcBase_Api_Get::allActivity(
             $contact_id_target,
-            Civi\RcBase\Api\Get::ACTIVITY_RECORD_TYPE_TARGET,
+            CRM_RcBase_Api_Get::ACTIVITY_RECORD_TYPE_TARGET,
             $activity_data_b['values']['activity_type_id']
         );
         $this->assertCount(6, $activities, 'Bad number of filtered activities when contact is the target');
 
         // Check non-existent activities returned
-        $activities = Civi\RcBase\Api\Get::allActivity($contact_id_target, 5);
+        $activities = CRM_RcBase_Api_Get::allActivity($contact_id_target, 5);
         $this->assertCount(0, $activities, 'Non existent activites returned');
 
         // Check activities when contact is source
-        $activities = Civi\RcBase\Api\Get::allActivity(
+        $activities = CRM_RcBase_Api_Get::allActivity(
             $contact_id_source_a,
-            Civi\RcBase\Api\Get::ACTIVITY_RECORD_TYPE_SOURCE
+            CRM_RcBase_Api_Get::ACTIVITY_RECORD_TYPE_SOURCE
         );
         $this->assertCount(8, $activities, 'Bad number of activities when contact is the source');
 
         // Check activities when contact is assignee
-        $activities = Civi\RcBase\Api\Get::allActivity(
+        $activities = CRM_RcBase_Api_Get::allActivity(
             $contact_id_assignee_b,
-            Civi\RcBase\Api\Get::ACTIVITY_RECORD_TYPE_ASSIGNEE
+            CRM_RcBase_Api_Get::ACTIVITY_RECORD_TYPE_ASSIGNEE
         );
         $this->assertCount(4, $activities, 'Bad number of activities when contact is the assignee');
 
         // Check activities when contact is assignee with filtering
-        $activities = Civi\RcBase\Api\Get::allActivity(
+        $activities = CRM_RcBase_Api_Get::allActivity(
             $contact_id_assignee_b,
-            Civi\RcBase\Api\Get::ACTIVITY_RECORD_TYPE_ASSIGNEE,
+            CRM_RcBase_Api_Get::ACTIVITY_RECORD_TYPE_ASSIGNEE,
             $activity_data_a['values']['activity_type_id']
         );
         $this->assertCount(1, $activities, 'Bad number of activities when contact is the assignee');
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        Civi\RcBase\Api\Get::allActivity($contact_id_target, 5, -5);
+        CRM_RcBase_Api_Get::allActivity($contact_id_target, 5, -5);
     }
 }
