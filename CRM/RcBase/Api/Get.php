@@ -313,7 +313,6 @@ class CRM_RcBase_Api_Get
             throw new CRM_Core_Exception('Invalid ID.');
         }
 
-        // record_type_id=3 means contact is the target of activity
         $query = ActivityContact::get($check_permissions)
             ->addSelect('activity.*')
             ->addWhere('contact_id', '=', $contact_id)
