@@ -18,6 +18,13 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
     private $testContactId;
 
     /**
+     * External ID counter
+     *
+     * @var int
+     */
+    private static $externalID = 0;
+
+    /**
      * The setupHeadless function runs at the start of each test case, right before
      * the headless environment reboots.
      *
@@ -63,7 +70,26 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
             ],
         ];
         $user = cv("api4 Contact.create '".json_encode($contact_data)."'");
+
+        // Check results id
+        $this->assertIsArray($user, 'Not an array returned from "cv Contact.create" for "id"');
+        $this->assertEquals(1, count($user), 'Not one result returned for "id"');
+        $this->assertIsArray($user[0], 'Not an array returned from "cv Contact.create" for "id"');
+        $this->assertArrayHasKey('id', $user[0], 'ID not found.');
+
         $this->testContactId = $user[0]['id'];
+    }
+
+    /**
+     * Get next ID in sequence (auto-increment)
+     *
+     * @return string Next ID
+     */
+    private static function getNextExternalID(): string
+    {
+        self::$externalID++;
+
+        return (string)self::$externalID;
     }
 
     /**
@@ -74,7 +100,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         $contact = [
             'contact_type' => 'Individual',
             'first_name' => 'Scipio',
-            'external_identifier' => '111',
+            'external_identifier' => self::getNextExternalID(),
         ];
 
         // Create user
@@ -87,6 +113,17 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         $data = cv(
             "api4 Contact.get +s contact_type,first_name,external_identifier +w external_identifier=".$contact['external_identifier']
         );
+
+        // Check results id
+        $this->assertIsArray($id, 'Not an array returned from "cv Contact.get" for "id"');
+        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
+        $this->assertIsArray($id[0], 'Not an array returned from "cv Contact.get" for "id"');
+        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
+
+        // Check results data
+        $this->assertIsArray($data, 'Not an array returned from "cv Contact.get" for "data"');
+        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
+        $this->assertIsArray($data[0], 'Not an array returned from "cv Contact.get" for "data"');
 
         // Check valid ID
         $this->assertSame($id[0]['id'], $contact_id, 'Bad contact ID returned');
@@ -104,7 +141,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         $contact = [
             'contact_type' => 'Individual',
             'first_name' => 'Sulla',
-            'external_identifier' => '333',
+            'external_identifier' => self::getNextExternalID(),
         ];
 
         // Create contact
@@ -112,6 +149,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
 
         // Create same contact
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("DB Error: already exists", "Invalid exception message.");
         CRM_RcBase_Api_Create::contact($contact);
     }
 
@@ -123,7 +161,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         $contact = [
             'contact_type' => 'Individual',
             'first_name' => 'Brutus',
-            'external_identifier' => '222',
+            'external_identifier' => self::getNextExternalID(),
             'nonexistent_field_string' => 'Ides of March',
             'nonexistent_field_int' => 15,
             'nonexistent_field_bool' => true,
@@ -139,6 +177,17 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         $data = cv(
             "api4 Contact.get +s contact_type,first_name,external_identifier +w external_identifier=".$contact['external_identifier']
         );
+
+        // Check results id
+        $this->assertIsArray($id, 'Not an array returned from "cv Contact.get" for "id"');
+        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
+        $this->assertIsArray($id[0], 'Not an array returned from "cv Contact.get" for "id"');
+        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
+
+        // Check results data
+        $this->assertIsArray($data, 'Not an array returned from "cv Contact.get" for "data"');
+        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
+        $this->assertIsArray($data[0], 'Not an array returned from "cv Contact.get" for "data"');
 
         // Check valid ID --> create was successful
         $this->assertSame($id[0]['id'], $contact_id, 'Bad contact ID returned');
@@ -165,6 +214,17 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         $id = cv("api4 Email.get +s id +w email=".$email['email']);
         $data = cv("api4 Email.get +s email,location_type_id +w email=".$email['email']);
 
+        // Check results id
+        $this->assertIsArray($id, 'Not an array returned from "cv Email.get" for "id"');
+        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
+        $this->assertIsArray($id[0], 'Not an array returned from "cv Email.get" for "id"');
+        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
+
+        // Check results data
+        $this->assertIsArray($data, 'Not an array returned from "cv Email.get" for "data"');
+        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
+        $this->assertIsArray($data[0], 'Not an array returned from "cv Email.get" for "data"');
+
         // Check valid ID
         $this->assertSame($id[0]['id'], $email_id, 'Bad email ID returned');
 
@@ -174,6 +234,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
         CRM_RcBase_Api_Create::email(0, $email);
     }
 
@@ -188,6 +249,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
 
         // Create email
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Mandatory values missing", "Invalid exception message.");
         CRM_RcBase_Api_Create::email($this->testContactId, $email);
     }
 
@@ -208,6 +270,17 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         $id = cv("api4 Phone.get +s id +w phone=".$phone['phone']);
         $data = cv("api4 Phone.get +s phone,location_type_id +w phone=".$phone['phone']);
 
+        // Check results id
+        $this->assertIsArray($id, 'Not an array returned from "cv Phone.get" for "id"');
+        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
+        $this->assertIsArray($id[0], 'Not an array returned from "cv Phone.get" for "id"');
+        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
+
+        // Check results data
+        $this->assertIsArray($data, 'Not an array returned from "cv Phone.get" for "data"');
+        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
+        $this->assertIsArray($data[0], 'Not an array returned from "cv Phone.get" for "data"');
+
         // Check valid ID
         $this->assertSame($id[0]['id'], $phone_id, 'Bad phone ID returned');
 
@@ -217,6 +290,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
         CRM_RcBase_Api_Create::phone(-4, $phone);
     }
 
@@ -237,6 +311,17 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         $id = cv("api4 Address.get +s id +w city=".$address['city']);
         $data = cv("api4 Address.get +s city,location_type_id +w city=".$address['city']);
 
+        // Check results id
+        $this->assertIsArray($id, 'Not an array returned from "cv Address.get" for "id"');
+        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
+        $this->assertIsArray($id[0], 'Not an array returned from "cv Address.get" for "id"');
+        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
+
+        // Check results data
+        $this->assertIsArray($data, 'Not an array returned from "cv Address.get" for "data"');
+        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
+        $this->assertIsArray($data[0], 'Not an array returned from "cv Address.get" for "data"');
+
         // Check valid ID
         $this->assertSame($id[0]['id'], $address_id, 'Bad address ID returned');
 
@@ -246,6 +331,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
         CRM_RcBase_Api_Create::address(0, $address);
     }
 
@@ -279,6 +365,17 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
             "api4 Relationship.get +s contact_id_b,relationship_type_id,description +w description=".$relationship['description']
         );
 
+        // Check results id
+        $this->assertIsArray($id, 'Not an array returned from "cv Relationship.get" for "id"');
+        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
+        $this->assertIsArray($id[0], 'Not an array returned from "cv Relationship.get" for "id"');
+        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
+
+        // Check results data
+        $this->assertIsArray($data, 'Not an array returned from "cv Relationship.get" for "data"');
+        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
+        $this->assertIsArray($data[0], 'Not an array returned from "cv Relationship.get" for "data"');
+
         // Check valid ID
         $this->assertSame($id[0]['id'], $relationship_id, 'Bad relationship ID returned');
 
@@ -288,6 +385,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
         CRM_RcBase_Api_Create::relationship(0, $relationship);
     }
 
@@ -311,6 +409,17 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
             "api4 Contribution.get +s financial_type_id,total_amount,trxn_id +w trxn_id=".$contribution['trxn_id']
         );
 
+        // Check results id
+        $this->assertIsArray($id, 'Not an array returned from "cv Contribution.get" for "id"');
+        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
+        $this->assertIsArray($id[0], 'Not an array returned from "cv Contribution.get" for "id"');
+        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
+
+        // Check results data
+        $this->assertIsArray($data, 'Not an array returned from "cv Contribution.get" for "data"');
+        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
+        $this->assertIsArray($data[0], 'Not an array returned from "cv Contribution.get" for "data"');
+
         // Check valid ID
         $this->assertSame($id[0]['id'], $contribution_id, 'Bad contribution ID returned');
 
@@ -320,6 +429,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
         CRM_RcBase_Api_Create::contribution(-20, $contribution);
     }
 
@@ -350,6 +460,17 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
         $id = cv("api4 Activity.get +s id +w subject=".$activity['subject']);
         $data = cv("api4 Activity.get +s source_contact_id,activity_type_id,subject +w subject=".$activity['subject']);
 
+        // Check results id
+        $this->assertIsArray($id, 'Not an array returned from "cv Activity.get" for "id"');
+        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
+        $this->assertIsArray($id[0], 'Not an array returned from "cv Activity.get" for "id"');
+        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
+
+        // Check results data
+        $this->assertIsArray($data, 'Not an array returned from "cv Activity.get" for "data"');
+        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
+        $this->assertIsArray($data[0], 'Not an array returned from "cv Activity.get" for "data"');
+
         // Check valid ID
         $this->assertSame($id[0]['id'], $activity_id, 'Bad activity ID returned');
 
@@ -360,6 +481,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
         CRM_RcBase_Api_Create::activity(-5, $activity);
     }
 }
