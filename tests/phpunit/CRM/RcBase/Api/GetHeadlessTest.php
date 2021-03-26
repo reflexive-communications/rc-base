@@ -14,6 +14,13 @@ use PHPUnit\Framework\TestCase;
 class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterface, HookInterface, TransactionalInterface
 {
     /**
+     * External ID counter
+     *
+     * @var int
+     */
+    private static $externalID = 0;
+
+    /**
      * The setupHeadless function runs at the start of each test case, right before
      * the headless environment reboots.
      *
@@ -47,6 +54,18 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
     }
 
     /**
+     * Get next ID in sequence (auto-increment)
+     *
+     * @return string Next ID
+     */
+    private static function getNextExternalID(): string
+    {
+        self::$externalID++;
+
+        return (string)self::$externalID;
+    }
+
+    /**
      * @throws UnauthorizedException|API_Exception
      */
     public function testGetContactIdFromEmail()
@@ -66,9 +85,22 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
 
         // Create user & add email
         $user = cv("api4 Contact.create '".json_encode($contact)."'");
+
+        // Check results user
+        $this->assertIsArray($user, 'Not an array returned from "cv Contact.create"');
+        $this->assertEquals(1, count($user), 'Not one result returned');
+        $this->assertIsArray($user[0], 'Not an array returned from "cv Contact.create"');
+        $this->assertArrayHasKey('id', $user[0], 'ID not found.');
+
         $id = (int)$user[0]['id'];
         $email['values']['contact_id'] = $id;
-        cv("api4 Email.create '".json_encode($email)."'");
+        $email_results = cv("api4 Email.create '".json_encode($email)."'");
+
+        // Check results email
+        $this->assertIsArray($email_results, 'Not an array returned from "cv Contact.create"');
+        $this->assertEquals(1, count($email_results), 'Not one result returned');
+        $this->assertIsArray($email_results[0], 'Not an array returned from "cv Contact.create"');
+        $this->assertArrayHasKey('id', $email_results[0], 'ID not found.');
 
         // Check valid email
         $this->assertSame(
@@ -80,7 +112,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
         // Check empty email
         $this->assertTrue(
             is_null(CRM_RcBase_Api_Get::contactIDFromEmail("")),
-            'Not null returned on non-existent email'
+            'Not null returned on empty email'
         );
 
         // Check non-existent email
@@ -100,12 +132,19 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
                 'contact_type' => 'Individual',
                 'first_name' => 'Marcus',
                 'last_name' => 'Antonius',
-                'external_identifier' => '1234',
+                'external_identifier' => self::getNextExternalID(),
             ],
         ];
 
         // Create user
         $user = cv("api4 Contact.create '".json_encode($contact)."'");
+
+        // Check results user
+        $this->assertIsArray($user, 'Not an array returned from "cv Contact.create"');
+        $this->assertEquals(1, count($user), 'Not one result returned');
+        $this->assertIsArray($user[0], 'Not an array returned from "cv Contact.create"');
+        $this->assertArrayHasKey('id', $user[0], 'ID not found.');
+
         $id = (int)$user[0]['id'];
 
         // Check valid external ID
@@ -118,7 +157,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
         // Check empty ID
         $this->assertTrue(
             is_null(CRM_RcBase_Api_Get::contactIDFromExternalID("")),
-            'Not null returned on non-existent email'
+            'Not null returned on empty external ID'
         );
 
         // Check non-existent ID
@@ -136,6 +175,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
     public function testGetContactDataWithInvalidId()
     {
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
         CRM_RcBase_Api_Get::contactData(-5);
     }
 
@@ -151,7 +191,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
                 'contact_type' => 'Individual',
                 'first_name' => 'Marcus',
                 'last_name' => 'Crassus',
-                'external_identifier' => '5678',
+                'external_identifier' => self::getNextExternalID(),
             ],
         ];
         $contact_2 = [
@@ -159,16 +199,36 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
                 'contact_type' => 'Individual',
                 'first_name' => 'Gaius',
                 'last_name' => 'Marius',
-                'external_identifier' => '9876',
+                'external_identifier' => self::getNextExternalID(),
             ],
         ];
 
         // Create users
         $user_1 = cv("api4 Contact.create '".json_encode($contact_1)."'");
         $user_2 = cv("api4 Contact.create '".json_encode($contact_2)."'");
+
+        // Check results user_1
+        $this->assertIsArray($user_1, 'Not an array returned from "cv Contact.create" for "user_1"');
+        $this->assertEquals(1, count($user_1), 'Not one result returned for "user_1"');
+        $this->assertIsArray($user_1[0], 'Not an array returned from "cv Contact.create" for "user_1"');
+        $this->assertArrayHasKey('id', $user_1[0], 'ID not found.');
+        // Check results user_2
+        $this->assertIsArray($user_2, 'Not an array returned from "cv Contact.create" for "user_2"');
+        $this->assertEquals(1, count($user_2), 'Not one result returned for "user_2"');
+        $this->assertIsArray($user_2[0], 'Not an array returned from "cv Contact.create" for "user_2"');
+        $this->assertArrayHasKey('id', $user_2[0], 'ID not found.');
+
+        // Get ID
         $id_1 = $user_1[0]['id'];
         $id_2 = $user_2[0]['id'];
+
+        // Get data
         $data = cv("api4 Contact.get +w external_identifier=".$contact_1['values']['external_identifier']);
+
+        // Check results data
+        $this->assertIsArray($data, 'Not an array returned from "cv Contact.get" for "data"');
+        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
+        $this->assertIsArray($data[0], 'Not an array returned from "cv Contact.get" for "data"');
 
         // Check if valid
         $this->assertSame(
@@ -192,6 +252,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
         CRM_RcBase_Api_Get::contactData(0);
     }
 
@@ -216,11 +277,25 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
 
         // Create user
         $user = cv("api4 Contact.create '".json_encode($contact_data)."'");
+
+        // Check results user
+        $this->assertIsArray($user, 'Not an array returned from "cv Contact.create" for "user"');
+        $this->assertEquals(1, count($user), 'Not one result returned for "user"');
+        $this->assertIsArray($user[0], 'Not an array returned from "cv Contact.create" for "user"');
+        $this->assertArrayHasKey('id', $user[0], 'ID not found.');
+
         $contact_id = $user[0]['id'];
 
         // Add email
         $email_data['values']['contact_id'] = $contact_id;
         $email = cv("api4 Email.create '".json_encode($email_data)."'");
+
+        // Check results email
+        $this->assertIsArray($email, 'Not an array returned from "cv Email.create" for "email"');
+        $this->assertEquals(1, count($email), 'Not one result returned for "email"');
+        $this->assertIsArray($email[0], 'Not an array returned from "cv Email.create" for "email"');
+        $this->assertArrayHasKey('id', $email[0], 'ID not found.');
+
         $email_id = $email[0]['id'];
 
         // Check valid email
@@ -244,6 +319,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
         CRM_RcBase_Api_Get::emailID(-1, $email_data['values']['location_type_id']);
     }
 
@@ -268,12 +344,25 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
 
         // Create user
         $user = cv("api4 Contact.create '".json_encode($contact_data)."'");
+
+        // Check results user
+        $this->assertIsArray($user, 'Not an array returned from "cv Contact.create" for "user"');
+        $this->assertEquals(1, count($user), 'Not one result returned for "user"');
+        $this->assertIsArray($user[0], 'Not an array returned from "cv Contact.create" for "user"');
+        $this->assertArrayHasKey('id', $user[0], 'ID not found.');
+
         $contact_id = $user[0]['id'];
 
         // Add phone
         $phone_data['values']['contact_id'] = $contact_id;
         $phone = cv("api4 Phone.create '".json_encode($phone_data)."'");
         $phone_id = $phone[0]['id'];
+
+        // Check results phone
+        $this->assertIsArray($phone, 'Not an array returned from "cv Phone.create" for "phone"');
+        $this->assertEquals(1, count($phone), 'Not one result returned for "phone"');
+        $this->assertIsArray($phone[0], 'Not an array returned from "cv Phone.create" for "phone"');
+        $this->assertArrayHasKey('id', $phone[0], 'ID not found.');
 
         // Check valid phone
         $this->assertSame(
@@ -296,6 +385,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
         CRM_RcBase_Api_Get::phoneID(-5, $phone_data['values']['location_type_id']);
     }
 
@@ -320,11 +410,25 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
 
         // Create user
         $user = cv("api4 Contact.create '".json_encode($contact_data)."'");
+
+        // Check results user
+        $this->assertIsArray($user, 'Not an array returned from "cv Contact.create" for "user"');
+        $this->assertEquals(1, count($user), 'Not one result returned for "user"');
+        $this->assertIsArray($user[0], 'Not an array returned from "cv Contact.create" for "user"');
+        $this->assertArrayHasKey('id', $user[0], 'ID not found.');
+
         $contact_id = $user[0]['id'];
 
         // Add address
         $address_data['values']['contact_id'] = $contact_id;
         $address = cv("api4 Address.create '".json_encode($address_data)."'");
+
+        // Check results address
+        $this->assertIsArray($address, 'Not an array returned from "cv Address.create" for "address"');
+        $this->assertEquals(1, count($address), 'Not one result returned for "address"');
+        $this->assertIsArray($address[0], 'Not an array returned from "cv Address.create" for "address"');
+        $this->assertArrayHasKey('id', $address[0], 'ID not found.');
+
         $address_id = $address[0]['id'];
 
         // Check valid address
@@ -348,6 +452,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
         CRM_RcBase_Api_Get::addressID($contact_id, 0);
     }
 
@@ -361,14 +466,14 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
             'values' => [
                 'contact_type' => 'Individual',
                 'first_name' => 'Romulus',
-                'external_identifier' => '2222',
+                'external_identifier' => self::getNextExternalID(),
             ],
         ];
         $contact_other = [
             'values' => [
                 'contact_type' => 'Individual',
                 'first_name' => 'Remus',
-                'external_identifier' => '3333',
+                'external_identifier' => self::getNextExternalID(),
             ],
         ];
         $relationship_data = [
@@ -380,6 +485,19 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
         // Create users
         $user = cv("api4 Contact.create '".json_encode($contact)."'");
         $user_other = cv("api4 Contact.create '".json_encode($contact_other)."'");
+
+        // Check results user
+        $this->assertIsArray($user, 'Not an array returned from "cv Contact.create" for "user"');
+        $this->assertEquals(1, count($user), 'Not one result returned for "user"');
+        $this->assertIsArray($user[0], 'Not an array returned from "cv Contact.create" for "user"');
+        $this->assertArrayHasKey('id', $user[0], 'ID not found.');
+
+        // Check results user_other
+        $this->assertIsArray($user_other, 'Not an array returned from "cv Contact.create" for "user_other"');
+        $this->assertEquals(1, count($user_other), 'Not one result returned for "user_other"');
+        $this->assertIsArray($user_other[0], 'Not an array returned from "cv Contact.create" for "user_other"');
+        $this->assertArrayHasKey('id', $user_other[0], 'ID not found.');
+
         $contact_id = $user[0]['id'];
         $contact_id_other = $user_other[0]['id'];
 
@@ -387,6 +505,16 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
         $relationship_data['values']['contact_id_a'] = $contact_id;
         $relationship_data['values']['contact_id_b'] = $contact_id_other;
         $relationship = cv("api4 Relationship.create '".json_encode($relationship_data)."'");
+
+        // Check results address
+        $this->assertIsArray($relationship, 'Not an array returned from "cv Relationship.create" for "relationship"');
+        $this->assertEquals(1, count($relationship), 'Not one result returned for "relationship"');
+        $this->assertIsArray(
+            $relationship[0],
+            'Not an array returned from "cv Relationship.create" for "relationship"'
+        );
+        $this->assertArrayHasKey('id', $relationship[0], 'ID not found.');
+
         $relationship_id = $relationship[0]['id'];
 
         // Check valid relationship
@@ -420,6 +548,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
         CRM_RcBase_Api_Get::relationshipID($contact_id, $contact_id, -5);
     }
 
@@ -491,6 +620,43 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
         $user_target = cv("api4 Contact.create '".json_encode($contact_target)."'");
         $user_assignee_a = cv("api4 Contact.create '".json_encode($contact_assignee_a)."'");
         $user_assignee_b = cv("api4 Contact.create '".json_encode($contact_assignee_b)."'");
+
+        // Check results user_source_a
+        $this->assertIsArray($user_source_a, 'Not an array returned from "cv Contact.create" for "user_source_a"');
+        $this->assertEquals(1, count($user_source_a), 'Not one result returned for "user_source_a"');
+        $this->assertIsArray($user_source_a[0], 'Not an array returned from "cv Contact.create" for "user_source_a"');
+        $this->assertArrayHasKey('id', $user_source_a[0], 'ID not found.');
+
+        // Check results user_source_b
+        $this->assertIsArray($user_source_b, 'Not an array returned from "cv Contact.create" for "user_source_b"');
+        $this->assertEquals(1, count($user_source_b), 'Not one result returned for "user_source_b"');
+        $this->assertIsArray($user_source_b[0], 'Not an array returned from "cv Contact.create" for "user_source_b"');
+        $this->assertArrayHasKey('id', $user_source_b[0], 'ID not found.');
+
+        // Check results user_target
+        $this->assertIsArray($user_target, 'Not an array returned from "cv Contact.create" for "user_target"');
+        $this->assertEquals(1, count($user_target), 'Not one result returned for "user_target"');
+        $this->assertIsArray($user_target[0], 'Not an array returned from "cv Contact.create" for "user_target"');
+        $this->assertArrayHasKey('id', $user_target[0], 'ID not found.');
+
+        // Check results user_assignee_a
+        $this->assertIsArray($user_assignee_a, 'Not an array returned from "cv Contact.create" for "user_assignee_a"');
+        $this->assertEquals(1, count($user_assignee_a), 'Not one result returned for "user_assignee_a"');
+        $this->assertIsArray(
+            $user_assignee_a[0],
+            'Not an array returned from "cv Contact.create" for "user_assignee_a"'
+        );
+        $this->assertArrayHasKey('id', $user_assignee_a[0], 'ID not found.');
+
+        // Check results user_assignee_b
+        $this->assertIsArray($user_assignee_b, 'Not an array returned from "cv Contact.create" for "user_assignee_b"');
+        $this->assertEquals(1, count($user_assignee_b), 'Not one result returned for "user_assignee_b"');
+        $this->assertIsArray(
+            $user_assignee_b[0],
+            'Not an array returned from "cv Contact.create" for "user_assignee_b"'
+        );
+        $this->assertArrayHasKey('id', $user_assignee_b[0], 'ID not found.');
+
         $contact_id_source_a = $user_source_a[0]['id'];
         $contact_id_source_b = $user_source_b[0]['id'];
         $contact_id_target = $user_target[0]['id'];
@@ -566,6 +732,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends TestCase implements HeadlessInterfa
 
         // Check invalid ID
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
         CRM_RcBase_Api_Get::allActivity($contact_id_target, 5, -5);
     }
 }
