@@ -29,6 +29,27 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
     protected static $externalID = 0;
 
     /**
+     * Contact sequence counter
+     *
+     * @var int
+     */
+    protected static $contactSequence = 0;
+
+    /**
+     * Apply a forced rebuild of DB, thus
+     * create a clean DB before running tests
+     *
+     * @throws CRM_Extension_Exception_ParseException
+     */
+    public static function setUpBeforeClass(): void
+    {
+        // Resets DB
+        Test::headless()
+            ->installMe(__DIR__)
+            ->apply(true);
+    }
+
+    /**
      * The setupHeadless function runs at the start of each test case, right before
      * the headless environment reboots.
      *
@@ -49,17 +70,11 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
     }
 
     /**
-     * Apply a forced rebuild of DB, thus
-     * create a clean DB before running tests
-     *
-     * @throws CRM_Extension_Exception_ParseException
+     * Setup method run before each test
      */
-    public static function setUpBeforeClass(): void
+    public function setUp(): void
     {
-        // Resets DB
-        Test::headless()
-            ->installMe(__DIR__)
-            ->apply(true);
+        parent::setUp();
     }
 
     /**
@@ -72,5 +87,17 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
         self::$externalID++;
 
         return (string)self::$externalID;
+    }
+
+    /**
+     * Get next contact sequence number (auto-increment)
+     *
+     * @return int Next ID
+     */
+    protected static function getNextContactSequence(): int
+    {
+        self::$contactSequence++;
+
+        return self::$contactSequence;
     }
 }
