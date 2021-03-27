@@ -102,6 +102,25 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
     }
 
     /**
+     * Sample contact parameters, next in the sequence
+     *
+     * @return array Contact parameters
+     */
+    protected function nextSampleIndividual(): array
+    {
+        // Assemble Contact data
+        $contact = $this->sampleContact('Individual', self::getNextContactSequence());
+        $contact['external_identifier'] = self::getNextExternalID();
+        // Remove unnecessary fields
+        unset($contact['prefix_id']);
+        unset($contact['suffix_id']);
+        // Remove email
+        unset($contact['email']);
+
+        return $contact;
+    }
+
+    /**
      * Call cv api4 with get action
      *
      * @param string $entity Entity to work on (Contact, Email, etc.)
