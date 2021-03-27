@@ -8,72 +8,38 @@
 class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCase
 {
     /**
-     * Test contact ID
-     *
-     * @var int
-     */
-    private $testContactId;
-
-    public function setUp(): void
-    {
-        parent::setUp();
-
-        // Create test contact
-        $contact_data = [
-            'values' => [
-                'contact_type' => 'Individual',
-                'first_name' => 'Julius',
-                'last_name' => 'Caesar',
-            ],
-        ];
-        $user = cv("api4 Contact.create '".json_encode($contact_data)."'");
-
-        // Check results id
-        $this->assertIsArray($user, 'Not an array returned from "cv Contact.create" for "id"');
-        $this->assertEquals(1, count($user), 'Not one result returned for "id"');
-        $this->assertIsArray($user[0], 'Not an array returned from "cv Contact.create" for "id"');
-        $this->assertArrayHasKey('id', $user[0], 'ID not found.');
-
-        $this->testContactId = $user[0]['id'];
-    }
-
-    /**
      * @throws CRM_Core_Exception
      */
     public function testCreateContact()
     {
-        $contact = [
-            'contact_type' => 'Individual',
-            'first_name' => 'Scipio',
-            'external_identifier' => self::getNextExternalID(),
-        ];
+        // Assemble Contact data
+        $contact = $this->nextSampleIndividual();
 
-        // Create user
+        // Number of contacts already in DB
+        $all_contact_old = $this->cvApi4Get('Contact', ['id']);
+
+        // Create contact
         $contact_id = CRM_RcBase_Api_Create::contact($contact);
 
-        // Get data
-        $id = cv(
-            "api4 Contact.get +s id +w external_identifier=".$contact['external_identifier']
+        $all_contact_new = $this->cvApi4Get('Contact', ['id']);
+
+        $this->assertCount(count($all_contact_old) + 1, $all_contact_new, 'No new contact created');
+
+        // Get from DB
+        $id = $this->cvApi4Get('Contact', ['id'], ["external_identifier=${contact['external_identifier']}"]);
+        $this->assertCount(1, $id, 'Not one result returned for "id"');
+
+        $data = $this->cvApi4Get(
+            'Contact',
+            ['contact_type', 'first_name', 'middle_name', 'last_name', 'external_identifier'],
+            ["id=".$id[0]['id']]
         );
-        $data = cv(
-            "api4 Contact.get +s contact_type,first_name,external_identifier +w external_identifier=".$contact['external_identifier']
-        );
+        $this->assertCount(1, $data, 'Not one result returned for "data"');
 
-        // Check results id
-        $this->assertIsArray($id, 'Not an array returned from "cv Contact.get" for "id"');
-        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
-        $this->assertIsArray($id[0], 'Not an array returned from "cv Contact.get" for "id"');
-        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
-
-        // Check results data
-        $this->assertIsArray($data, 'Not an array returned from "cv Contact.get" for "data"');
-        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
-        $this->assertIsArray($data[0], 'Not an array returned from "cv Contact.get" for "data"');
-
-        // Check valid ID
+        // Check ID
         $this->assertSame($id[0]['id'], $contact_id, 'Bad contact ID returned');
 
-        // Check valid data
+        // Check data
         unset($data[0]['id']);
         $this->assertSame($data[0], $contact, 'Bad contact data returned');
     }
@@ -83,11 +49,8 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     public function testCreateContactWithDuplicateExternalIdThrowsException()
     {
-        $contact = [
-            'contact_type' => 'Individual',
-            'first_name' => 'Sulla',
-            'external_identifier' => self::getNextExternalID(),
-        ];
+        // Assemble Contact data
+        $contact = $this->nextSampleIndividual();
 
         // Create contact
         CRM_RcBase_Api_Create::contact($contact);
@@ -103,41 +66,31 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     public function testCreateContactWithExtraUnknownFields()
     {
-        $contact = [
-            'contact_type' => 'Individual',
-            'first_name' => 'Brutus',
-            'external_identifier' => self::getNextExternalID(),
-            'nonexistent_field_string' => 'Ides of March',
-            'nonexistent_field_int' => 15,
-            'nonexistent_field_bool' => true,
-        ];
+        // Assemble Contact data
+        $contact = $this->nextSampleIndividual();
+        // Add extra unknown fields
+        $contact['nonexistent_field_string'] = 'Ides of March';
+        $contact['nonexistent_field_int'] = 15;
+        $contact['nonexistent_field_bool'] = true;
 
         // Create user
         $contact_id = CRM_RcBase_Api_Create::contact($contact);
 
-        // Get data
-        $id = cv(
-            "api4 Contact.get +s id +w external_identifier=".$contact['external_identifier']
+        // Get from DB
+        $id = $this->cvApi4Get('Contact', ['id'], ["external_identifier=${contact['external_identifier']}"]);
+        $this->assertCount(1, $id, 'Not one result returned for "id"');
+
+        $data = $this->cvApi4Get(
+            'Contact',
+            ['contact_type', 'first_name', 'middle_name', 'last_name', 'external_identifier'],
+            ["id=".$id[0]['id']]
         );
-        $data = cv(
-            "api4 Contact.get +s contact_type,first_name,external_identifier +w external_identifier=".$contact['external_identifier']
-        );
+        $this->assertCount(1, $data, 'Not one result returned for "data"');
 
-        // Check results id
-        $this->assertIsArray($id, 'Not an array returned from "cv Contact.get" for "id"');
-        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
-        $this->assertIsArray($id[0], 'Not an array returned from "cv Contact.get" for "id"');
-        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
-
-        // Check results data
-        $this->assertIsArray($data, 'Not an array returned from "cv Contact.get" for "data"');
-        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
-        $this->assertIsArray($data[0], 'Not an array returned from "cv Contact.get" for "data"');
-
-        // Check valid ID --> create was successful
+        // Check ID
         $this->assertSame($id[0]['id'], $contact_id, 'Bad contact ID returned');
 
-        // Check data --> this should be different
+        // Check data
         unset($data[0]['id']);
         $this->assertNotSame($data[0], $contact, 'Bad contact data returned');
     }
@@ -147,28 +100,33 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     public function testCreateEmail()
     {
+        // Create contact
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+
+        // Number of emails already in DB
+        $all_email_old = $this->cvApi4Get('Email', ['id']);
+
+        // Create email
         $email = [
             'email' => 'ceasar@senate.rome',
             'location_type_id' => 1,
         ];
+        $email_id = CRM_RcBase_Api_Create::email($contact_id, $email);
 
-        // Create email
-        $email_id = CRM_RcBase_Api_Create::email($this->testContactId, $email);
+        $all_email_new = $this->cvApi4Get('Email', ['id']);
 
-        // Get data
-        $id = cv("api4 Email.get +s id +w email=".$email['email']);
-        $data = cv("api4 Email.get +s email,location_type_id +w email=".$email['email']);
+        $this->assertCount(count($all_email_old) + 1, $all_email_new, 'No new email created');
 
-        // Check results id
-        $this->assertIsArray($id, 'Not an array returned from "cv Email.get" for "id"');
-        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
-        $this->assertIsArray($id[0], 'Not an array returned from "cv Email.get" for "id"');
-        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
+        // Get from DB
+        $id = $this->cvApi4Get('Email', ['id'], ["email=${email['email']}"]);
+        $this->assertCount(1, $id, 'Not one result returned for "id"');
 
-        // Check results data
-        $this->assertIsArray($data, 'Not an array returned from "cv Email.get" for "data"');
-        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
-        $this->assertIsArray($data[0], 'Not an array returned from "cv Email.get" for "data"');
+        $data = $this->cvApi4Get(
+            'Email',
+            ['email', 'location_type_id'],
+            ["id=".$id[0]['id']]
+        );
+        $this->assertCount(1, $data, 'Not one result returned for "data"');
 
         // Check valid ID
         $this->assertSame($id[0]['id'], $email_id, 'Bad email ID returned');
@@ -188,14 +146,16 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     public function testCreateEmailWithMissingRequiredFields()
     {
+        // Create contact
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+
+        // Create email
         $email = [
             'location_type_id' => 2,
         ];
-
-        // Create email
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
         $this->expectExceptionMessage("Mandatory values missing", "Invalid exception message.");
-        CRM_RcBase_Api_Create::email($this->testContactId, $email);
+        CRM_RcBase_Api_Create::email($contact_id, $email);
     }
 
     /**
@@ -203,28 +163,33 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     public function testCreatePhone()
     {
+        // Create contact
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+
+        // Number of phones already in DB
+        $all_phone_old = $this->cvApi4Get('Phone', ['id']);
+
+        // Create phone
         $phone = [
             'phone' => '+12343243',
             'location_type_id' => 1,
         ];
+        $phone_id = CRM_RcBase_Api_Create::phone($contact_id, $phone);
 
-        // Create phone
-        $phone_id = CRM_RcBase_Api_Create::phone($this->testContactId, $phone);
+        $all_phone_new = $this->cvApi4Get('Phone', ['id']);
 
-        // Get data
-        $id = cv("api4 Phone.get +s id +w phone=".$phone['phone']);
-        $data = cv("api4 Phone.get +s phone,location_type_id +w phone=".$phone['phone']);
+        $this->assertCount(count($all_phone_old) + 1, $all_phone_new, 'No new phone created');
 
-        // Check results id
-        $this->assertIsArray($id, 'Not an array returned from "cv Phone.get" for "id"');
-        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
-        $this->assertIsArray($id[0], 'Not an array returned from "cv Phone.get" for "id"');
-        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
+        // Get from DB
+        $id = $this->cvApi4Get('Phone', ['id'], ["phone=${phone['phone']}"]);
+        $this->assertCount(1, $id, 'Not one result returned for "id"');
 
-        // Check results data
-        $this->assertIsArray($data, 'Not an array returned from "cv Phone.get" for "data"');
-        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
-        $this->assertIsArray($data[0], 'Not an array returned from "cv Phone.get" for "data"');
+        $data = $this->cvApi4Get(
+            'Phone',
+            ['phone', 'location_type_id'],
+            ["id=".$id[0]['id']]
+        );
+        $this->assertCount(1, $data, 'Not one result returned for "data"');
 
         // Check valid ID
         $this->assertSame($id[0]['id'], $phone_id, 'Bad phone ID returned');
@@ -244,28 +209,33 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     public function testCreateAddress()
     {
+        // Create contact
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+
+        // Number of addresses already in DB
+        $all_address_old = $this->cvApi4Get('Address', ['id']);
+
+        // Create address
         $address = [
             'city' => 'Rome',
             'location_type_id' => 1,
         ];
+        $address_id = CRM_RcBase_Api_Create::address($contact_id, $address);
 
-        // Create address
-        $address_id = CRM_RcBase_Api_Create::address($this->testContactId, $address);
+        $all_address_new = $this->cvApi4Get('Address', ['id']);
 
-        // Get data
-        $id = cv("api4 Address.get +s id +w city=".$address['city']);
-        $data = cv("api4 Address.get +s city,location_type_id +w city=".$address['city']);
+        $this->assertCount(count($all_address_old) + 1, $all_address_new, 'No new address created');
 
-        // Check results id
-        $this->assertIsArray($id, 'Not an array returned from "cv Address.get" for "id"');
-        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
-        $this->assertIsArray($id[0], 'Not an array returned from "cv Address.get" for "id"');
-        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
+        // Get from DB
+        $id = $this->cvApi4Get('Address', ['id'], ["city=${address['city']}"]);
+        $this->assertCount(1, $id, 'Not one result returned for "id"');
 
-        // Check results data
-        $this->assertIsArray($data, 'Not an array returned from "cv Address.get" for "data"');
-        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
-        $this->assertIsArray($data[0], 'Not an array returned from "cv Address.get" for "data"');
+        $data = $this->cvApi4Get(
+            'Address',
+            ['city', 'location_type_id'],
+            ["id=".$id[0]['id']]
+        );
+        $this->assertCount(1, $data, 'Not one result returned for "data"');
 
         // Check valid ID
         $this->assertSame($id[0]['id'], $address_id, 'Bad address ID returned');
@@ -285,41 +255,40 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     public function testCreateRelationship()
     {
-        $contact_other = [
-            'values' => [
-                'contact_type' => 'Individual',
-                'first_name' => 'Marcus',
-                'last_name' => 'Crassus',
-            ],
-        ];
-        $user_other = cv("api4 Contact.create '".json_encode($contact_other)."'");
-        $contact_id_other = (int)$user_other[0]['id'];
+        // Create contact
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        // Create other contact
+        $contact_id_other = $this->individualCreate([], self::getNextContactSequence());
 
+        // Number of relationships already in DB
+        $all_relationship_old = $this->cvApi4Get('Relationship', ['id']);
+
+        // Create relationship
         $relationship = [
             'contact_id_b' => $contact_id_other,
             'relationship_type_id' => 1,
             'description' => 'Test',
         ];
+        $relationship_id = CRM_RcBase_Api_Create::relationship($contact_id, $relationship);
 
-        // Create relationship
-        $relationship_id = CRM_RcBase_Api_Create::relationship($this->testContactId, $relationship);
+        $all_relationship_new = $this->cvApi4Get('Relationship', ['id']);
 
-        // Get data
-        $id = cv("api4 Relationship.get +s id +w description=".$relationship['description']);
-        $data = cv(
-            "api4 Relationship.get +s contact_id_b,relationship_type_id,description +w description=".$relationship['description']
+        $this->assertCount(
+            count($all_relationship_old) + 1,
+            $all_relationship_new,
+            'No new relationship created'
         );
 
-        // Check results id
-        $this->assertIsArray($id, 'Not an array returned from "cv Relationship.get" for "id"');
-        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
-        $this->assertIsArray($id[0], 'Not an array returned from "cv Relationship.get" for "id"');
-        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
+        // Get from DB
+        $id = $this->cvApi4Get('Relationship', ['id'], ["description=${relationship['description']}"]);
+        $this->assertCount(1, $id, 'Not one result returned for "id"');
 
-        // Check results data
-        $this->assertIsArray($data, 'Not an array returned from "cv Relationship.get" for "data"');
-        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
-        $this->assertIsArray($data[0], 'Not an array returned from "cv Relationship.get" for "data"');
+        $data = $this->cvApi4Get(
+            'Relationship',
+            ['contact_id_b', 'relationship_type_id', 'description'],
+            ["id=".$id[0]['id']]
+        );
+        $this->assertCount(1, $data, 'Not one result returned for "data"');
 
         // Check valid ID
         $this->assertSame($id[0]['id'], $relationship_id, 'Bad relationship ID returned');
@@ -339,31 +308,38 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     public function testCreateContribution()
     {
+        // Create contact
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+
+        // Number of contributions already in DB
+        $all_contribution_old = $this->cvApi4Get('Contribution', ['id']);
+
+        // Create contribution
         $contribution = [
             'financial_type_id' => 1,
             'total_amount' => 13.43,
             'trxn_id' => '12345',
         ];
+        $contribution_id = CRM_RcBase_Api_Create::contribution($contact_id, $contribution);
 
-        // Create contribution
-        $contribution_id = CRM_RcBase_Api_Create::contribution($this->testContactId, $contribution);
+        $all_contribution_new = $this->cvApi4Get('Contribution', ['id']);
 
-        // Get data
-        $id = cv("api4 Contribution.get +s id +w trxn_id=".$contribution['trxn_id']);
-        $data = cv(
-            "api4 Contribution.get +s financial_type_id,total_amount,trxn_id +w trxn_id=".$contribution['trxn_id']
+        $this->assertCount(
+            count($all_contribution_old) + 1,
+            $all_contribution_new,
+            'No new contribution created'
         );
 
-        // Check results id
-        $this->assertIsArray($id, 'Not an array returned from "cv Contribution.get" for "id"');
-        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
-        $this->assertIsArray($id[0], 'Not an array returned from "cv Contribution.get" for "id"');
-        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
+        // Get from DB
+        $id = $this->cvApi4Get('Contribution', ['id'], ["trxn_id=${contribution['trxn_id']}"]);
+        $this->assertCount(1, $id, 'Not one result returned for "id"');
 
-        // Check results data
-        $this->assertIsArray($data, 'Not an array returned from "cv Contribution.get" for "data"');
-        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
-        $this->assertIsArray($data[0], 'Not an array returned from "cv Contribution.get" for "data"');
+        $data = $this->cvApi4Get(
+            'Contribution',
+            ['financial_type_id', 'total_amount', 'trxn_id'],
+            ["id=".$id[0]['id']]
+        );
+        $this->assertCount(1, $data, 'Not one result returned for "data"');
 
         // Check valid ID
         $this->assertSame($id[0]['id'], $contribution_id, 'Bad contribution ID returned');
@@ -381,40 +357,60 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
     /**
      * @throws CRM_Core_Exception
      */
+    public function testCreateContributionWithDuplicateTransactionIdThrowsException()
+    {
+        // Create contact
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+
+        // Create contribution
+        $contribution = [
+            'financial_type_id' => 1,
+            'total_amount' => 654.34,
+            'trxn_id' => '987654',
+        ];
+        CRM_RcBase_Api_Create::contribution($contact_id, $contribution);
+
+        // Create same contribution
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Duplicate error", "Invalid exception message.");
+        CRM_RcBase_Api_Create::contribution($contact_id, $contribution);
+    }
+
+    /**
+     * @throws CRM_Core_Exception
+     */
     public function testCreateActivity()
     {
-        $contact_source = [
-            'values' => [
-                'contact_type' => 'Individual',
-                'first_name' => 'Pompeius',
-            ],
-        ];
-        $user_other = cv("api4 Contact.create '".json_encode($contact_source)."'");
-        $contact_id_other = $user_other[0]['id'];
+        // Create contact
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        // Create source contact
+        $contact_id_source = $this->individualCreate([], self::getNextContactSequence());
 
+        // Number of activities already in DB
+        $all_activity_old = $this->cvApi4Get('Activity', ['id']);
+
+        // Create activity
         $activity = [
-            'source_contact_id' => $contact_id_other,
+            'source_contact_id' => $contact_id_source,
             'activity_type_id' => 1,
             'subject' => 'Tribute',
         ];
+        $activity_id = CRM_RcBase_Api_Create::activity($contact_id, $activity);
 
-        // Create activity
-        $activity_id = CRM_RcBase_Api_Create::activity($this->testContactId, $activity);
+        $all_activity_new = $this->cvApi4Get('Activity', ['id']);
 
-        // Get data
-        $id = cv("api4 Activity.get +s id +w subject=".$activity['subject']);
-        $data = cv("api4 Activity.get +s source_contact_id,activity_type_id,subject +w subject=".$activity['subject']);
+        $this->assertCount(count($all_activity_old) + 1, $all_activity_new, 'No new activity created');
 
-        // Check results id
-        $this->assertIsArray($id, 'Not an array returned from "cv Activity.get" for "id"');
-        $this->assertEquals(1, count($id), 'Not one result returned for "id"');
-        $this->assertIsArray($id[0], 'Not an array returned from "cv Activity.get" for "id"');
-        $this->assertArrayHasKey('id', $id[0], 'ID not found.');
+        // Get from DB
+        $id = $this->cvApi4Get('Activity', ['id'], ["subject=${activity['subject']}"]);
+        $this->assertCount(1, $id, 'Not one result returned for "id"');
 
-        // Check results data
-        $this->assertIsArray($data, 'Not an array returned from "cv Activity.get" for "data"');
-        $this->assertEquals(1, count($data), 'Not one result returned for "data"');
-        $this->assertIsArray($data[0], 'Not an array returned from "cv Activity.get" for "data"');
+        $data = $this->cvApi4Get(
+            'Activity',
+            ['activity_type_id', 'subject'],
+            ["id=".$id[0]['id']]
+        );
+        $this->assertCount(1, $data, 'Not one result returned for "data"');
 
         // Check valid ID
         $this->assertSame($id[0]['id'], $activity_id, 'Bad activity ID returned');
