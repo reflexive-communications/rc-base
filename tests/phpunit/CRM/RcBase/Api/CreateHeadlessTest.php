@@ -1,14 +1,11 @@
 <?php
 
-use Civi\Test\HeadlessInterface;
-use PHPUnit\Framework\TestCase;
-
 /**
  * Test API Create class
  *
  * @group headless
  */
-class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInterface
+class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCase
 {
     /**
      * Test contact ID
@@ -23,39 +20,6 @@ class CRM_RcBase_Api_CreateHeadlessTest extends TestCase implements HeadlessInte
      * @var int
      */
     private static $externalID = 0;
-
-    /**
-     * The setupHeadless function runs at the start of each test case, right before
-     * the headless environment reboots.
-     *
-     * It should perform any necessary steps required for putting the database
-     * in a consistent baseline -- such as loading schema and extensions.
-     *
-     * The utility `\Civi\Test::headless()` provides a number of helper functions
-     * for managing this setup, and it includes optimizations to avoid redundant
-     * setup work.
-     *
-     * @see \Civi\Test
-     */
-    public function setUpHeadless()
-    {
-        return \Civi\Test::headless()
-            ->installMe(__DIR__)
-            ->apply();
-    }
-
-    /**
-     * Create a clean DB before running tests
-     *
-     * @throws CRM_Extension_Exception_ParseException
-     */
-    public static function setUpBeforeClass(): void
-    {
-        // Set up a clean DB
-        \Civi\Test::headless()
-            ->installMe(__DIR__)
-            ->apply(true);
-    }
 
     public function setUp(): void
     {
