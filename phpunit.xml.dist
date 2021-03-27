@@ -23,6 +23,8 @@
                 <!-- Skip the generated files -->
                 <file>./rc_base.php</file>
                 <file>./rc_base.civix.php</file>
+                <!-- Skip the base testcases -->
+                <directory>./CRM/RcBase/Test</directory>
             </exclude>
         </whitelist>
     </filter>
