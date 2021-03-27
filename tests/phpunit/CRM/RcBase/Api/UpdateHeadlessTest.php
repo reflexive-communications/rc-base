@@ -8,26 +8,59 @@
 class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCase
 {
     /**
-     * Test contact ID
-     *
-     * @var int
+     * @throws CRM_Core_Exception
      */
-    private $testContactId;
-
-    public function setUp(): void
+    public function testUpdateContact()
     {
-        parent::setUp();
-
-        // Create test contact
-        $contact_data = [
-            'values' => [
-                'contact_type' => 'Individual',
-                'first_name' => 'Julius',
-                'last_name' => 'Caesar',
-            ],
+        // Create contact
+        $contact = [
+            'contact_type' => 'Individual',
+            'first_name' => 'Marcus',
+            'last_name' => 'Crassus',
+            'external_identifier' => self::getNextExternalID(),
+            'job_title' => 'consul',
         ];
-        $user = cv("api4 Contact.create '".json_encode($contact_data)."'");
-        $this->testContactId = (int)$user[0]['id'];
+        $contact_id = $this->cvApi4Create('Contact', $contact);
+
+        // Old data
+        $data_old = $this->cvApi4Get(
+            'Contact',
+            ['contact_type', 'first_name', 'last_name', 'middle_name', 'external_identifier', 'job_title'],
+            ["id=${contact_id}"]
+        );
+        $all_contact_old = $this->cvApi4Get('Contact', ['id']);
+
+        // Change data & update
+        $contact = [
+            'contact_type' => 'Individual',
+            'first_name' => 'Marcus',
+            'last_name' => 'Crassus',
+            // Add new field
+            'middle_name' => 'Licinius',
+            // Change value
+            'external_identifier' => self::getNextExternalID(),
+            // Delete fields
+            'job_title' => null,
+        ];
+        CRM_RcBase_Api_Update::contact($contact_id, $contact);
+
+        // New data
+        $data_new = $this->cvApi4Get(
+            'Contact',
+            ['contact_type', 'first_name', 'last_name', 'middle_name', 'external_identifier', 'job_title'],
+            ["id=${contact_id}"]
+        );
+        $all_contact_new = $this->cvApi4Get('Contact', ['id']);
+
+        // Check number of entities not changed
+        $this->assertCount(count($all_contact_old), $all_contact_new, 'New contact created');
+
+        // Check if data changed
+        $this->assertNotSame($data_old, $data_new, 'Data not changed.');
+
+        // Check data
+        unset($data_new[0]['id']);
+        $this->assertSame($data_new[0], $contact, 'Bad updated contact data.');
     }
 
     /**
@@ -35,7 +68,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     public function testUpdateInvalidEntityIdThrowsException()
     {
-        // Update test contact
+        // Update contact
         $contact = [
             'contact_type' => 'Individual',
         ];
@@ -47,83 +80,17 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
     /**
      * @throws CRM_Core_Exception
      */
-    public function testUpdateContact()
-    {
-        // Create contact
-        $contact = [
-            'values' => [
-                'contact_type' => 'Individual',
-                'first_name' => 'Marcus',
-                'last_name' => 'Crassus',
-                'external_identifier' => self::getNextExternalID(),
-                'job_title' => 'consul',
-            ],
-        ];
-        $user = cv("api4 Contact.create '".json_encode($contact)."'");
-
-        // Check results user
-        $this->assertIsArray($user, 'Not an array returned from "cv Contact.create" for "user"');
-        $this->assertEquals(1, count($user), 'Not one result returned for "user"');
-        $this->assertIsArray($user[0], 'Not an array returned from "cv Contact.create" for "user"');
-        $this->assertArrayHasKey('id', $user[0], 'ID not found.');
-
-        $id = $user[0]['id'];
-        $data_old = cv(
-            "api4 Contact.get +s contact_type,first_name,last_name,middle_name,external_identifier,job_title +w id=".$id
-        );
-
-        // Check results data_old
-        $this->assertIsArray($data_old, 'Not an array returned from "cv Contact.get" for "data_old"');
-        $this->assertEquals(1, count($data_old), 'Not one result returned for "data_old"');
-        $this->assertIsArray($data_old[0], 'Not an array returned from "cv Contact.get" for "data_old"');
-        $this->assertArrayHasKey('id', $data_old[0], 'ID not found.');
-
-        // Change data & update
-        $contact = [
-            'values' => [
-                'contact_type' => 'Individual',
-                'first_name' => 'Marcus',
-                'last_name' => 'Crassus',
-                // Add new field
-                'middle_name' => 'Licinius',
-                // Change value
-                'external_identifier' => self::getNextExternalID(),
-                // Delete fields
-                'job_title' => null,
-            ],
-        ];
-        CRM_RcBase_Api_Update::contact($id, $contact['values']);
-
-        $data_new = cv(
-            "api4 Contact.get +s contact_type,first_name,last_name,middle_name,external_identifier,job_title +w id=".$id
-        );
-
-        // Check results data_new
-        $this->assertIsArray($data_new, 'Not an array returned from "cv Contact.get" for "data_new"');
-        $this->assertEquals(1, count($data_new), 'Not one result returned for "data_new"');
-        $this->assertIsArray($data_new[0], 'Not an array returned from "cv Contact.get" for "data_new"');
-        $this->assertArrayHasKey('id', $data_new[0], 'ID not found.');
-
-        // Check if data changed
-        $this->assertNotSame($data_old, $data_new, 'Data not changed.');
-
-        // Check data
-        unset($data_new[0]['id']);
-        $this->assertSame($data_new[0], $contact['values'], 'Bad updated contact data.');
-    }
-
-    /**
-     * @throws CRM_Core_Exception
-     */
     public function testUpdateContactInvalidFieldValueTypeThrowsException()
     {
-        // Update test contact
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+
+        // Update contact
         $contact = [
             'contact_type' => 'Invalid contact type',
         ];
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
         $this->expectExceptionMessage("DB Error: syntax error", "Invalid exception message.");
-        CRM_RcBase_Api_Update::contact($this->testContactId, $contact);
+        CRM_RcBase_Api_Update::contact($contact_id, $contact);
     }
 
     /**
@@ -131,23 +98,27 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     public function testUpdateContactUpdateToDuplicateExternalIdThrowsException()
     {
-        // Create contact
+        // Create previous contact
         $contact_previous = [
-            'values' => [
-                'contact_type' => 'Individual',
-                'first_name' => 'Sulla',
-                'external_identifier' => self::getNextExternalID(),
-            ],
+            'contact_type' => 'Individual',
+            'first_name' => 'Sulla',
+            'external_identifier' => self::getNextExternalID(),
         ];
-        cv("api4 Contact.create '".json_encode($contact_previous)."'");
+        $contact_id_previous = $this->cvApi4Create('Contact', $contact_previous);
 
-        // Update test contact
-        $contact = [
-            'external_identifier' => $contact_previous['values']['external_identifier'],
+        // Create new contact
+        $contact_new = [
+            'contact_type' => 'Individual',
+            'first_name' => 'Caesar',
+            'external_identifier' => self::getNextExternalID(),
         ];
+        $contact_id_new = $this->cvApi4Create('Contact', $contact_new);
+
+        // Update new contact
+        $contact_new = ['external_identifier' => $contact_previous['external_identifier'],];
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
         $this->expectExceptionMessage("DB Error: already exists", "Invalid exception message.");
-        CRM_RcBase_Api_Update::contact($this->testContactId, $contact);
+        CRM_RcBase_Api_Update::contact($contact_id_new, $contact_new);
     }
 
     /**
@@ -155,51 +126,46 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     public function testUpdateEmail()
     {
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+
         // Create email
-        $email_data = [
-            'values' => [
-                'contact_id' => $this->testContactId,
-                'email' => 'ceasar@senate.rome',
-                'location_type_id' => 1,
-            ],
+        $email = [
+            'contact_id' => $contact_id,
+            'email' => 'ceasar@senate.rome',
+            'location_type_id' => 1,
         ];
-        $email = cv("api4 Email.create '".json_encode($email_data)."'");
+        $email_id = $this->cvApi4Create('Email', $email);
 
-        // Check results email
-        $this->assertIsArray($email, 'Not an array returned from "cv Email.create" for "email"');
-        $this->assertEquals(1, count($email), 'Not one result returned for "email"');
-        $this->assertIsArray($email[0], 'Not an array returned from "cv Email.create" for "email"');
-        $this->assertArrayHasKey('id', $email[0], 'ID not found.');
-
-        $id = $email[0]['id'];
-
-        $data_old = cv("api4 Email.get +s contact_id,email,location_type_id +w id=".$id);
-
-        // Check results data_old
-        $this->assertIsArray($data_old, 'Not an array returned from "cv Email.get" for "data_old"');
-        $this->assertEquals(1, count($data_old), 'Not one result returned for "data_old"');
-        $this->assertIsArray($data_old[0], 'Not an array returned from "cv Email.get" for "data_old"');
-        $this->assertArrayHasKey('id', $data_old[0], 'ID not found.');
+        // Old data
+        $data_old = $this->cvApi4Get(
+            'Email',
+            ['contact_id', 'email', 'location_type_id'],
+            ["id=${email_id}"]
+        );
+        $all_email_old = $this->cvApi4Get('Email', ['id']);
 
         // Change data & update
-        $email_data['values']['email'] = 'julius@senate.rome';
-        $email_data['values']['location_type_id'] = 2;
-        CRM_RcBase_Api_Update::email($id, $email_data['values']);
+        $email['email'] = 'julius@senate.rome';
+        $email['location_type_id'] = 2;
+        CRM_RcBase_Api_Update::email($email_id, $email);
 
-        $data_new = cv("api4 Email.get +s contact_id,email,location_type_id +w id=".$id);
+        // New data
+        $data_new = $this->cvApi4Get(
+            'Email',
+            ['contact_id', 'email', 'location_type_id'],
+            ["id=${email_id}"]
+        );
+        $all_email_new = $this->cvApi4Get('Email', ['id']);
 
-        // Check results data_new
-        $this->assertIsArray($data_new, 'Not an array returned from "cv Email.get" for "data_new"');
-        $this->assertEquals(1, count($data_new), 'Not one result returned for "data_new"');
-        $this->assertIsArray($data_new[0], 'Not an array returned from "cv Email.get" for "data_new"');
-        $this->assertArrayHasKey('id', $data_new[0], 'ID not found.');
+        // Check number of entities not changed
+        $this->assertCount(count($all_email_old), $all_email_new, 'New email created');
 
         // Check if data changed
         $this->assertNotSame($data_old, $data_new, 'Data not changed.');
 
         // Check data
         unset($data_new[0]['id']);
-        $this->assertSame($data_new[0], $email_data['values'], 'Bad updated email data.');
+        $this->assertSame($data_new[0], $email, 'Bad updated email data.');
     }
 
     /**
@@ -207,50 +173,45 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     public function testUpdatePhone()
     {
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+
         // Create phone
-        $phone_data = [
-            'values' => [
-                'contact_id' => $this->testContactId,
-                'phone' => '+1234',
-                'location_type_id' => 1,
-            ],
+        $phone = [
+            'contact_id' => $contact_id,
+            'phone' => '+1234',
+            'location_type_id' => 1,
         ];
-        $phone = cv("api4 Phone.create '".json_encode($phone_data)."'");
+        $phone_id = $this->cvApi4Create('Phone', $phone);
 
-        // Check results phone
-        $this->assertIsArray($phone, 'Not an array returned from "cv Phone.create" for "phone"');
-        $this->assertEquals(1, count($phone), 'Not one result returned for "phone"');
-        $this->assertIsArray($phone[0], 'Not an array returned from "cv Phone.create" for "phone"');
-        $this->assertArrayHasKey('id', $phone[0], 'ID not found.');
-
-        $id = $phone[0]['id'];
-
-        $data_old = cv("api4 Phone.get +s contact_id,phone,location_type_id +w id=".$id);
-
-        // Check results data_old
-        $this->assertIsArray($data_old, 'Not an array returned from "cv Phone.get" for "data_old"');
-        $this->assertEquals(1, count($data_old), 'Not one result returned for "data_old"');
-        $this->assertIsArray($data_old[0], 'Not an array returned from "cv Phone.get" for "data_old"');
-        $this->assertArrayHasKey('id', $data_old[0], 'ID not found.');
+        // Old data
+        $data_old = $this->cvApi4Get(
+            'Phone',
+            ['contact_id', 'phone', 'location_type_id'],
+            ["id=${phone_id}"]
+        );
+        $all_phone_old = $this->cvApi4Get('Phone', ['id']);
 
         // Change data & update
-        $phone_data['values']['phone'] = '+98765';
-        CRM_RcBase_Api_Update::phone($id, $phone_data['values']);
+        $phone['phone'] = '+98765';
+        CRM_RcBase_Api_Update::phone($phone_id, $phone);
 
-        $data_new = cv("api4 Phone.get +s contact_id,phone,location_type_id +w id=".$id);
+        // New data
+        $data_new = $this->cvApi4Get(
+            'Phone',
+            ['contact_id', 'phone', 'location_type_id'],
+            ["id=${phone_id}"]
+        );
+        $all_phone_new = $this->cvApi4Get('Phone', ['id']);
 
-        // Check results data_new
-        $this->assertIsArray($data_new, 'Not an array returned from "cv Phone.get" for "data_new"');
-        $this->assertEquals(1, count($data_new), 'Not one result returned for "data_new"');
-        $this->assertIsArray($data_new[0], 'Not an array returned from "cv Phone.get" for "data_new"');
-        $this->assertArrayHasKey('id', $data_new[0], 'ID not found.');
+        // Check number of entities not changed
+        $this->assertCount(count($all_phone_old), $all_phone_new, 'New phone created');
 
         // Check if data changed
         $this->assertNotSame($data_old, $data_new, 'Data not changed.');
 
         // Check data
         unset($data_new[0]['id']);
-        $this->assertSame($data_new[0], $phone_data['values'], 'Bad updated phone data.');
+        $this->assertSame($data_new[0], $phone, 'Bad updated phone data.');
     }
 
     /**
@@ -258,50 +219,45 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     public function testUpdateAddress()
     {
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+
         // Create address
-        $address_data = [
-            'values' => [
-                'contact_id' => $this->testContactId,
-                'city' => 'Rome',
-                'location_type_id' => 1,
-            ],
+        $address = [
+            'contact_id' => $contact_id,
+            'city' => 'Rome',
+            'location_type_id' => 1,
         ];
-        $address = cv("api4 Address.create '".json_encode($address_data)."'");
+        $address_id = $this->cvApi4Create('Address', $address);
 
-        // Check results address
-        $this->assertIsArray($address, 'Not an array returned from "cv Address.create" for "address"');
-        $this->assertEquals(1, count($address), 'Not one result returned for "address"');
-        $this->assertIsArray($address[0], 'Not an array returned from "cv Address.create" for "address"');
-        $this->assertArrayHasKey('id', $address[0], 'ID not found.');
-
-        $id = $address[0]['id'];
-
-        $data_old = cv("api4 Address.get +s contact_id,city,location_type_id +w id=".$id);
-
-        // Check results data_old
-        $this->assertIsArray($data_old, 'Not an array returned from "cv Address.get" for "data_old"');
-        $this->assertEquals(1, count($data_old), 'Not one result returned for "data_old"');
-        $this->assertIsArray($data_old[0], 'Not an array returned from "cv Address.get" for "data_old"');
-        $this->assertArrayHasKey('id', $data_old[0], 'ID not found.');
+        // Old data
+        $data_old = $this->cvApi4Get(
+            'Address',
+            ['contact_id', 'city', 'location_type_id'],
+            ["id=${address_id}"]
+        );
+        $all_address_old = $this->cvApi4Get('Address', ['id']);
 
         // Change data & update
-        $address_data['values']['city'] = 'Alexandria';
-        CRM_RcBase_Api_Update::address($id, $address_data['values']);
+        $address['city'] = 'Alexandria';
+        CRM_RcBase_Api_Update::address($address_id, $address);
 
-        $data_new = cv("api4 Address.get +s contact_id,city,location_type_id +w id=".$id);
+        // New data
+        $data_new = $this->cvApi4Get(
+            'Address',
+            ['contact_id', 'city', 'location_type_id'],
+            ["id=${address_id}"]
+        );
+        $all_address_new = $this->cvApi4Get('Address', ['id']);
 
-        // Check results data_new
-        $this->assertIsArray($data_new, 'Not an array returned from "cv Address.get" for "data_new"');
-        $this->assertEquals(1, count($data_new), 'Not one result returned for "data_new"');
-        $this->assertIsArray($data_new[0], 'Not an array returned from "cv Address.get" for "data_new"');
-        $this->assertArrayHasKey('id', $data_new[0], 'ID not found.');
+        // Check number of entities not changed
+        $this->assertCount(count($all_address_old), $all_address_new, 'New address created');
 
         // Check if data changed
         $this->assertNotSame($data_old, $data_new, 'Data not changed.');
 
         // Check data
         unset($data_new[0]['id']);
-        $this->assertSame($data_new[0], $address_data['values'], 'Bad updated address data.');
+        $this->assertSame($data_new[0], $address, 'Bad updated address data.');
     }
 
     /**
@@ -309,94 +265,48 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     public function testUpdateRelationship()
     {
-        // Create other contact
-        $contact_other = [
-            'values' => [
-                'contact_type' => 'Individual',
-                'first_name' => 'Ovidius',
-            ],
-        ];
-        $user_other = cv("api4 Contact.create '".json_encode($contact_other)."'");
-
-        // Check results user_other
-        $this->assertIsArray($user_other, 'Not an array returned from "cv Contact.create" for "user_other"');
-        $this->assertEquals(1, count($user_other), 'Not one result returned for "user_other"');
-        $this->assertIsArray($user_other[0], 'Not an array returned from "cv Contact.create" for "user_other"');
-        $this->assertArrayHasKey('id', $user_other[0], 'ID not found.');
-
-        $contact_id_other = (int)$user_other[0]['id'];
-
-        // Create another contact
-        $contact_other_new = [
-            'values' => [
-                'contact_type' => 'Individual',
-                'first_name' => 'Cassius',
-            ],
-        ];
-        $user_other_new = cv("api4 Contact.create '".json_encode($contact_other_new)."'");
-
-        // Check results user_other_new
-        $this->assertIsArray($user_other_new, 'Not an array returned from "cv Contact.create" for "user_other_new"');
-        $this->assertEquals(1, count($user_other_new), 'Not one result returned for "user_other_new"');
-        $this->assertIsArray($user_other_new[0], 'Not an array returned from "cv Contact.create" for "user_other_new"');
-        $this->assertArrayHasKey('id', $user_other_new[0], 'ID not found.');
-
-        $contact_id_other_new = (int)$user_other_new[0]['id'];
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id_other = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id_other_new = $this->individualCreate([], self::getNextContactSequence());
 
         // Create relationship
-        $relationship_data = [
-            'values' => [
-                'contact_id_a' => $this->testContactId,
-                'contact_id_b' => $contact_id_other,
-                'relationship_type_id' => 1,
-                'description' => 'Test',
-            ],
+        $relationship = [
+            'contact_id_a' => $contact_id,
+            'contact_id_b' => $contact_id_other,
+            'relationship_type_id' => 1,
+            'description' => 'Test',
         ];
-        $relationship = cv("api4 Relationship.create '".json_encode($relationship_data)."'");
+        $relationship_id = $this->cvApi4Create('Relationship', $relationship);
 
-        // Check results relationship
-        $this->assertIsArray($relationship, 'Not an array returned from "cv Relationship.create" for "relationship"');
-        $this->assertEquals(1, count($relationship), 'Not one result returned for "relationship"');
-        $this->assertIsArray(
-            $relationship[0],
-            'Not an array returned from "cv Relationship.create" for "relationship"'
+        // Old data
+        $data_old = $this->cvApi4Get(
+            'Relationship',
+            ['contact_id_a', 'contact_id_b', 'relationship_type_id', 'description'],
+            ["id=${relationship_id}"]
         );
-        $this->assertArrayHasKey('id', $relationship[0], 'ID not found.');
-
-        $id = $relationship[0]['id'];
-
-        $data_old = cv(
-            "api4 Relationship.get +s contact_id_a,contact_id_b,relationship_type_id,description +w id=".$id
-        );
-
-        // Check results data_old
-        $this->assertIsArray($data_old, 'Not an array returned from "cv Relationship.get" for "data_old"');
-        $this->assertEquals(1, count($data_old), 'Not one result returned for "data_old"');
-        $this->assertIsArray($data_old[0], 'Not an array returned from "cv Relationship.get" for "data_old"');
-        $this->assertArrayHasKey('id', $data_old[0], 'ID not found.');
+        $all_relationship_old = $this->cvApi4Get('Relationship', ['id']);
 
         // Change data & update
-        $relationship_data['values']['contact_id_b'] = $contact_id_other_new;
+        $relationship['contact_id_b'] = $contact_id_other_new;
+        CRM_RcBase_Api_Update::relationship($relationship_id, $relationship);
 
-        // Update contact
-        CRM_RcBase_Api_Update::relationship($id, $relationship_data['values']);
-
-        $data_new = cv(
-            "api4 Relationship.get +s contact_id_a,contact_id_b,relationship_type_id,description +w id=".$id
+        // New data
+        $data_new = $this->cvApi4Get(
+            'Relationship',
+            ['contact_id_a', 'contact_id_b', 'relationship_type_id', 'description'],
+            ["id=${relationship_id}"]
         );
+        $all_relationship_new = $this->cvApi4Get('Relationship', ['id']);
 
-        // Check results data_new
-        $this->assertIsArray($data_new, 'Not an array returned from "cv Relationship.get" for "data_new"');
-        $this->assertEquals(1, count($data_new), 'Not one result returned for "data_new"');
-        $this->assertIsArray($data_new[0], 'Not an array returned from "cv Relationship.get" for "data_new"');
-        $this->assertArrayHasKey('id', $data_new[0], 'ID not found.');
+        // Check number of entities not changed
+        $this->assertCount(count($all_relationship_old), $all_relationship_new, 'New relationship created');
 
         // Check if data changed
         $this->assertNotSame($data_old, $data_new, 'Data not changed.');
 
         // Check data
         unset($data_new[0]['id']);
-        $this->assertSame($data_new[0], $relationship_data['values'], 'Bad updated relationship data.');
+        $this->assertSame($data_new[0], $relationship, 'Bad updated address data.');
     }
 
     /**
@@ -404,71 +314,48 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     public function testUpdateActivity()
     {
-        // Create source contact
-        $contact_source = [
-            'values' => [
-                'contact_type' => 'Individual',
-                'first_name' => 'Brutus',
-            ],
-        ];
-        $user_source = cv("api4 Contact.create '".json_encode($contact_source)."'");
-
-        // Check results user_other_new
-        $this->assertIsArray($user_source, 'Not an array returned from "cv Contact.create" for "user_source"');
-        $this->assertEquals(1, count($user_source), 'Not one result returned for "user_source"');
-        $this->assertIsArray($user_source[0], 'Not an array returned from "cv Contact.create" for "user_source"');
-        $this->assertArrayHasKey('id', $user_source[0], 'ID not found.');
-
-        $contact_id_source = $user_source[0]['id'];
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id_source = $this->individualCreate([], self::getNextContactSequence());
 
         // Create activity
-        $activity_data = [
-            'values' => [
-                'source_contact_id' => $contact_id_source,
-                'target_contact_id' => $this->testContactId,
-                'activity_type_id' => 1,
-                'subject' => 'Test',
-            ],
+        $activity = [
+            'source_contact_id' => $contact_id_source,
+            'target_contact_id' => $contact_id,
+            'activity_type_id' => 1,
+            'subject' => 'Test',
         ];
-        $activity = cv("api4 Activity.create '".json_encode($activity_data)."'");
+        $activity_id = $this->cvApi4Create('Activity', $activity);
 
-        // Check results activity
-        $this->assertIsArray($activity, 'Not an array returned from "cv Activity.create" for "activity"');
-        $this->assertEquals(1, count($activity), 'Not one result returned for "activity"');
-        $this->assertIsArray($activity[0], 'Not an array returned from "cv Activity.create" for "activity"');
-        $this->assertArrayHasKey('id', $activity[0], 'ID not found.');
-
-        $id = $activity[0]['id'];
-
-        $data_old = cv("api4 Activity.get +s activity_type_id,subject +w id=".$id);
-
-        // Check results data_old
-        $this->assertIsArray($data_old, 'Not an array returned from "cv Activity.get" for "data_old"');
-        $this->assertEquals(1, count($data_old), 'Not one result returned for "data_old"');
-        $this->assertIsArray($data_old[0], 'Not an array returned from "cv Activity.get" for "data_old"');
-        $this->assertArrayHasKey('id', $data_old[0], 'ID not found.');
+        // Old data
+        $data_old = $this->cvApi4Get(
+            'Activity',
+            ['activity_type_id', 'subject'],
+            ["id=${activity_id}"]
+        );
+        $all_activity_old = $this->cvApi4Get('Activity', ['id']);
 
         // Change data & update
-        $activity_data['values']['activity_type_id'] = 2;
+        $activity['activity_type_id'] = 2;
+        CRM_RcBase_Api_Update::activity($activity_id, $activity);
 
-        // Update contact
-        CRM_RcBase_Api_Update::activity($id, $activity_data['values']);
+        // New data
+        $data_new = $this->cvApi4Get(
+            'Activity',
+            ['activity_type_id', 'subject'],
+            ["id=${activity_id}"]
+        );
+        $all_activity_new = $this->cvApi4Get('Activity', ['id']);
 
-        $data_new = cv("api4 Activity.get +s activity_type_id,subject +w id=".$id);
-
-        // Check results data_new
-        $this->assertIsArray($data_new, 'Not an array returned from "cv Activity.get" for "data_new"');
-        $this->assertEquals(1, count($data_new), 'Not one result returned for "data_new"');
-        $this->assertIsArray($data_new[0], 'Not an array returned from "cv Activity.get" for "data_new"');
-        $this->assertArrayHasKey('id', $data_new[0], 'ID not found.');
+        // Check number of entities not changed
+        $this->assertCount(count($all_activity_old), $all_activity_new, 'New activity created');
 
         // Check if data changed
         $this->assertNotSame($data_old, $data_new, 'Data not changed.');
 
         // Check data
         unset($data_new[0]['id']);
-        unset($activity_data['values']['source_contact_id']);
-        unset($activity_data['values']['target_contact_id']);
-        $this->assertSame($data_new[0], $activity_data['values'], 'Bad updated activity data.');
+        unset($activity['source_contact_id']);
+        unset($activity['target_contact_id']);
+        $this->assertSame($data_new[0], $activity, 'Bad updated address data.');
     }
 }
