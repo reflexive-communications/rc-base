@@ -10,25 +10,6 @@ use Civi\API\Exception\UnauthorizedException;
 class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCase
 {
     /**
-     * External ID counter
-     *
-     * @var int
-     */
-    private static $externalID = 0;
-
-    /**
-     * Get next ID in sequence (auto-increment)
-     *
-     * @return string Next ID
-     */
-    private static function getNextExternalID(): string
-    {
-        self::$externalID++;
-
-        return (string)self::$externalID;
-    }
-
-    /**
      * @throws UnauthorizedException|API_Exception
      */
     public function testGetContactIdFromEmail()

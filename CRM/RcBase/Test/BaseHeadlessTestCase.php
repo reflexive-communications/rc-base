@@ -22,6 +22,13 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
     use MailingTestTrait;
 
     /**
+     * External ID counter
+     *
+     * @var int
+     */
+    protected static $externalID = 0;
+
+    /**
      * The setupHeadless function runs at the start of each test case, right before
      * the headless environment reboots.
      *
@@ -53,5 +60,17 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
         Test::headless()
             ->installMe(__DIR__)
             ->apply(true);
+    }
+
+    /**
+     * Get next ID in sequence (auto-increment)
+     *
+     * @return string Next ID
+     */
+    protected static function getNextExternalID(): string
+    {
+        self::$externalID++;
+
+        return (string)self::$externalID;
     }
 }

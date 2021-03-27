@@ -14,13 +14,6 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     private $testContactId;
 
-    /**
-     * External ID counter
-     *
-     * @var int
-     */
-    private static $externalID = 0;
-
     public function setUp(): void
     {
         parent::setUp();
@@ -42,18 +35,6 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $this->assertArrayHasKey('id', $user[0], 'ID not found.');
 
         $this->testContactId = $user[0]['id'];
-    }
-
-    /**
-     * Get next ID in sequence (auto-increment)
-     *
-     * @return string Next ID
-     */
-    private static function getNextExternalID(): string
-    {
-        self::$externalID++;
-
-        return (string)self::$externalID;
     }
 
     /**

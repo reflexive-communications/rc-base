@@ -14,13 +14,6 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
      */
     private $testContactId;
 
-    /**
-     * External ID counter
-     *
-     * @var int
-     */
-    private static $externalID = 0;
-
     public function setUp(): void
     {
         parent::setUp();
@@ -35,18 +28,6 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         ];
         $user = cv("api4 Contact.create '".json_encode($contact_data)."'");
         $this->testContactId = (int)$user[0]['id'];
-    }
-
-    /**
-     * Get next ID in sequence (auto-increment)
-     *
-     * @return string Next ID
-     */
-    private static function getNextExternalID(): string
-    {
-        self::$externalID++;
-
-        return (string)self::$externalID;
     }
 
     /**
