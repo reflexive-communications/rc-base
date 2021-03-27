@@ -176,4 +176,39 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
 
         return $result;
     }
+
+    /**
+     * Call cv api4 with create action
+     *
+     * @param string $entity Entity to work on (Contact, Email, etc.)
+     * @param array $params Params of entity
+     *
+     * @return int Created entity ID
+     *
+     * @throws CRM_Core_Exception
+     */
+    protected function cvApi4Create(string $entity, array $params = []): int
+    {
+        if (empty($entity)) {
+            throw new CRM_Core_Exception('Missing entity name');
+        }
+
+        // Parse parameters and assemble command
+        $values = [
+            'values' => $params,
+        ];
+        $values_json = json_encode($values);
+
+        $command = "api4 ${entity}.create '${values_json}'";
+
+        // Run command
+        $result = cv($command);
+
+        $this->assertIsArray($result, "Not an array returned from '${command}'");
+        $this->assertEquals(1, count($result), "Not one result returned from '${command}'");
+        $this->assertIsArray($result[0], "Not an array returned from '${command}'");
+        $this->assertArrayHasKey('id', $result[0], 'ID not found.');
+
+        return (int)$result[0]['id'];
+    }
 }
