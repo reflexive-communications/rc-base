@@ -100,4 +100,61 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
 
         return self::$contactSequence;
     }
+
+    /**
+     * Call cv api4 with get action
+     *
+     * @param string $entity Entity to work on (Contact, Email, etc.)
+     * @param array $select Fields to return
+     *   Example:
+     *   $select = ['contact_type', 'first_name', 'external_identifier']
+     * @param array $where Where conditions to filter results (if more given they are joined by AND)
+     *   Example:
+     *   $where = [
+     *     'contact_type=Individual',
+     *     'first_name like "Adams%",
+     *   ]
+     *
+     * @return array Results
+     *
+     * @throws CRM_Core_Exception
+     */
+    protected function cvApi4Get(string $entity, array $select = [], array $where = []): array
+    {
+        if (empty($entity)) {
+            throw new CRM_Core_Exception('Missing entity name');
+        }
+
+        // Parse parameters and assemble command
+        $select_string = '';
+        if (!empty($select)) {
+            $select_string = implode(',', $select);
+            $select_string = "+s '${select_string}'";
+        }
+
+        $where_string = '';
+        foreach ($where as $item) {
+            $where_string .= "+w '${item}'";
+        }
+
+        $command = "api4 ${entity}.get ${select_string} ${where_string}";
+
+        // Run command
+        $result = cv($command);
+
+        // Check results
+        $this->assertIsArray($result, "Not an array returned from '${command}'");
+
+        // Check each record
+        foreach ($result as $record) {
+            $this->assertIsArray($record, "Not an array returned from '${command}'");
+
+            // Check if selected fields are present
+            foreach ($select as $item) {
+                $this->assertArrayHasKey($item, $record, "${item} not returned");
+            }
+        }
+
+        return $result;
+    }
 }
