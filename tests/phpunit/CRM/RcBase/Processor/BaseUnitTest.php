@@ -33,7 +33,7 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase
     {
         // not set.
         $result = CRM_RcBase_Processor_Base::detectContentType();
-        $this->assertEquals("CRM_RcBase_Processor_UrlEncodedForm", $result, "Invalid class reurned.");
+        $this->assertEquals("CRM_RcBase_Processor_UrlEncodedForm", $result, "Invalid class returned.");
         $testData = [
             "application/json" => "CRM_RcBase_Processor_JSON",
             "application/javascript" => "CRM_RcBase_Processor_JSON",
@@ -50,21 +50,28 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Sanitize string.
+     * Strings to sanitize
+     *
+     * @return array
      */
-    public function testSanitizeString()
+    public function provideStringsToSanitize()
     {
-        $testData = [
-            "this_is_kept_as_it_is" => "this_is_kept_as_it_is",
-            "\"first_and_last_removed\"" => "first_and_last_removed",
-            "'first_and_last_also_removed'" => "first_and_last_also_removed",
-            "'middle_one'_is_kept'" => "middle_one'_is_kept",
-            "without_html_<a href=\"site.com\" target=\"_blank\">link</a>_tags" => "without_html_link_tags",
+        return [
+            'No change' => ["this_is_kept_as_it_is", "this_is_kept_as_it_is"],
+            'Double quotes around' => ["\"first_and_last_removed\"", "first_and_last_removed"],
+            'Single quotes around' => ["'first_and_last_also_removed'", "first_and_last_also_removed"],
+            'Quotes inside' => ["'middle_\"one'_is_kept'", "middle_\"one'_is_kept"],
+            'Tags' => ["without_html_<a href=\"site.com\" target=\"_blank\">link</a>_tags", "without_html_link_tags"],
         ];
-        foreach ($testData as $k => $v) {
-            $result = CRM_RcBase_Processor_Base::sanitizeString($k);
-            $this->assertEquals($v, $result, "Invalid sanitized string returned.");
-        }
+    }
+
+    /**
+     * @dataProvider provideStringsToSanitize
+     */
+    public function testSanitizeString($input, $expected)
+    {
+        $result = CRM_RcBase_Processor_Base::sanitizeString($input);
+        $this->assertEquals($expected, $result, "Invalid sanitized string returned.");
     }
 
     public function testSanitize()
