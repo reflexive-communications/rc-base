@@ -28,17 +28,18 @@ abstract class CRM_RcBase_Processor_Base
             switch ($_SERVER['CONTENT_TYPE']) {
                 case 'application/json':
                 case 'application/javascript':
-                    return CRM_Wrapi_Processor_JSON::class;
+                    return CRM_RcBase_Processor_JSON::class;
                 case 'text/xml':
                 case 'application/xml':
-                    return CRM_Wrapi_Processor_XML::class;
+                    return CRM_RcBase_Processor_XML::class;
+                case 'application/x-www-form-urlencoded':
                 default:
-                    return CRM_Wrapi_Processor_UrlEncodedForm::class;
+                    return CRM_RcBase_Processor_UrlEncodedForm::class;
             }
         }
 
         // Fallback to URL encoded
-        return CRM_Wrapi_Processor_UrlEncodedForm::class;
+        return CRM_RcBase_Processor_UrlEncodedForm::class;
     }
 
     /**
@@ -184,73 +185,6 @@ abstract class CRM_RcBase_Processor_Base
         // Allowed values values set --> check
         if (!empty($allowed_values) && !in_array($value, $allowed_values)) {
             throw new CRM_Core_Exception(sprintf('Not allowed value for: %s (%s)', $name, $value));
-        }
-    }
-
-    /**
-     * Return output to client in JSON format
-     *
-     * @param mixed $result Result to output
-     */
-    public function output($result): void
-    {
-        header('Content-Type: application/json');
-        echo json_encode($result, JSON_UNESCAPED_UNICODE);
-        CRM_Utils_System::civiExit();
-    }
-
-    /**
-     * Process request
-     *
-     * @return array|string Processed request parameters
-     *
-     * @throws CRM_Core_Exception
-     */
-    public function processInput()
-    {
-        // Parse request data
-        $request_data = $this->input();
-
-        // Check if required params (keys, action) supplied and valid strings
-        $this->validateKeyInputs($request_data);
-
-        return $request_data;
-    }
-
-    /**
-     * Validate inputs (keys, action)
-     *
-     * @param mixed $request_params Request data
-     *
-     * @throws CRM_Core_Exception
-     */
-    protected function validateKeyInputs($request_params): void
-    {
-        // Get parameters
-        $site_key = $request_params['site_key'] ?? "";
-        $user_key = $request_params['user_key'] ?? "";
-        $selector = $request_params['selector'] ?? "";
-
-        // Check if supplied
-        if (empty($site_key)) {
-            throw new CRM_Core_Exception('Site key missing');
-        }
-        if (empty($user_key)) {
-            throw new CRM_Core_Exception('User key missing');
-        }
-        if (empty($selector)) {
-            throw new CRM_Core_Exception('Selector missing');
-        }
-
-        // Check if string
-        if (!CRM_Utils_Rule::string($site_key)) {
-            throw new CRM_Core_Exception('Site key not a string');
-        }
-        if (!CRM_Utils_Rule::string($user_key)) {
-            throw new CRM_Core_Exception('User key not a string');
-        }
-        if (!CRM_Utils_Rule::string($selector)) {
-            throw new CRM_Core_Exception('Selector not a string');
         }
     }
 }

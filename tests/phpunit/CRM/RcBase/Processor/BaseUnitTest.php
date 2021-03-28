@@ -29,14 +29,14 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase {
   public function testDetectContentType() {
     // not set.
     $result = CRM_RcBase_Processor_Base::detectContentType();
-    $this->assertEquals("CRM_Wrapi_Processor_UrlEncodedForm", $result, "Invalid class reurned.");
+    $this->assertEquals("CRM_RcBase_Processor_UrlEncodedForm", $result, "Invalid class reurned.");
     $testData = [
-      "application/json" => "CRM_Wrapi_Processor_JSON",
-      "application/javascript" => "CRM_Wrapi_Processor_JSON",
-      "text/xml" => "CRM_Wrapi_Processor_XML",
-      "application/xml" => "CRM_Wrapi_Processor_XML",
-      "text/html" => "CRM_Wrapi_Processor_UrlEncodedForm",
-      "something/other/string" => "CRM_Wrapi_Processor_UrlEncodedForm",
+      "application/json" => "CRM_RcBase_Processor_JSON",
+      "application/javascript" => "CRM_RcBase_Processor_JSON",
+      "text/xml" => "CRM_RcBase_Processor_XML",
+      "application/xml" => "CRM_RcBase_Processor_XML",
+      "text/html" => "CRM_RcBase_Processor_UrlEncodedForm",
+      "something/other/string" => "CRM_RcBase_Processor_UrlEncodedForm",
     ];
     foreach($testData as $k => $v) {
       $_SERVER["CONTENT_TYPE"] = $k;
