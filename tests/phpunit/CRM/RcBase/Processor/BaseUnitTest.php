@@ -67,6 +67,8 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider provideStringsToSanitize
+     * @param $input
+     * @param $expected
      */
     public function testSanitizeString($input, $expected)
     {
