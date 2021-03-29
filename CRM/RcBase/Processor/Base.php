@@ -168,9 +168,11 @@ abstract class CRM_RcBase_Processor_Base
                 $valid = CRM_Utils_Rule::date($value);
                 break;
             case 'datetime':
+                $valid = CRM_Utils_Rule::dateTime($value);
+                break;
+            case 'datetimeIso':
                 $valid = (is_string($value)
-                    && (preg_match('/^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\d(Z|\+\d\d:\d\d)$/', $value)
-                        || !is_null(CRM_Utils_Rule::dateTime($value))));
+                    && (preg_match('/^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{1,6}(Z|(\+|-)\d\d:\d\d)$/', $value)));
                 break;
             default:
                 throw new CRM_Core_Exception(sprintf('Not supported type: %s', $type));
