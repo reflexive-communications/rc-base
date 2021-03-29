@@ -116,31 +116,6 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Complex arrays to sanitize
-     */
-    public function provideArrayToSanitize()
-    {
-        [
-            [
-                "input" => [],
-                "expected" => null,
-            ],
-            [
-                "input" => ["key" => 3.14],
-                "expected" => ["key" => 3.14],
-            ],
-            [
-                "input" => ["'key'" => 3.14],
-                "expected" => ["key" => 3.14],
-            ],
-            [
-                "input" => ["'constants'" => ["'pi'" => 3.14]],
-                "expected" => ["constants" => ["pi" => 3.14]],
-            ],
-        ];
-    }
-
-    /**
      * Test sanitize with a real world looking array
      */
     public function testSanitizeWithComplexArray()
@@ -169,7 +144,7 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             'email ' => "test@example.com\n",
-            'UTF-8' => 'kéményŐÜÖÓúőü',
+            'UTF-8' => 'kéményŐÜÖÓúőü$!#~`\\|',
         ];
         $expected = [
             "alert(hack)\t" => "this is a test",
@@ -195,13 +170,13 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             'email' => "test@example.com",
-            'UTF-8' => 'kéményŐÜÖÓúőü',
+            'UTF-8' => 'kéményŐÜÖÓúőü$!#~`\\|',
         ];
         $result = CRM_RcBase_Processor_Base::sanitize($input);
         $this->assertEquals($expected, $result, "Invalid sanitized array returned.");
     }
 
-    public function testValidateInputMissingType()
+    public function testValidateInputMissingTypeThrowsException()
     {
         $value = "testvalue";
         $type = "";
@@ -213,7 +188,7 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name, $required, $allowedValues);
     }
 
-    public function testValidateInputMissingName()
+    public function testValidateInputMissingNameThrowsException()
     {
         $value = "testvalue";
         $type = "testtype";
@@ -225,7 +200,7 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name, $required, $allowedValues);
     }
 
-    public function testValidateInputEmptyRequiredValue()
+    public function testValidateInputEmptyRequiredValueThrowsException()
     {
         $value = "";
         $type = "testtype";
@@ -237,7 +212,7 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name, $required, $allowedValues);
     }
 
-    public function testValidateInputNotSupportedType()
+    public function testValidateInputNotSupportedTypeThrowsException()
     {
         $value = "testvalue";
         $type = "invalidTypeName";
@@ -249,19 +224,7 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name, $required, $allowedValues);
     }
 
-    public function testValidateInputInvalidValue()
-    {
-        $value = "testvalue";
-        $type = "email";
-        $name = "testname";
-        $required = false;
-        $allowedValues = [];
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
-        $this->expectExceptionMessage($name." is not type of: ".$type, "Invalid exception message.");
-        CRM_RcBase_Processor_Base::validateInput($value, $type, $name, $required, $allowedValues);
-    }
-
-    public function testValidateInputNotAllowedValue()
+    public function testValidateInputNotAllowedValueThrowsException()
     {
         $value = "invalid value";
         $type = "string";
@@ -273,83 +236,359 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name, $required, $allowedValues);
     }
 
+    public function testValidateStringWithArrayThrowsException()
+    {
+        $value = ['test'];
+        $type = "string";
+        $name = "array instead string";
+
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
+        $this->expectExceptionMessage("${name} is not type of: ${type}", "Invalid exception message.");
+        CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
+    }
+
+    public function testValidateEmailWithMissingLocalPartThrowsException()
+    {
+        $value = '@example.com';
+        $type = "email";
+        $name = "missing local part";
+
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
+        $this->expectExceptionMessage("${name} is not type of: ${type}", "Invalid exception message.");
+        CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
+    }
+
+    public function testValidateEmailWithMissingDomainThrowsException()
+    {
+        $value = 'test@';
+        $type = "email";
+        $name = "missing domain";
+
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
+        $this->expectExceptionMessage("${name} is not type of: ${type}", "Invalid exception message.");
+        CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
+    }
+
+    public function testValidateEmailWithMissingTopLevelDomainThrowsException()
+    {
+        $value = 'test@example';
+        $type = "email";
+        $name = "missing top level domain";
+
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
+        $this->expectExceptionMessage("${name} is not type of: ${type}", "Invalid exception message.");
+        CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
+    }
+
+    public function testValidateIntegerWithStringThrowsException()
+    {
+        $value = 'string';
+        $type = "int";
+        $name = "string";
+
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
+        $this->expectExceptionMessage("${name} is not type of: ${type}", "Invalid exception message.");
+        CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
+    }
+
+    public function testValidateFloatWithStringThrowsException()
+    {
+        $value = 'string';
+        $type = "float";
+        $name = "string";
+
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
+        $this->expectExceptionMessage("${name} is not type of: ${type}", "Invalid exception message.");
+        CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
+    }
+
+    public function testValidateBoolWithStringThrowsException()
+    {
+        $value = 'string';
+        $type = "bool";
+        $name = "string";
+
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
+        $this->expectExceptionMessage("${name} is not type of: ${type}", "Invalid exception message.");
+        CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
+    }
+
+    public function testValidateDateWithTimeThrowsException()
+    {
+        $value = '202004021531';
+        $type = "date";
+        $name = "date with time";
+
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
+        $this->expectExceptionMessage("${name} is not type of: ${type}", "Invalid exception message.");
+        CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
+    }
+
+    public function testValidateDateTimeWithMissingDayThrowsException()
+    {
+        $value = '202011';
+        $type = "datetime";
+        $name = "missing day";
+
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
+        $this->expectExceptionMessage("${name} is not type of: ${type}", "Invalid exception message.");
+        CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
+    }
+
+    public function testValidateDateTimeWithMissingDayMonthThrowsException()
+    {
+        $value = '2020';
+        $type = "datetime";
+        $name = "missing day month";
+
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
+        $this->expectExceptionMessage("${name} is not type of: ${type}", "Invalid exception message.");
+        CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
+    }
+
+    public function testValidateDateTimeWithRandomStringThrowsException()
+    {
+        $value = 'random';
+        $type = "datetime";
+        $name = "random string";
+
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
+        $this->expectExceptionMessage("${name} is not type of: ${type}", "Invalid exception message.");
+        CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
+    }
+
+    public function testValidateDateTimeIsoWithMissingDecimalsThrowsException()
+    {
+        $value = "2020-12-01T03:19:46+04:30";
+        $type = "datetimeIso";
+        $name = "missing seconds decimals";
+
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
+        $this->expectExceptionMessage("${name} is not type of: ${type}", "Invalid exception message.");
+        CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
+    }
+
+    public function testValidateDateTimeIsoWithTooMuchDecimalsThrowsException()
+    {
+        $value = "2020-12-01T03:19:46.1234567+04:30";
+        $type = "datetimeIso";
+        $name = "more than 6 seconds decimals";
+
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
+        $this->expectExceptionMessage("${name} is not type of: ${type}", "Invalid exception message.");
+        CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
+    }
+
     public function testValidateInputValidValues()
     {
         $testData = [
             [
                 "value" => "",
                 "type" => "string",
-                "name" => "testName",
+                "name" => "empty string",
                 "required" => false,
                 "allowedValues" => [],
             ],
             [
-                "value" => "valid string value",
+                "value" => "any string",
                 "type" => "string",
-                "name" => "testName",
+                "name" => "no allowed specified",
                 "required" => false,
                 "allowedValues" => [],
+            ],
+            [
+                "value" => "valid string value 1",
+                "type" => "string",
+                "name" => "valid and allowed",
+                "required" => false,
+                "allowedValues" => ["valid string value 1", "valid string value 2"],
+            ],
+            [
+                "value" => "valid string value 2",
+                "type" => "string",
+                "name" => "valid allowed and required",
+                "required" => true,
+                "allowedValues" => ["valid string value 1", "valid string value 2"],
             ],
             [
                 "value" => "email@addr.hu",
                 "type" => "email",
-                "name" => "testName",
+                "name" => "email address",
                 "required" => false,
                 "allowedValues" => [],
+            ],
+            [
+                "value" => 87,
+                "type" => "int",
+                "name" => "integer as int",
+                "required" => false,
+                "allowedValues" => [12, "87"],
             ],
             [
                 "value" => "12",
                 "type" => "int",
-                "name" => "testName",
+                "name" => "integer as string",
                 "required" => false,
-                "allowedValues" => [],
+                "allowedValues" => [12, "87"],
             ],
             [
                 "value" => "-12",
                 "type" => "int",
-                "name" => "testName",
+                "name" => "negative integer as string",
                 "required" => false,
                 "allowedValues" => [],
             ],
             [
                 "value" => -12,
                 "type" => "int",
-                "name" => "testName",
+                "name" => "negative integer as int",
                 "required" => false,
                 "allowedValues" => [],
             ],
             [
                 "value" => 12,
                 "type" => "id",
-                "name" => "testName",
+                "name" => "ID",
                 "required" => false,
                 "allowedValues" => [],
             ],
             [
                 "value" => 12.1,
                 "type" => "float",
-                "name" => "testName",
+                "name" => "float as float",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => "12.1",
+                "type" => "float",
+                "name" => "float as string",
                 "required" => false,
                 "allowedValues" => [],
             ],
             [
                 "value" => false,
                 "type" => "bool",
-                "name" => "testName",
+                "name" => "bool as bool",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => 1,
+                "type" => "bool",
+                "name" => "bool as truthy integer",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => 0,
+                "type" => "bool",
+                "name" => "bool as falsy integer",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => "Y",
+                "type" => "bool",
+                "name" => "bool as truthy string",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => "no",
+                "type" => "bool",
+                "name" => "bool as falsy string",
                 "required" => false,
                 "allowedValues" => [],
             ],
             [
                 "value" => "2020-12-01",
                 "type" => "date",
-                "name" => "testName",
+                "name" => "date full",
                 "required" => false,
                 "allowedValues" => [],
             ],
             [
-                "value" => "2020-12-01T11:22:22.101Z",
+                "value" => "20201201",
+                "type" => "date",
+                "name" => "date compact",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => "2020-12-01 11:22:22",
                 "type" => "datetime",
-                "name" => "testName",
+                "name" => "datetime full",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => "2020-12-01",
+                "type" => "datetime",
+                "name" => "datetime only date",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => "2020-12-01 11:22:22",
+                "type" => "datetime",
+                "name" => "datetime compact",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => "2020-12-01 11:22",
+                "type" => "datetime",
+                "name" => "datetime no seconds",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => "202012011122",
+                "type" => "datetime",
+                "name" => "datetime no seconds compact",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => "2020-12-01T03:19:46.101Z",
+                "type" => "datetimeIso",
+                "name" => "datetime ISO",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => "2020-12-01T03:19:46.101+02:00",
+                "type" => "datetimeIso",
+                "name" => "datetime ISO plus timezone",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => "2020-12-01T03:19:46.101-05:30",
+                "type" => "datetimeIso",
+                "name" => "datetime ISO minus timezone",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => "2020-12-01T03:19:46.1Z",
+                "type" => "datetimeIso",
+                "name" => "datetime ISO 2 digits microseconds",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => "2020-12-01T03:19:46.123Z",
+                "type" => "datetimeIso",
+                "name" => "datetime ISO 3 digits microseconds",
+                "required" => false,
+                "allowedValues" => [],
+            ],
+            [
+                "value" => "2020-12-01T03:19:46.123456Z",
+                "type" => "datetimeIso",
+                "name" => "datetime ISO 6 digits microseconds",
                 "required" => false,
                 "allowedValues" => [],
             ],
@@ -367,7 +606,7 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase
                     "Should be empty for valid setup."
                 );
             } catch (Exception $e) {
-                $this->fail("Should not throw exception for valid setup.".$e->getMessage());
+                $this->fail("Should not throw exception for valid setup. ".$e->getMessage());
             }
         }
     }
