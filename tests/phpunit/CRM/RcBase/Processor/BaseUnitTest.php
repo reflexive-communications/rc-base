@@ -57,7 +57,13 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase
     public function provideStringsToSanitize()
     {
         return [
+            'Empty string' => ["", ""],
             'No change' => ["this_is_kept_as_it_is", "this_is_kept_as_it_is"],
+            'Trailing newline' => ["first word\n", "first word"],
+            'Middle newline' => ["first\nword", "first\nword"],
+            'Trailing whitespace' => ["first word  \t\n", "first word"],
+            'Leading whitespace' => ["\n  \tfirst word", "first word"],
+            'Double whitespace' => ["first   word\tand\t\tsecond word", "first word\tand second word"],
             'Double quotes around' => ["\"first_and_last_removed\"", "first_and_last_removed"],
             'Single quotes around' => ["'first_and_last_also_removed'", "first_and_last_also_removed"],
             'Quotes inside' => ["'middle_\"one'_is_kept'", "middle_\"one'_is_kept"],
