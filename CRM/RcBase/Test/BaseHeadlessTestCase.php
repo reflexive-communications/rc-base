@@ -141,7 +141,7 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
     protected function cvApi4Get(string $entity, array $select = [], array $where = []): array
     {
         if (empty($entity)) {
-            throw new CRM_Core_Exception('Missing entity name');
+            $this->fail('Missing entity name');
         }
 
         // Parse parameters and assemble command
@@ -190,7 +190,7 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
     protected function cvApi4Create(string $entity, array $params = []): int
     {
         if (empty($entity)) {
-            throw new CRM_Core_Exception('Missing entity name');
+            $this->fail('Missing entity name');
         }
 
         // Parse parameters and assemble command
