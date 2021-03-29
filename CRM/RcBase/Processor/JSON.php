@@ -72,7 +72,7 @@ class CRM_RcBase_Processor_JSON
      *
      * @param mixed $data Object to encode
      *
-     * @return mixed
+     * @return mixed JSON
      */
     public static function output($data)
     {
