@@ -159,7 +159,7 @@ abstract class CRM_RcBase_Processor_Base
                 $valid = CRM_Utils_Rule::positiveInteger($value);
                 break;
             case 'float':
-                $valid = (is_float($value) || (preg_match('/^\d*\.\d+$/', $value)));
+                $valid = (is_float($value) || CRM_Utils_Rule::numeric($value));
                 break;
             case 'bool':
                 $valid = (is_bool($value) || CRM_Utils_Rule::boolean($value));
