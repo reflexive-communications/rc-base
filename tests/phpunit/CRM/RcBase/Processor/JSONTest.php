@@ -47,14 +47,10 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
                 ['ÖÜÓŐÚÉÁŰÍ' => 'öüóőúéáűí'],
             ],
         ];
-
     }
 
     /**
-     * Test valid JSON
-     *
      * @dataProvider provideValidJson
-     *
      * @param $json
      * @param $object
      * @throws CRM_Core_Exception
@@ -104,5 +100,25 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
         ];
         $result = CRM_RcBase_Processor_JSON::inputStream('file://'.__DIR__.'/test.json');
         $this->assertSame($expected, $result, 'Invalid JSON returned.');
+    }
+
+    public function testOutput()
+    {
+        $data = [
+            'string',
+            '5',
+            5,
+            -5,
+            1.1,
+            true,
+            'field_1' => 'value_2',
+            'field_2' => 'value_2',
+            ['a', 'b', 'c'],
+            'ÖÜÓŐÚÉÁŰÍ' => 'öüóőúéáűí',
+        ];
+        $json = '{"0":"string","1":"5","2":5,"3":-5,"4":1.1,"5":true,"field_1":"value_2","field_2":"value_2","6":["a","b","c"],"ÖÜÓŐÚÉÁŰÍ":"öüóőúéáűí"}';
+
+        $result = CRM_RcBase_Processor_JSON::output($data);
+        $this->assertSame($json, $result, 'Invalid JSON returned.');
     }
 }
