@@ -121,6 +121,47 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
     }
 
     /**
+     * Executes a raw SQL query on the DB
+     *
+     * @param string $query SQL query
+     *
+     * @return array Query results indexed by column name
+     */
+    protected function rawSqlQuery(string $query): array
+    {
+        if (empty($query)) {
+            $this->fail('Missing SQL query');
+        }
+
+        $pdo = Test::pdo();
+
+        return $pdo->query($query)->fetchAll(PDO::FETCH_ASSOC);
+
+    }
+
+    /**
+     * Get next auto-increment value for an SQL table
+     *
+     * @param string $table_name Name of table
+     *
+     * @return int Next auto-increment value
+     */
+    protected function getNextAutoIncrementValue(string $table_name): int
+    {
+        if (empty($table_name)) {
+            $this->fail('Missing table name');
+        }
+
+        $results = $this->rawSqlQuery("SHOW TABLE STATUS WHERE name='${table_name}'");
+
+        if (count($results) < 1) {
+            $this->fail("Table ${table_name} not found in DB");
+        }
+
+        return (int)$results[0]['Auto_increment'];
+    }
+
+    /**
      * Call cv api4 with get action
      *
      * @param string $entity Entity to work on (Contact, Email, etc.)
