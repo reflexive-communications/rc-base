@@ -82,23 +82,45 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $result, "Invalid sanitized string returned.");
     }
 
-    public function testSanitize()
+    /**
+     * Basic input to sanitize
+     */
+    public function provideBasicTypeToSanitize()
     {
-        $testDataBasic = [
-            "this_is_kept_as_it_is" => "this_is_kept_as_it_is",
-            "\"first_and_last_removed\"" => "first_and_last_removed",
-            "'first_and_last_also_removed'" => "first_and_last_also_removed",
-            "'middle_one'_is_kept'" => "middle_one'_is_kept",
-            "without_html_<a href=\"site.com\" target=\"_blank\">link</a>_tags" => "without_html_link_tags",
-            3 => 3,
-            0 => 0,
-            -1 => -1,
-            1.1 => 1.1,
-            -0.3 => -0.3,
-            true => true,
-            false => false,
+        return [
+            'string' => ["\n  \t'first'<alert> word'  ", "first' word"],
+            'positive integer' => [3, 3],
+            'zero integer' => [0, 0],
+            'negative integer' => [-1, -1],
+            'positive float' => [3.3, 3.3],
+            'zero float' => [0.0, 0.0],
+            'negative float' => [-1.9, -1.9],
+            'bool true' => [true, true],
+            'bool false' => [false, false],
+            'null' => [null, null],
+            'empty array' => [[], null],
+            'empty string' => ["", ""],
         ];
-        $testDataArray = [
+    }
+
+    /**
+     * @dataProvider provideBasicTypeToSanitize
+     *
+     * @param $input
+     * @param $expected
+     */
+    public function testSanitizeWithBasicInputTypes($input, $expected)
+    {
+        $result = CRM_RcBase_Processor_Base::sanitize($input);
+        $this->assertEquals($expected, $result, "Invalid sanitized value returned.");
+    }
+
+    /**
+     * Complex arrays to sanitize
+     */
+    public function provideArrayToSanitize()
+    {
+        [
             [
                 "input" => [],
                 "expected" => null,
@@ -116,15 +138,67 @@ class CRM_RcBase_Processor_BaseUnitTest extends \PHPUnit\Framework\TestCase
                 "expected" => ["constants" => ["pi" => 3.14]],
             ],
         ];
-        $stub = $this->getMockForAbstractClass('CRM_RcBase_Processor_Base');
-        foreach ($testDataBasic as $k => $v) {
-            $result = $stub->sanitize($k);
-            $this->assertEquals($v, $result, "Invalid sanitized value returned.");
-        }
-        foreach ($testDataArray as $v) {
-            $result = $stub->sanitize($v["input"]);
-            $this->assertEquals($v["expected"], $result, "Invalid sanitized object returned.");
-        }
+    }
+
+    /**
+     * Test sanitize with a real world looking array
+     */
+    public function testSanitizeWithComplexArray()
+    {
+        $input = [
+            "  <script>alert(hack)\t</script>\n" => "this is a test",
+            'sub_array' => [
+                "first ",
+                "se   cond",
+                15,
+                true,
+                null,
+                -45.431,
+                [1, 2, 3],
+                [
+                    're   curse <html>' => '"index" ',
+                    'integer' => 5,
+                    'boolean' => true,
+                    're-recurse' => [
+                        'greater_than' => '>15',
+                        'less then' => '>11',
+                        'tags' => '<input/>testing<br/>',
+                        5 => null,
+                        6 => ' six',
+                    ],
+                ],
+            ],
+            'email ' => "test@example.com\n",
+            'UTF-8' => 'kéményŐÜÖÓúőü',
+        ];
+        $expected = [
+            "alert(hack)\t" => "this is a test",
+            'sub_array' => [
+                "first",
+                "se cond",
+                15,
+                true,
+                null,
+                -45.431,
+                [1, 2, 3],
+                [
+                    're curse ' => 'index',
+                    'integer' => 5,
+                    'boolean' => true,
+                    're-recurse' => [
+                        'greater_than' => '>15',
+                        'less then' => '>11',
+                        'tags' => 'testing',
+                        5 => null,
+                        6 => 'six',
+                    ],
+                ],
+            ],
+            'email' => "test@example.com",
+            'UTF-8' => 'kéményŐÜÖÓúőü',
+        ];
+        $result = CRM_RcBase_Processor_Base::sanitize($input);
+        $this->assertEquals($expected, $result, "Invalid sanitized array returned.");
     }
 
     public function testValidateInputMissingType()
