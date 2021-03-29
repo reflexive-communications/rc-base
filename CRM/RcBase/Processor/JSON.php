@@ -76,6 +76,6 @@ class CRM_RcBase_Processor_JSON
      */
     public static function output($data)
     {
-        return json_encode($data);
+        return json_encode($data, JSON_UNESCAPED_UNICODE);
     }
 }
