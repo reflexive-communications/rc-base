@@ -48,10 +48,8 @@ abstract class CRM_RcBase_Processor_Base
      * @param mixed $input Input to sanitize
      *
      * @return mixed Sanitized input
-     *
-     * @throws CRM_Core_Exception
      */
-    public function sanitize($input)
+    public static function sanitize($input)
     {
         $sanitized = null;
 
@@ -61,7 +59,7 @@ abstract class CRM_RcBase_Processor_Base
                 // Sanitize key
                 $key = self::sanitizeString($key);
                 // Sanitize value
-                $value = $this->sanitize($value);
+                $value = self::sanitize($value);
 
                 $sanitized[$key] = $value;
             }
