@@ -7,19 +7,12 @@
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-abstract class CRM_RcBase_Processor_Base
+class CRM_RcBase_Processor_Base
 {
-    /**
-     * Parse input
-     *
-     * @return mixed
-     */
-    abstract public function input();
-
     /**
      * Detect content-type
      *
-     * @return string Appropriate Processor class name
+     * @return string Relevant Processor class name
      */
     public static function detectContentType(): string
     {
