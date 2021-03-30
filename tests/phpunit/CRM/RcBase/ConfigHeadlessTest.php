@@ -79,6 +79,31 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
         self::assertSame(DEFAULT_CONFIGURATION, $cfg, "Invalid configuration has been returned.");
         self::assertTrue($config->create(), "Create config has to be successful multiple times.");
     }
+    public function testCreateAfterChanges() {
+        $config = $this->getConfig();
+        self::assertTrue($config->create(), "Create config has to be successful.");
+        $cfg = $config->get();
+        self::assertSame(DEFAULT_CONFIGURATION, $cfg, "Invalid configuration has been returned.");
+        self::assertTrue($config->create(), "Create config has to be successful multiple times.");
+        // Update config and call create. The updated config has to be created.
+        foreach ($cfg as $k => $v) {
+            $newKey = $k."new";
+            unset($cfg[$k]);
+            $cfg[$newKey] = $v;
+            $cfg[$newKey."v2"] = false;
+            break;
+        }
+        self::assertTrue($config->update($cfg), "Update config has to be successful.");
+        self::assertEmpty($config->load(), "Load result supposed to be empty.");
+        self::assertTrue($config->create(), "Create config has to be successful with changed config.");
+        $cfgNew = $config->get();
+        self::assertSame($cfg, $cfgNew, "Invalid configuration has been returned.");
+        // reset the changes with creating the db with a new config instance.
+        $otherConfig = $this->getConfig();
+        self::assertTrue($otherConfig->create(), "Create config has to be successful.");
+        $otherCfg = $otherConfig->get();
+        self::assertSame(DEFAULT_CONFIGURATION, $otherCfg, "Invalid configuration has been returned.");
+    }
 
     /**
      * It checks that the remove function works well.
@@ -114,6 +139,13 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
         // preset the config.
         Civi::settings()->add([CONFIG_NAME => DEFAULT_CONFIGURATION]);
         $cfg = Civi::settings()->get(CONFIG_NAME);
+        foreach ($cfg as $k => $v) {
+            $newKey = $k."new";
+            unset($cfg[$k]);
+            $cfg[$newKey] = $v;
+            $cfg[$newKey."v2"] = false;
+            break;
+        }
         $cfg["brand-new-key"] = false;
         self::assertTrue($config->update($cfg), "Update config has to be successful.");
         self::assertSame($cfg, $config->get(), "Invalid updated configuration.");
