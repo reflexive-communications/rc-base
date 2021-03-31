@@ -26,7 +26,7 @@ class CRM_RcBase_Processor_JSON
 
         // Check if valid JSON
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new CRM_Core_Exception('Invalid JSON received');
+            throw new CRM_Core_Exception('Invalid JSON received: '.json_last_error_msg());
         }
 
         return CRM_RcBase_Processor_Base::sanitize($decoded);
@@ -35,10 +35,10 @@ class CRM_RcBase_Processor_JSON
     /**
      * Parse JSON from stream wrappers
      * Example:
-     *   - http: $socket="https://example.com/json"
-     *   - file: $socket="file:///path/to/local/file"
-     *   - data: $socket="data://text/plain;base64,bW9ua2V5Cg=="
-     *   - php:  $socket="php://input"
+     *   - http: $stream="https://example.com/json"
+     *   - file: $stream="file:///path/to/local/file"
+     *   - data: $stream="data://text/plain;base64,bW9ua2V5Cg=="
+     *   - php:  $stream="php://input"
      *
      * @link https://www.php.net/manual/en/wrappers.expect.php
      *
@@ -50,8 +50,12 @@ class CRM_RcBase_Processor_JSON
      */
     public static function parseStream(string $stream)
     {
-        // Get contents from raw stream
-        $raw = file_get_contents($stream);
+        try {
+            // Get contents from raw stream
+            $raw = file_get_contents($stream);
+        } catch (Throwable $ex) {
+            throw new CRM_Core_Exception('Failed to open stream');
+        }
 
         return self::parse($raw);
     }

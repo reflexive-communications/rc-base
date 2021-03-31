@@ -75,7 +75,7 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
         CRM_RcBase_Processor_JSON::parse($json);
     }
 
-    public function testReadFromDataSocket()
+    public function testReadFromDataStream()
     {
         $base64_enc = "eyLDlsOcw5PFkMOaw4nDgcWww40iOiAiw7bDvMOzxZHDusOpw6HFscOtIn0K";
         $expected = ['ÖÜÓŐÚÉÁŰÍ' => 'öüóőúéáűí'];
@@ -83,7 +83,7 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expected, $result, 'Invalid JSON returned.');
     }
 
-    public function testReadFromFileSocket()
+    public function testReadFromFileStream()
     {
         $expected = [
             'string'  => 'some string',
@@ -103,6 +103,13 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
         ];
         $result = CRM_RcBase_Processor_JSON::parseStream('file://'.__DIR__.'/test.json');
         $this->assertSame($expected, $result, 'Invalid JSON returned.');
+    }
+
+    public function testFailedReadFromStreamThrowsException()
+    {
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
+        $this->expectExceptionMessage("Failed to open stream", "Invalid exception message.");
+        CRM_RcBase_Processor_JSON::parseStream('file://'.__DIR__.'/non-existent.json');
     }
 
     public function testEncode()
