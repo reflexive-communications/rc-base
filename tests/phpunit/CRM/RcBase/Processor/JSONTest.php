@@ -57,7 +57,7 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
      */
     public function testValidJson($json, $object)
     {
-        $result = CRM_RcBase_Processor_JSON::input($json);
+        $result = CRM_RcBase_Processor_JSON::parse($json);
         $this->assertSame($object, $result, 'Invalid JSON returned.');
     }
 
@@ -69,14 +69,14 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
         $json = '["string 1"=,"string 2"]';
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
         $this->expectExceptionMessage("Invalid JSON received", "Invalid exception message.");
-        CRM_RcBase_Processor_JSON::input($json);
+        CRM_RcBase_Processor_JSON::parse($json);
     }
 
     public function testReadFromDataSocket()
     {
         $base64_enc = "eyLDlsOcw5PFkMOaw4nDgcWww40iOiAiw7bDvMOzxZHDusOpw6HFscOtIn0K";
         $expected = ['ÖÜÓŐÚÉÁŰÍ' => 'öüóőúéáűí'];
-        $result = CRM_RcBase_Processor_JSON::inputStream('data://text/plain;base64,'.$base64_enc);
+        $result = CRM_RcBase_Processor_JSON::parseStream('data://text/plain;base64,'.$base64_enc);
         $this->assertSame($expected, $result, 'Invalid JSON returned.');
     }
 
@@ -98,11 +98,11 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
                     2 => 'c',
                 ],
         ];
-        $result = CRM_RcBase_Processor_JSON::inputStream('file://'.__DIR__.'/test.json');
+        $result = CRM_RcBase_Processor_JSON::parseStream('file://'.__DIR__.'/test.json');
         $this->assertSame($expected, $result, 'Invalid JSON returned.');
     }
 
-    public function testOutput()
+    public function testEncode()
     {
         $data = [
             'string',
@@ -118,7 +118,7 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
         ];
         $json = '{"0":"string","1":"5","2":5,"3":-5,"4":1.1,"5":true,"field_1":"value_2","field_2":"value_2","6":["a","b","c"],"ÖÜÓŐÚÉÁŰÍ":"öüóőúéáűí"}';
 
-        $result = CRM_RcBase_Processor_JSON::output($data);
+        $result = CRM_RcBase_Processor_JSON::encode($data);
         $this->assertSame($json, $result, 'Invalid JSON returned.');
     }
 }

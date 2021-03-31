@@ -10,7 +10,7 @@
 class CRM_RcBase_Processor_JSON
 {
     /**
-     * Process input
+     * Parse JSON string
      *
      * @param string $json JSON to parse
      *
@@ -18,7 +18,7 @@ class CRM_RcBase_Processor_JSON
      *
      * @throws CRM_Core_Exception
      */
-    public static function input(string $json)
+    public static function parse(string $json)
     {
         // Decode JSON
         $decoded = json_decode($json, true);
@@ -32,7 +32,7 @@ class CRM_RcBase_Processor_JSON
     }
 
     /**
-     * Read JSON from stream wrappers
+     * Parse JSON from stream wrappers
      * Example:
      *   - http: $socket="https://example.com/json"
      *   - file: $socket="file:///path/to/local/file"
@@ -47,24 +47,24 @@ class CRM_RcBase_Processor_JSON
      *
      * @throws CRM_Core_Exception
      */
-    public static function inputStream(string $stream)
+    public static function parseStream(string $stream)
     {
         // Get contents from raw stream
         $raw = file_get_contents($stream);
 
-        return self::input($raw);
+        return self::parse($raw);
     }
 
     /**
-     * Read JSON from request body
+     * Parse JSON from request body
      *
      * @return mixed Parsed JSON
      *
      * @throws CRM_Core_Exception
      */
-    public static function inputPost()
+    public static function parsePost()
     {
-        return self::inputStream('php://input');
+        return self::parseStream('php://input');
     }
 
     /**
@@ -74,7 +74,7 @@ class CRM_RcBase_Processor_JSON
      *
      * @return mixed JSON
      */
-    public static function output($data)
+    public static function encode($data)
     {
         return json_encode($data, JSON_UNESCAPED_UNICODE);
     }
