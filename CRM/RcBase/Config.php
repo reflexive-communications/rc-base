@@ -11,7 +11,7 @@ abstract class CRM_RcBase_Config {
      * @param string $extensionName prefix for db.
      */
     public function __construct(string $extensionName) {
-        $this->configName = $extensionName."_configuration";
+        $this->configName = $extensionName."_config";
         $this->configuration = $this->defaultConfiguration();
     }
 

@@ -127,7 +127,7 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
         // remove the config
         self::assertTrue($config->remove(), "Remove config has to be successful.");
         self::expectException(CRM_Core_Exception::class, "Invalid exception class.");
-        self::expectExceptionMessage(CONFIG_NAME."_configuration config is missing.", "Invalid exception message.");
+        self::expectExceptionMessage(CONFIG_NAME."_config config is missing.", "Invalid exception message.");
         $config->get();
     }
 
@@ -157,7 +157,7 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
     public function testLoadEmptyConfig() {
         $config = $this->getConfig();
         self::expectException(CRM_Core_Exception::class, "Invalid exception class.");
-        self::expectExceptionMessage(CONFIG_NAME."_configuration config invalid.", "Invalid exception message.");
+        self::expectExceptionMessage(CONFIG_NAME."_config config invalid.", "Invalid exception message.");
         self::assertEmpty($config->load(), "Load result supposed to be empty.");
     }
     public function testLoadCreatedConfig() {
