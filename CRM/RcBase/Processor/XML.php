@@ -43,7 +43,7 @@ class CRM_RcBase_Processor_XML
 
             return CRM_RcBase_Processor_Base::sanitize($array);
         } catch (Throwable $ex) {
-            throw new CRM_Core_Exception('Unable to parse XML');
+            throw new CRM_Core_Exception('Invalid XML received');
         }
     }
 

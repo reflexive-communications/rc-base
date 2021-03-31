@@ -8,6 +8,9 @@
 class CRM_RcBase_Processor_XMLTest extends \PHPUnit\Framework\TestCase
 {
 
+    /**
+     * @throws \CRM_Core_Exception
+     */
     public function testValidXmlToArray()
     {
         $xml_string = <<<XML
@@ -66,6 +69,9 @@ XML;
         $this->assertSame($expected, $result, 'Invalid XML returned.');
     }
 
+    /**
+     * @throws \CRM_Core_Exception
+     */
     public function testValidXmlToObject()
     {
         $xml_string = '<?xml version="1.0"?>
@@ -105,6 +111,35 @@ XML;
         $this->assertInstanceOf(SimpleXMLElement::class, $result, 'Not a SimpleXMLElement returned.');
         $this->assertEquals($expected, $result, 'Invalid XML returned.');
         $this->assertEquals($expected->asXML(), $result->asXML(), 'Different XML returned.');
+    }
+
+    /**
+     * @throws CRM_Core_Exception
+     */
+    public function testInvalidXmlThrowsException()
+    {
+        $invalid_xml = '<?xml version="1.0"?><movies><movie><title>Star Wars</title>';
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
+        $this->expectExceptionMessage("Invalid XML received", "Invalid exception message.");
+        CRM_RcBase_Processor_XML::parse($invalid_xml);
+    }
+
+    public function testReadFromFileSocket()
+    {
+        $expected = [
+            'movie' => [
+                [
+                    'title'      => 'Star Wars',
+                    'characters' => ['character' => ['Anakin Skywalker', 'Palpatine']],
+                ],
+                [
+                    'title'      => 'Harry Potter',
+                    'characters' => ['character' => ['Harry Potter', 'Voldemort']],
+                ],
+            ],
+        ];
+        $result = CRM_RcBase_Processor_XML::parseStream('file://'.__DIR__.'/test.xml');
+        $this->assertSame($expected, $result, 'Invalid XML returned.');
     }
 
 }
