@@ -368,235 +368,115 @@ class CRM_RcBase_Processor_BaseTest extends \PHPUnit\Framework\TestCase
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
     }
 
-    public function testValidateInputValidValues()
+    public function provideValidInput()
     {
-        $testData = [
-            [
-                "value"         => "",
-                "type"          => "string",
-                "name"          => "empty string",
-                "required"      => false,
-                "allowedValues" => [],
+        return [
+            'empty string'                       => ["", "string", "empty string", false, [],],
+            'no allowed specified'               => ["any string", "string", "no allowed specified", false, [],],
+            'required'                           => ["any string", "string", "required", true, [],],
+            'valid and allowed'                  => [
+                "valid string value 1",
+                "string",
+                "valid and allowed",
+                false,
+                ["valid string value 1", "valid string value 2"],
             ],
-            [
-                "value"         => "any string",
-                "type"          => "string",
-                "name"          => "no allowed specified",
-                "required"      => false,
-                "allowedValues" => [],
+            'valid allowed and required'         => [
+                "valid string value 2",
+                "string",
+                "valid allowed and required",
+                true,
+                ["valid string value 1", "valid string value 2"],
             ],
-            [
-                "value"         => "valid string value 1",
-                "type"          => "string",
-                "name"          => "valid and allowed",
-                "required"      => false,
-                "allowedValues" => ["valid string value 1", "valid string value 2"],
+            'email address'                      => ["email@addr.hu", "email", "email address", false, []],
+            'integer as int'                     => [87, "int", "integer as int", false, [12, "87"]],
+            'integer as string'                  => ["12", "int", "integer as string", false, [12, "87"],],
+            'negative integer as int'            => [-12, "int", "negative integer as int", false, [],],
+            'negative integer as string'         => ["-12", "int", "negative integer as string", false, [],],
+            'ID as int'                          => [12, "id", "ID as int", false, [],],
+            'ID as string'                       => ["12", "id", "ID as string", false, [],],
+            'float as float'                     => [12.1, "float", "float as float", false, [],],
+            'float as string'                    => ["12.1", "float", "float as string", false, [],],
+            'bool as bool'                       => [false, "bool", "bool as bool", false, [],],
+            'bool as truthy int'                 => [1, "bool", "bool as truthy int", false, [],],
+            'bool as falsy int'                  => [0, "bool", "bool as falsy int", false, [],],
+            'bool as truthy string'              => ["Y", "bool", "bool as truthy string", false, [],],
+            'bool as falsy string'               => ["no", "bool", "bool as falsy string", false, [],],
+            'date full'                          => ["2020-08-13", "date", "date full", false, [],],
+            'date compact'                       => ["20200813", "date", "date compact", false, [],],
+            'datetime'                           => ["2020-11-27 04:52:28", "datetime", "datetime full", false, [],],
+            'datetime only date'                 => ["2020-11-27", "datetime", "datetime only date", false, [],],
+            'datetime compact'                   => ["20201127045228", "datetime", "datetime compact", false, [],],
+            'datetime no seconds'                => ["2020-11-27 04:52", "datetime", "datetime no seconds", false, [],],
+            'datetime no seconds compact'        => [
+                "202011270452",
+                "datetime",
+                "datetime no seconds compact",
+                false,
+                [],
             ],
-            [
-                "value"         => "valid string value 2",
-                "type"          => "string",
-                "name"          => "valid allowed and required",
-                "required"      => true,
-                "allowedValues" => ["valid string value 1", "valid string value 2"],
+            'datetime ISO'                       => [
+                "2020-12-01T03:19:46.101Z",
+                "datetimeIso",
+                "datetime ISO",
+                false,
+                [],
             ],
-            [
-                "value"         => "email@addr.hu",
-                "type"          => "email",
-                "name"          => "email address",
-                "required"      => false,
-                "allowedValues" => [],
+            'datetime ISO plus timezone'         => [
+                "2020-12-01T03:19:46.101+02:00",
+                "datetimeIso",
+                "datetime ISO plus timezone",
+                false,
+                [],
             ],
-            [
-                "value"         => 87,
-                "type"          => "int",
-                "name"          => "integer as int",
-                "required"      => false,
-                "allowedValues" => [12, "87"],
+            'datetime ISO minus timezone'        => [
+                "2020-12-01T03:19:46.101-05:30",
+                "datetimeIso",
+                "datetime ISO minus timezone",
+                false,
+                [],
             ],
-            [
-                "value"         => "12",
-                "type"          => "int",
-                "name"          => "integer as string",
-                "required"      => false,
-                "allowedValues" => [12, "87"],
+            'datetime ISO 1 digits microseconds' => [
+                "2020-12-01T03:19:46.1Z",
+                "datetimeIso",
+                "datetime ISO 2 digits microseconds",
+                false,
+                [],
             ],
-            [
-                "value"         => "-12",
-                "type"          => "int",
-                "name"          => "negative integer as string",
-                "required"      => false,
-                "allowedValues" => [],
+            'datetime ISO 3 digits microseconds' => [
+                "2020-12-01T03:19:46.123Z",
+                "datetimeIso",
+                "datetime ISO 3 digits microseconds",
+                false,
+                [],
             ],
-            [
-                "value"         => -12,
-                "type"          => "int",
-                "name"          => "negative integer as int",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => 12,
-                "type"          => "id",
-                "name"          => "ID",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => 12.1,
-                "type"          => "float",
-                "name"          => "float as float",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "12.1",
-                "type"          => "float",
-                "name"          => "float as string",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => false,
-                "type"          => "bool",
-                "name"          => "bool as bool",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => 1,
-                "type"          => "bool",
-                "name"          => "bool as truthy integer",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => 0,
-                "type"          => "bool",
-                "name"          => "bool as falsy integer",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "Y",
-                "type"          => "bool",
-                "name"          => "bool as truthy string",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "no",
-                "type"          => "bool",
-                "name"          => "bool as falsy string",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "2020-12-01",
-                "type"          => "date",
-                "name"          => "date full",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "20201201",
-                "type"          => "date",
-                "name"          => "date compact",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "2020-12-01 11:22:22",
-                "type"          => "datetime",
-                "name"          => "datetime full",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "2020-12-01",
-                "type"          => "datetime",
-                "name"          => "datetime only date",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "2020-12-01 11:22:22",
-                "type"          => "datetime",
-                "name"          => "datetime compact",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "2020-12-01 11:22",
-                "type"          => "datetime",
-                "name"          => "datetime no seconds",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "202012011122",
-                "type"          => "datetime",
-                "name"          => "datetime no seconds compact",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "2020-12-01T03:19:46.101Z",
-                "type"          => "datetimeIso",
-                "name"          => "datetime ISO",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "2020-12-01T03:19:46.101+02:00",
-                "type"          => "datetimeIso",
-                "name"          => "datetime ISO plus timezone",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "2020-12-01T03:19:46.101-05:30",
-                "type"          => "datetimeIso",
-                "name"          => "datetime ISO minus timezone",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "2020-12-01T03:19:46.1Z",
-                "type"          => "datetimeIso",
-                "name"          => "datetime ISO 2 digits microseconds",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "2020-12-01T03:19:46.123Z",
-                "type"          => "datetimeIso",
-                "name"          => "datetime ISO 3 digits microseconds",
-                "required"      => false,
-                "allowedValues" => [],
-            ],
-            [
-                "value"         => "2020-12-01T03:19:46.123456Z",
-                "type"          => "datetimeIso",
-                "name"          => "datetime ISO 6 digits microseconds",
-                "required"      => false,
-                "allowedValues" => [],
+            'datetime ISO 6 digits microseconds' => [
+                "2020-12-01T03:19:46.123456Z",
+                "datetimeIso",
+                "datetime ISO 6 digits microseconds",
+                false,
+                [],
             ],
         ];
-        foreach ($testData as $t) {
-            try {
-                $this->assertEmpty(
-                    CRM_RcBase_Processor_Base::validateInput(
-                        $t["value"],
-                        $t["type"],
-                        $t["name"],
-                        $t["required"],
-                        $t["allowedValues"]
-                    ),
-                    "Should be empty for valid setup."
-                );
-            } catch (Exception $e) {
-                $this->fail("Should not throw exception for valid setup. ".$e->getMessage());
-            }
+    }
+
+    /**
+     * @dataProvider provideValidInput
+     *
+     * @param $value
+     * @param $type
+     * @param $name
+     * @param $required
+     * @param $allowedValues
+     */
+    public function testValidateInputValidValues($value, $type, $name, $required, $allowedValues)
+    {
+        try {
+            $this->assertEmpty(
+                CRM_RcBase_Processor_Base::validateInput($value, $type, $name, $required, $allowedValues),
+                "Should be empty for valid setup.");
+        } catch (Exception $ex) {
+            $this->fail("Should not throw exception for valid setup. ".$ex->getMessage());
         }
     }
 
