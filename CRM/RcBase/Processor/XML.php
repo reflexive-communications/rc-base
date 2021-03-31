@@ -50,10 +50,10 @@ class CRM_RcBase_Processor_XML
     /**
      * Read XML from stream wrappers
      * Example:
-     *   - http: $socket="https://example.com/json"
-     *   - file: $socket="file:///path/to/local/file"
-     *   - data: $socket="data://text/plain;base64,bW9ua2V5Cg=="
-     *   - php:  $socket="php://input"
+     *   - http: $stream="https://example.com/json"
+     *   - file: $stream="file:///path/to/local/file"
+     *   - data: $stream="data://text/plain;base64,bW9ua2V5Cg=="
+     *   - php:  $stream="php://input"
      *
      * @link https://www.php.net/manual/en/wrappers.expect.php
      *
@@ -65,8 +65,12 @@ class CRM_RcBase_Processor_XML
      */
     public static function parseStream(string $stream)
     {
-        // Get contents from raw stream
-        $raw = file_get_contents($stream);
+        try {
+            // Get contents from raw stream
+            $raw = file_get_contents($stream);
+        } catch (Throwable $ex) {
+            throw new CRM_Core_Exception('Failed to open stream');
+        }
 
         return self::parse($raw);
     }
