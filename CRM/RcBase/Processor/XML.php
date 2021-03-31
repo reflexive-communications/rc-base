@@ -7,33 +7,44 @@
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class CRM_RcBase_Processor_XML extends CRM_RcBase_Processor_Base
+class CRM_RcBase_Processor_XML
 {
     /**
-     * Process input
+     * Parse XML string
      *
-     * @param string $xml_string
+     * @param string $xml_string XML to parse
+     * @param bool $return_array Return array or SimpleXMLElement
+     *
      * @return mixed Parsed XML object
      *
      * @throws CRM_Core_Exception
      */
-    public static function input(string $xml_string)
+    public static function parse(string $xml_string, bool $return_array = true)
     {
         // Disable external entity parsing to prevent XEE attack
-        libxml_disable_entity_loader(true);
+        // In libxml versions from 2.9.0 XXE is disabled by default
+        if (LIBXML_VERSION < 20900) {
+            libxml_disable_entity_loader(true);
+        }
 
         try {
             // Load XML
-            $xml = new SimpleXMLElement($xml_string);
+            $xml_obj = new SimpleXMLElement($xml_string);
+
+            // If not array requested, return XML_Element
+            if (!$return_array) {
+                return $xml_obj;
+            }
 
             // Encode & decode to JSON to convert XML_Element to array
-            $data = json_encode($xml, JSON_UNESCAPED_UNICODE);
-            $data = json_decode($data, true);
+            $array = json_encode($xml_obj, JSON_UNESCAPED_UNICODE);
+            $array = json_decode($array, true);
+
+            return CRM_RcBase_Processor_Base::sanitize($array);
+
         } catch (Throwable $ex) {
             throw new CRM_Core_Exception('Unable to parse XML');
         }
-
-        return CRM_RcBase_Processor_Base::sanitize($data);
     }
 
     /**
@@ -52,12 +63,12 @@ class CRM_RcBase_Processor_XML extends CRM_RcBase_Processor_Base
      *
      * @throws CRM_Core_Exception
      */
-    public static function inputStream(string $stream)
+    public static function parseStream(string $stream)
     {
         // Get contents from raw stream
         $raw = file_get_contents($stream);
 
-        return self::input($raw);
+        return self::parse($raw);
     }
 
     /**
@@ -67,8 +78,8 @@ class CRM_RcBase_Processor_XML extends CRM_RcBase_Processor_Base
      *
      * @throws CRM_Core_Exception
      */
-    public static function inputPost()
+    public static function parsePost()
     {
-        return self::inputStream('php://input');
+        return self::parseStream('php://input');
     }
 }
