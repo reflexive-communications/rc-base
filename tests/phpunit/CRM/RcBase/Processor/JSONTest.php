@@ -7,6 +7,7 @@
  */
 class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
 {
+
     /**
      * Provide valid JSON
      *
@@ -15,16 +16,16 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
     public function provideValidJson()
     {
         return [
-            'empty string' => ['""', ''],
-            'empty object' => ['{}', null],
-            'empty array' => ['[]', null],
-            'null' => ['null', null],
-            'string' => ['"some string"', 'some string'],
-            'integer' => ['5', 5],
-            'float' => ['-21.984', -21.984],
-            'bool' => ['false', false],
-            'array' => ['["string 1","string 2"]', ['string 1', 'string 2']],
-            'complex' => [
+            'empty string'     => ['""', ''],
+            'empty object'     => ['{}', null],
+            'empty array'      => ['[]', null],
+            'null'             => ['null', null],
+            'string'           => ['"some string"', 'some string'],
+            'integer'          => ['5', 5],
+            'float'            => ['-21.984', -21.984],
+            'bool'             => ['false', false],
+            'array'            => ['["string 1","string 2"]', ['string 1', 'string 2']],
+            'complex'          => [
                 '{"0":"string","1":"5","2":5,"3":-5,"4":1.1,"5":true,"field_1":"value_2","field_2":"value_2","6":["a","b","c"]}',
                 ['string', '5', 5, -5, 1.1, true, 'field_1' => 'value_2', 'field_2' => 'value_2', ['a', 'b', 'c']],
             ],
@@ -32,17 +33,17 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
                 '{"field\t\t_1  ":"<script>value</script>","   field_2":"value_2\n\n"}',
                 [
                     'field _1' => 'value',
-                    'field_2' => 'value_2',
+                    'field_2'  => 'value_2',
                 ],
             ],
-            'whitespace' => [
+            'whitespace'       => [
                 '{"\n   field_1   "  :  "\t\t\tvalue_1","field_2":"value_2"}',
                 [
                     'field_1' => 'value_1',
                     'field_2' => 'value_2',
                 ],
             ],
-            'UTF-8' => [
+            'UTF-8'            => [
                 '{"ÖÜÓŐÚÉÁŰÍ": "öüóőúéáűí"}',
                 ['ÖÜÓŐÚÉÁŰÍ' => 'öüóőúéáűí'],
             ],
@@ -51,8 +52,10 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @dataProvider provideValidJson
+     *
      * @param $json
      * @param $object
+     *
      * @throws CRM_Core_Exception
      */
     public function testValidJson($json, $object)
@@ -83,15 +86,15 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
     public function testReadFromFileSocket()
     {
         $expected = [
-            'string' => 'some string',
-            1 => '5',
-            2 => 5,
-            3 => -5,
-            4 => 1.1,
-            5 => true,
+            'string'  => 'some string',
+            1         => '5',
+            2         => 5,
+            3         => -5,
+            4         => 1.1,
+            5         => true,
             'field_1' => 'value_2',
             'field_2' => 'value_2',
-            6 =>
+            6         =>
                 [
                     0 => 'a',
                     1 => 'b',
@@ -111,14 +114,16 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
             -5,
             1.1,
             true,
-            'field_1' => 'value_2',
-            'field_2' => 'value_2',
+            'field_1'   => 'value_2',
+            'field_2'   => 'value_2',
             ['a', 'b', 'c'],
             'ÖÜÓŐÚÉÁŰÍ' => 'öüóőúéáűí',
         ];
-        $json = '{"0":"string","1":"5","2":5,"3":-5,"4":1.1,"5":true,"field_1":"value_2","field_2":"value_2","6":["a","b","c"],"ÖÜÓŐÚÉÁŰÍ":"öüóőúéáűí"}';
+        $json
+            = '{"0":"string","1":"5","2":5,"3":-5,"4":1.1,"5":true,"field_1":"value_2","field_2":"value_2","6":["a","b","c"],"ÖÜÓŐÚÉÁŰÍ":"öüóőúéáűí"}';
 
         $result = CRM_RcBase_Processor_JSON::encode($data);
         $this->assertSame($json, $result, 'Invalid JSON returned.');
     }
+
 }

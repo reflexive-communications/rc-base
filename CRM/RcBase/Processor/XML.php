@@ -9,11 +9,12 @@
  */
 class CRM_RcBase_Processor_XML
 {
+
     /**
      * Parse XML string
      *
-     * @param string $xml_string XML to parse
-     * @param bool $return_array Return array or SimpleXMLElement
+     * @param  string  $xml_string    XML to parse
+     * @param  bool    $return_array  Return array or SimpleXMLElement
      *
      * @return mixed Parsed XML object
      *
@@ -41,7 +42,6 @@ class CRM_RcBase_Processor_XML
             $array = json_decode($array, true);
 
             return CRM_RcBase_Processor_Base::sanitize($array);
-
         } catch (Throwable $ex) {
             throw new CRM_Core_Exception('Unable to parse XML');
         }
@@ -57,7 +57,7 @@ class CRM_RcBase_Processor_XML
      *
      * @link https://www.php.net/manual/en/wrappers.expect.php
      *
-     * @param string $stream Name of XML stream
+     * @param  string  $stream  Name of XML stream
      *
      * @return mixed Parsed data
      *
@@ -82,4 +82,5 @@ class CRM_RcBase_Processor_XML
     {
         return self::parseStream('php://input');
     }
+
 }

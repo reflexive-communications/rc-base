@@ -9,10 +9,11 @@
  */
 class CRM_RcBase_Processor_JSON
 {
+
     /**
      * Parse JSON string
      *
-     * @param string $json JSON to parse
+     * @param  string  $json  JSON to parse
      *
      * @return mixed Parsed JSON object
      *
@@ -41,7 +42,7 @@ class CRM_RcBase_Processor_JSON
      *
      * @link https://www.php.net/manual/en/wrappers.expect.php
      *
-     * @param string $stream Name of JSON stream
+     * @param  string  $stream  Name of JSON stream
      *
      * @return mixed Parsed data
      *
@@ -70,7 +71,7 @@ class CRM_RcBase_Processor_JSON
     /**
      * Encode data to JSON
      *
-     * @param mixed $data Object to encode
+     * @param  mixed  $data  Object to encode
      *
      * @return mixed JSON
      */
@@ -78,4 +79,5 @@ class CRM_RcBase_Processor_JSON
     {
         return json_encode($data, JSON_UNESCAPED_UNICODE);
     }
+
 }

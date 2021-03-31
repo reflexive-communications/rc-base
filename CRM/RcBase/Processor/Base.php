@@ -9,6 +9,7 @@
  */
 class CRM_RcBase_Processor_Base
 {
+
     /**
      * Detect content-type
      *
@@ -38,7 +39,7 @@ class CRM_RcBase_Processor_Base
     /**
      * Perform basic input sanitization
      *
-     * @param mixed $input Input to sanitize
+     * @param  mixed  $input  Input to sanitize
      *
      * @return mixed Sanitized input
      */
@@ -70,7 +71,7 @@ class CRM_RcBase_Processor_Base
     /**
      * Sanitize string
      *
-     * @param mixed $value Value to sanitize
+     * @param  mixed  $value  Value to sanitize
      *
      * @return string Sanitized string
      */
@@ -93,20 +94,20 @@ class CRM_RcBase_Processor_Base
      * Throws exception if problem with input
      * No exception means input OK
      *
-     * @param mixed $value Input to validate
-     * @param string $type Input type
-     *  'string':   any string
-     *  'email':    email address
-     *  'int':      integer
-     *  'id':       positive integer
-     *  'float':    float
-     *  'bool':     boolean
-     *  'date':     date
-     *  'datetime': datetime
-     * @param string $name Name of variable (for logging and reporting)
-     * @param bool $required Is value required?
-     *  throws exception if value is empty
-     * @param array $allowed_values Allowed values for this input
+     * @param  mixed   $value           Input to validate
+     * @param  string  $type            Input type
+     *                                  'string':   any string
+     *                                  'email':    email address
+     *                                  'int':      integer
+     *                                  'id':       positive integer
+     *                                  'float':    float
+     *                                  'bool':     boolean
+     *                                  'date':     date
+     *                                  'datetime': datetime
+     * @param  string  $name            Name of variable (for logging and reporting)
+     * @param  bool    $required        Is value required?
+     *                                  throws exception if value is empty
+     * @param  array   $allowed_values  Allowed values for this input
      *
      * @return void
      *
@@ -129,7 +130,6 @@ class CRM_RcBase_Processor_Base
 
         // Empty value
         if ($value === "" || $value === [] || $value === null) {
-
             if ($required) {
                 throw new CRM_Core_Exception(sprintf('Missing parameter: %s', $name));
             }
@@ -180,4 +180,5 @@ class CRM_RcBase_Processor_Base
             throw new CRM_Core_Exception(sprintf('Not allowed value for: %s (%s)', $name, $value));
         }
     }
+
 }

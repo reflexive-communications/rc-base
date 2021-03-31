@@ -7,6 +7,7 @@
  */
 class CRM_RcBase_Processor_XMLTest extends \PHPUnit\Framework\TestCase
 {
+
     public function testValidXmlToArray()
     {
         $xml_string = <<<XML
@@ -47,18 +48,18 @@ class CRM_RcBase_Processor_XMLTest extends \PHPUnit\Framework\TestCase
 XML;
         $expected = [
             'movie' => [
-                'title' => 'PHP: Behind the Parser',
-                'utf-8' => 'öüóőúéáűíÖÜÓŐÚÉÁŰ',
-                'urlencode' => '%C3%B6%C3%BC%C3%B3%C5%91%C3%BA',
-                'characters' => [
+                'title'       => 'PHP: Behind the Parser',
+                'utf-8'       => 'öüóőúéáűíÖÜÓŐÚÉÁŰ',
+                'urlencode'   => '%C3%B6%C3%BC%C3%B3%C5%91%C3%BA',
+                'characters'  => [
                     'character' => [
                         ['name' => 'Ms. Coder', 'actor' => 'Onlivia Áctőré',],
                         ['name' => 'Mr. Coder', 'actor' => 'El ActÓr',],
                     ],
                 ],
-                'plot' => 'So, this language. It\'s like, a programming language. Or is it a scripting language? All is revealed in this thrilling horror spoof of a documentary.',
+                'plot'        => 'So, this language. It\'s like, a programming language. Or is it a scripting language? All is revealed in this thrilling horror spoof of a documentary.',
                 'great-lines' => ['line' => 'PHP solves all my web problems',],
-                'rating' => ['7', '5',],
+                'rating'      => ['7', '5',],
             ],
         ];
         $result = CRM_RcBase_Processor_XML::parse($xml_string);
@@ -105,4 +106,5 @@ XML;
         $this->assertEquals($expected, $result, 'Invalid XML returned.');
         $this->assertEquals($expected->asXML(), $result->asXML(), 'Different XML returned.');
     }
+
 }
