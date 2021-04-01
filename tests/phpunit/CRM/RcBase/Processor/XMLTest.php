@@ -1,7 +1,5 @@
 <?php
 
-use const NEW_LIBXML_VERSION as LIBXML_VERSION;
-
 /**
  * Test XML Processor class
  *
@@ -234,27 +232,6 @@ XML;
 
         $result = CRM_RcBase_Processor_XML::parse($xxe_xml);
 
-        $this->assertSame($expected, $result, 'Invalid XML returned.');
-    }
-
-    public function testSkipXxeContentWithOldLibXmlVersion()
-    {
-        $xxe_xml = <<<XML
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE foo [
-<!ELEMENT foo ANY >
-<!ENTITY xxe SYSTEM "file:///etc/passwd" >]>
-<foo>&xxe;<title>Star Wars</title></foo>
-XML;
-        $expected = [
-            'xxe'   => ['xxe' => null,],
-            'title' => 'Star Wars',
-        ];
-
-        define('NEW_LIBXML_VERSION', 20800);
-        $this->assertSame(20800, LIBXML_VERSION, 'Invalid XML returned.');
-
-        $result = CRM_RcBase_Processor_XML::parse($xxe_xml);
         $this->assertSame($expected, $result, 'Invalid XML returned.');
     }
 
