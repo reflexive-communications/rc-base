@@ -7,28 +7,37 @@
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class CRM_RcBase_Processor_UrlEncodedForm extends CRM_RcBase_Processor_Base
+class CRM_RcBase_Processor_UrlEncodedForm
 {
-    /**
-     * Process input
-     *
-     * @return array|string Request parameters parsed
-     *
-     * @throws CRM_Core_Exception
-     */
-    public function input()
-    {
-        switch ($_SERVER['REQUEST_METHOD']) {
-            case 'GET':
-                $data = $_GET;
-                break;
-            case 'POST':
-                $data = $_POST;
-                break;
-            default:
-                throw new CRM_Core_Exception('Not supported request method');
-        }
 
-        return $this->sanitize($data);
+    /**
+     * Parse GET request parameters
+     *
+     * @return array GET parameters parsed
+     */
+    public static function parseGet()
+    {
+        return CRM_RcBase_Processor_Base::sanitize($_GET);
     }
+
+    /**
+     * Parse POST request body
+     *
+     * @return array Request POST parsed
+     */
+    public static function parsePost()
+    {
+        return CRM_RcBase_Processor_Base::sanitize($_POST);
+    }
+
+    /**
+     * Parse request parameters
+     *
+     * @return array Request parameters parsed
+     */
+    public static function parseRequest()
+    {
+        return CRM_RcBase_Processor_Base::sanitize($_REQUEST);
+    }
+
 }
