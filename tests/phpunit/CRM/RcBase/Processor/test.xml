@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<movies>
+    <movie>
+        <title>Star Wars</title>
+        <characters>
+            <character>Anakin Skywalker</character>
+            <character>Palpatine</character>
+        </characters>
+    </movie>
+    <movie>
+        <title>Harry Potter</title>
+        <characters>
+            <character>Harry Potter</character>
+            <character>Voldemort</character>
+        </characters>
+    </movie>
+</movies>

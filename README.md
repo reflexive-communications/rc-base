@@ -1,5 +1,7 @@
 # rc-base
 
+![CI](https://github.com/reflexive-communications/rc-base/workflows/CI/badge.svg)
+
 This extension does nothing, it is only required by some other extensions. It contains shared components, libraries.
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
