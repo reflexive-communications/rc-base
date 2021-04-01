@@ -1,11 +1,13 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test JSON Processor class
  *
  * @group unit
  */
-class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
+class CRM_RcBase_Processor_JSONTest extends TestCase
 {
 
     /**

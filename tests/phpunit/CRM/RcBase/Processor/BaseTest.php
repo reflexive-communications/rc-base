@@ -1,11 +1,13 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test Base Processor class
  *
  * @group unit
  */
-class CRM_RcBase_Processor_BaseTest extends \PHPUnit\Framework\TestCase
+class CRM_RcBase_Processor_BaseTest extends TestCase
 {
 
     /**

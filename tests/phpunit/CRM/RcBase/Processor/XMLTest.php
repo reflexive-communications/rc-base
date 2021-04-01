@@ -1,11 +1,13 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test XML Processor class
  *
  * @group unit
  */
-class CRM_RcBase_Processor_XMLTest extends \PHPUnit\Framework\TestCase
+class CRM_RcBase_Processor_XMLTest extends TestCase
 {
 
     /**

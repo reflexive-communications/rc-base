@@ -1,11 +1,13 @@
 <?php
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Test MockPhpStream Processor class
  *
  * @group unit
  */
-class CRM_RcBase_Test_MockPhpStreamTest extends \PHPUnit\Framework\TestCase
+class CRM_RcBase_Test_MockPhpStreamTest extends TestCase
 {
 
     /**
