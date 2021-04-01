@@ -22,7 +22,7 @@ class CRM_RcBase_Processor_XML
      */
     public static function parse(string $xml_string, bool $return_array = true)
     {
-        // Disable external entity parsing to prevent XEE attack
+        // Disable external entity parsing to prevent XXE attack
         // In libxml versions from 2.9.0 XXE is disabled by default
         if (LIBXML_VERSION < 20900) {
             libxml_disable_entity_loader(true);
