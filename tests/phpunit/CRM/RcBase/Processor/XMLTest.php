@@ -124,7 +124,7 @@ XML;
         CRM_RcBase_Processor_XML::parse($invalid_xml);
     }
 
-    public function testReadFromFileSocket()
+    public function testParseFileStream()
     {
         $expected = [
             'movie' => [
@@ -139,6 +139,77 @@ XML;
             ],
         ];
         $result = CRM_RcBase_Processor_XML::parseStream('file://'.__DIR__.'/test.xml');
+        $this->assertSame($expected, $result, 'Invalid XML returned.');
+    }
+
+    /**
+     * @throws CRM_Core_Exception
+     */
+    public function testParsePost()
+    {
+        $xml = <<<XML
+<?xml version='1.0' standalone='yes'?>
+<movies
+
+>
+ <movie\n\n>
+  <title>
+    PHP: Behind the Parser
+  </title>
+  <utf-8>öüóőúéáűíÖÜÓŐÚÉÁŰ</utf-8>
+  <urlencode>
+    %C3%B6%C3%BC%C3%B3%C5%91%C3%BA
+  </urlencode>
+  <characters>
+   <character>
+    <name>Ms. <br/>Coder</name>
+    <actor>Onlivia Áctőré</actor>
+   </character>
+   <character>
+    <name>"Mr. Coder"</name>
+    <actor>'El Act&#211;r'</actor>
+   </character>
+  </characters>
+  <plot>
+   So, this language. It's like, a programming language. Or is it a
+   scripting language? All is revealed in this thrilling horror spoof
+   of a documentary.
+  </plot>
+  <great-lines>
+   <line>PHP solves all my web problems</line>
+  </great-lines>
+  <rating type="thumbs">7</rating>
+  <rating type="stars">5</rating>
+ </movie>
+</movies>
+XML;
+        $expected = [
+            'movie' => [
+                'title'       => 'PHP: Behind the Parser',
+                'utf-8'       => 'öüóőúéáűíÖÜÓŐÚÉÁŰ',
+                'urlencode'   => '%C3%B6%C3%BC%C3%B3%C5%91%C3%BA',
+                'characters'  => [
+                    'character' => [
+                        ['name' => 'Ms. Coder', 'actor' => 'Onlivia Áctőré',],
+                        ['name' => 'Mr. Coder', 'actor' => 'El ActÓr',],
+                    ],
+                ],
+                'plot'        => 'So, this language. It\'s like, a programming language. Or is it a scripting language? All is revealed in this thrilling horror spoof of a documentary.',
+                'great-lines' => ['line' => 'PHP solves all my web problems',],
+                'rating'      => ['7', '5',],
+            ],
+        ];
+
+        // Register Mock wrapper
+        stream_wrapper_unregister("php");
+        stream_wrapper_register("php", "CRM_RcBase_Test_MockPhpStream");
+
+        // Feed JSON to stream
+        file_put_contents('php://input', $xml);
+
+        // Parse raw data from the request body
+        $result = CRM_RcBase_Processor_XML::parsePost();
+
         $this->assertSame($expected, $result, 'Invalid XML returned.');
     }
 
