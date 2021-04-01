@@ -12,6 +12,9 @@
  * // Write & read data
  * file_put_contents("php://${stream}", "data");
  * $data = file_get_contents("php://${stream}");
+ *
+ * // Restore original wrapper
+ * stream_wrapper_restore("php");
  */
 class CRM_RcBase_Test_MockPhpStream
 {
