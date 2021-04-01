@@ -26,8 +26,19 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
             'bool'             => ['false', false],
             'array'            => ['["string 1","string 2"]', ['string 1', 'string 2']],
             'complex'          => [
-                '{"0":"string","1":"5","2":5,"3":-5,"4":1.1,"5":true,"field_1":"value_2","field_2":"value_2","6":["a","b","c"]}',
-                ['string', '5', 5, -5, 1.1, true, 'field_1' => 'value_2', 'field_2' => 'value_2', ['a', 'b', 'c']],
+                '{"0":"string","1":"5","2":5,"3":-5,"4":1.1,"5":true,"field_1":"value_2","field_2":"value_2","6":["a","b","c"],"utf-8":"éáÜŐ"}',
+                [
+                    'string',
+                    '5',
+                    5,
+                    -5,
+                    1.1,
+                    true,
+                    'field_1' => 'value_2',
+                    'field_2' => 'value_2',
+                    ['a', 'b', 'c'],
+                    'utf-8'   => 'éáÜŐ',
+                ],
             ],
             'need to sanitize' => [
                 '{"field\t\t_1  ":"<script>value</script>","   field_2":"value_2\n\n"}',
@@ -75,7 +86,7 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
         CRM_RcBase_Processor_JSON::parse($json);
     }
 
-    public function testReadFromDataStream()
+    public function testParseDataStream()
     {
         $base64_enc = "eyLDlsOcw5PFkMOaw4nDgcWww40iOiAiw7bDvMOzxZHDusOpw6HFscOtIn0K";
         $expected = ['ÖÜÓŐÚÉÁŰÍ' => 'öüóőúéáűí'];
@@ -83,7 +94,7 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expected, $result, 'Invalid JSON returned.');
     }
 
-    public function testReadFromFileStream()
+    public function testParseFileStream()
     {
         $expected = [
             'string'  => 'some string',
@@ -105,7 +116,7 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expected, $result, 'Invalid JSON returned.');
     }
 
-    public function testFailedReadFromStreamThrowsException()
+    public function testFailedParseStreamThrowsException()
     {
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
         $this->expectExceptionMessage("Failed to open stream", "Invalid exception message.");
@@ -131,6 +142,41 @@ class CRM_RcBase_Processor_JSONTest extends \PHPUnit\Framework\TestCase
 
         $result = CRM_RcBase_Processor_JSON::encode($data);
         $this->assertSame($json, $result, 'Invalid JSON returned.');
+    }
+
+    /**
+     * @throws CRM_Core_Exception
+     */
+    public function testParsePost()
+    {
+        $json = [
+            '{"0":"string","1":"5","2":5,"3":-5,"4":1.1,"5":true,"field_1":"value_2","field_2":"value_2","6":["a","b","c"],"utf-8":"éáÜŐ"}',
+        ];
+        $expected
+            = [
+            'string',
+            '5',
+            5,
+            -5,
+            1.1,
+            true,
+            'field_1' => 'value_2',
+            'field_2' => 'value_2',
+            ['a', 'b', 'c'],
+            'utf-8'   => 'éáÜŐ',
+        ];
+
+        // Register Mock wrapper
+        stream_wrapper_unregister("php");
+        stream_wrapper_register("php", "CRM_RcBase_Test_MockPhpStream");
+
+        // Feed JSON to stream
+        file_put_contents('php://input', $json);
+
+        // Parse raw data from the request body
+        $result = CRM_RcBase_Processor_JSON::parsePost();
+
+        $this->assertSame($expected, $result, 'Invalid JSON returned.');
     }
 
 }
