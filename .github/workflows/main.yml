@@ -23,6 +23,7 @@ jobs:
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
           args: --config=.php_cs.dist --dry-run -v
+
   unit-tests:
     name:    Unit tests
     needs:   code-style
