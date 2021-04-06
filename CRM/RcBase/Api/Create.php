@@ -33,7 +33,7 @@ class CRM_RcBase_Api_Create
                     'checkPermissions' => $check_permissions,
                 ]
             );
-        } catch (\Throwable $ex) {
+        } catch (Throwable $ex) {
             throw new CRM_Core_Exception(sprintf('Failed to create %s, reason: %s', $entity, $ex->getMessage()));
         }
 
