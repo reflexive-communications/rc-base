@@ -45,7 +45,7 @@ class CRM_RcBase_Api_Get
      *
      * @return mixed|null
      */
-    protected static function parseResultsFirst(Result $results, string $field = "")
+    protected static function parseResultsFirst(Result $results, string $field = '')
     {
         // Get first result row
         $result = $results->first();
