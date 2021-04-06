@@ -194,7 +194,7 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
 
         $where_string = '';
         foreach ($where as $item) {
-            $where_string .= "+w '${item}'";
+            $where_string .= "+w '${item}' ";
         }
 
         $command = "api4 ${entity}.get ${select_string} ${where_string}";
