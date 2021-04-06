@@ -15,7 +15,6 @@ use PHPUnit\Framework\TestCase;
  */
 class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessInterface
 {
-
     use Api3DocTrait;
     use GenericAssertionsTrait;
     use DbTestTrait;
@@ -124,7 +123,7 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
     /**
      * Executes a raw SQL query on the DB
      *
-     * @param  string  $query  SQL query
+     * @param string $query SQL query
      *
      * @return array Query results indexed by column name
      */
@@ -142,7 +141,7 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
     /**
      * Get next auto-increment value for an SQL table
      *
-     * @param  string  $table_name  Name of table
+     * @param string $table_name Name of table
      *
      * @return int Next auto-increment value
      */
@@ -164,16 +163,16 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
     /**
      * Call cv api4 with get action
      *
-     * @param  string  $entity  Entity to work on (Contact, Email, etc.)
-     * @param  array   $select  Fields to return
-     *                          Example:
-     *                          $select = ['contact_type', 'first_name', 'external_identifier']
-     * @param  array   $where   Where conditions to filter results (if more given they are joined by AND)
-     *                          Example:
-     *                          $where = [
-     *                          'contact_type=Individual',
-     *                          'first_name like "Adams%",
-     *                          ]
+     * @param string $entity Entity to work on (Contact, Email, etc.)
+     * @param array $select Fields to return
+     *   Example:
+     *   $select = ['contact_type', 'first_name', 'external_identifier']
+     * @param array $where Where conditions to filter results (if more given they are joined by AND)
+     *   Example:
+     *   $where = [
+     *   'contact_type=Individual',
+     *   'first_name like "Adams%",
+     *   ]
      *
      * @return array Results
      */
@@ -225,8 +224,8 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
     /**
      * Call cv api4 with create action
      *
-     * @param  string  $entity  Entity to work on (Contact, Email, etc.)
-     * @param  array   $params  Params of entity
+     * @param string $entity Entity to work on (Contact, Email, etc.)
+     * @param array $params Params of entity
      *
      * @return int Created entity ID
      */
@@ -263,5 +262,4 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
 
         return (int)$result[0]['id'];
     }
-
 }

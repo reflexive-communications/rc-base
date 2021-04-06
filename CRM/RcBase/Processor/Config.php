@@ -10,13 +10,12 @@
  */
 class CRM_RcBase_Processor_Config
 {
-
     /**
      * Parse INI string
      *
-     * @param  string  $ini_string        INI string to parse
-     * @param  bool    $process_sections  Process sections
-     * @param  int     $scanner_mode      Scanner mode
+     * @param string $ini_string INI string to parse
+     * @param bool $process_sections Process sections
+     * @param int $scanner_mode Scanner mode
      *
      * @return mixed Parsed config
      *
@@ -39,9 +38,9 @@ class CRM_RcBase_Processor_Config
     /**
      * Parse INI file
      *
-     * @param  string  $filename          INI file to parse
-     * @param  bool    $process_sections  Process sections
-     * @param  int     $scanner_mode      Scanner mode
+     * @param string $filename INI file to parse
+     * @param bool $process_sections Process sections
+     * @param int $scanner_mode Scanner mode
      *
      * @return mixed Parsed config
      *
@@ -60,5 +59,4 @@ class CRM_RcBase_Processor_Config
             throw new CRM_Core_Exception('Failed to parse ini file'.$ex->getMessage());
         }
     }
-
 }

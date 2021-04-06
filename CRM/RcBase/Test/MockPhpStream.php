@@ -18,7 +18,6 @@
  */
 class CRM_RcBase_Test_MockPhpStream
 {
-
     protected $index = 0;
 
     protected $length = null;
@@ -93,5 +92,4 @@ class CRM_RcBase_Test_MockPhpStream
         $this->index = 0;
         $this->length = 0;
     }
-
 }

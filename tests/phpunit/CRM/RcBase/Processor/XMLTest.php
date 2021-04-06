@@ -53,18 +53,18 @@ class CRM_RcBase_Processor_XMLTest extends TestCase
 XML;
         $expected = [
             'movie' => [
-                'title'       => 'PHP: Behind the Parser',
-                'utf-8'       => 'öüóőúéáűíÖÜÓŐÚÉÁŰ',
-                'urlencode'   => '%C3%B6%C3%BC%C3%B3%C5%91%C3%BA',
-                'characters'  => [
+                'title' => 'PHP: Behind the Parser',
+                'utf-8' => 'öüóőúéáűíÖÜÓŐÚÉÁŰ',
+                'urlencode' => '%C3%B6%C3%BC%C3%B3%C5%91%C3%BA',
+                'characters' => [
                     'character' => [
                         ['name' => 'Ms. Coder', 'actor' => 'Onlivia Áctőré',],
                         ['name' => 'Mr. Coder', 'actor' => 'El ActÓr',],
                     ],
                 ],
-                'plot'        => 'So, this language. It\'s like, a programming language. Or is it a scripting language? All is revealed in this thrilling horror spoof of a documentary.',
+                'plot' => 'So, this language. It\'s like, a programming language. Or is it a scripting language? All is revealed in this thrilling horror spoof of a documentary.',
                 'great-lines' => ['line' => 'PHP solves all my web problems',],
-                'rating'      => ['7', '5',],
+                'rating' => ['7', '5',],
             ],
         ];
         $result = CRM_RcBase_Processor_XML::parse($xml_string);
@@ -121,8 +121,8 @@ XML;
     public function testInvalidXmlThrowsException()
     {
         $invalid_xml = '<?xml version="1.0"?><movies><movie><title>Star Wars</title>';
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class.");
-        $this->expectExceptionMessage("Invalid XML received", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
+        $this->expectExceptionMessage('Invalid XML received', 'Invalid exception message.');
         CRM_RcBase_Processor_XML::parse($invalid_xml);
     }
 
@@ -131,11 +131,11 @@ XML;
         $expected = [
             'movie' => [
                 [
-                    'title'      => 'Star Wars',
+                    'title' => 'Star Wars',
                     'characters' => ['character' => ['Anakin Skywalker', 'Palpatine']],
                 ],
                 [
-                    'title'      => 'Harry Potter',
+                    'title' => 'Harry Potter',
                     'characters' => ['character' => ['Harry Potter', 'Voldemort']],
                 ],
             ],
@@ -187,24 +187,24 @@ XML;
 XML;
         $expected = [
             'movie' => [
-                'title'       => 'PHP: Behind the Parser',
-                'utf-8'       => 'öüóőúéáűíÖÜÓŐÚÉÁŰ',
-                'urlencode'   => '%C3%B6%C3%BC%C3%B3%C5%91%C3%BA',
-                'characters'  => [
+                'title' => 'PHP: Behind the Parser',
+                'utf-8' => 'öüóőúéáűíÖÜÓŐÚÉÁŰ',
+                'urlencode' => '%C3%B6%C3%BC%C3%B3%C5%91%C3%BA',
+                'characters' => [
                     'character' => [
                         ['name' => 'Ms. Coder', 'actor' => 'Onlivia Áctőré',],
                         ['name' => 'Mr. Coder', 'actor' => 'El ActÓr',],
                     ],
                 ],
-                'plot'        => 'So, this language. It\'s like, a programming language. Or is it a scripting language? All is revealed in this thrilling horror spoof of a documentary.',
+                'plot' => 'So, this language. It\'s like, a programming language. Or is it a scripting language? All is revealed in this thrilling horror spoof of a documentary.',
                 'great-lines' => ['line' => 'PHP solves all my web problems',],
-                'rating'      => ['7', '5',],
+                'rating' => ['7', '5',],
             ],
         ];
 
         // Register Mock wrapper
-        stream_wrapper_unregister("php");
-        stream_wrapper_register("php", "CRM_RcBase_Test_MockPhpStream");
+        stream_wrapper_unregister('php');
+        stream_wrapper_register('php', 'CRM_RcBase_Test_MockPhpStream');
 
         // Feed JSON to stream
         file_put_contents('php://input', $xml);
@@ -213,7 +213,7 @@ XML;
         $result = CRM_RcBase_Processor_XML::parsePost();
 
         // Restore original wrapper
-        stream_wrapper_restore("php");
+        stream_wrapper_restore('php');
 
         $this->assertSame($expected, $result, 'Invalid XML returned.');
     }
@@ -228,7 +228,7 @@ XML;
 <foo>&xxe;<title>Star Wars</title></foo>
 XML;
         $expected = [
-            'xxe'   => ['xxe' => null,],
+            'xxe' => ['xxe' => null,],
             'title' => 'Star Wars',
         ];
 
@@ -236,5 +236,4 @@ XML;
 
         $this->assertSame($expected, $result, 'Invalid XML returned.');
     }
-
 }
