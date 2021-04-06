@@ -25,7 +25,7 @@ class CRM_RcBase_Processor_XML
         // Disable external entity parsing to prevent XXE attack
         // In libxml versions from 2.9.0 XXE is disabled by default
         if (LIBXML_VERSION < 20900) {
-            libxml_disable_entity_loader(true);
+            libxml_disable_entity_loader();
         }
 
         try {

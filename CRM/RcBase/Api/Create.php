@@ -33,7 +33,7 @@ class CRM_RcBase_Api_Create
                     'checkPermissions' => $check_permissions,
                 ]
             );
-        } catch (\Throwable $ex) {
+        } catch (Throwable $ex) {
             throw new CRM_Core_Exception(sprintf('Failed to create %s, reason: %s', $entity, $ex->getMessage()));
         }
 
@@ -186,5 +186,31 @@ class CRM_RcBase_Api_Create
         $values['target_contact_id'] = $contact_id;
 
         return self::entity('Activity', $values, $check_permissions);
+    }
+
+    /**
+     * Add tag to contact
+     *
+     * @param int $contact_id Contact ID
+     * @param int $tag_id Tag ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int EntityTag ID
+     *
+     * @throws CRM_Core_Exception
+     */
+    public static function tagContact(int $contact_id, int $tag_id, bool $check_permissions = false): int
+    {
+        if ($contact_id < 1 || $tag_id < 1) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
+
+        $values = [
+            'entity_table' => 'civicrm_contact',
+            'entity_id' => $contact_id,
+            'tag_id' => $tag_id,
+        ];
+
+        return self::entity('EntityTag', $values, $check_permissions);
     }
 }

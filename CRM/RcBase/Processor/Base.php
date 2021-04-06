@@ -129,7 +129,7 @@ class CRM_RcBase_Processor_Base
         }
 
         // Empty value
-        if ($value === "" || $value === [] || $value === null) {
+        if ($value === '' || $value === [] || $value === null) {
             if ($required) {
                 throw new CRM_Core_Exception(sprintf('Missing parameter: %s', $name));
             }
