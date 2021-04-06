@@ -14,8 +14,18 @@ env:
   PHP_VERSION:         7.3
 
 jobs:
-  tests:
+  code-style:
+    name:    Code style check with PHP-CS-Fixer
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: PHP-CS-Fixer
+        uses: docker://oskarstark/php-cs-fixer-ga
+        with:
+          args: --config=.php_cs.dist --dry-run -v
+  unit-tests:
     name:    Unit tests
+    needs:   code-style
     runs-on: ubuntu-18.04
     services:
       mysql:
