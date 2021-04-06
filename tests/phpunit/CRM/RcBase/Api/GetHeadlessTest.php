@@ -462,4 +462,55 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
         $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
         CRM_RcBase_Api_Get::allActivity($contact_id_target, 5, -5);
     }
+
+    /**
+     * @throws UnauthorizedException|API_Exception
+     * @throws CRM_Core_Exception
+     */
+    public function testContactHasTag()
+    {
+        // Create contact
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+
+        // Create tag
+        $tag = [
+            'name' => 'Test tag',
+        ];
+        $tag_id = $this->cvApi4Create('Tag', $tag);
+
+        // Add tag to contact
+        $entity_tag = [
+            'entity_table' => 'civicrm_contact',
+            'entity_id' => $contact_id,
+            'tag_id' => $tag_id,
+        ];
+        $entity_tag_id = $this->cvApi4Create('EntityTag', $entity_tag);
+
+        // Check valid tag
+        $this->assertSame(
+            $entity_tag_id,
+            CRM_RcBase_Api_Get::contactHasTag($contact_id, $tag_id),
+            'Bad entity tag ID returned'
+        );
+
+        // Check non-existent tag
+        $this->assertNull(
+            CRM_RcBase_Api_Get::contactHasTag($contact_id, $this->getNextAutoIncrementValue('civicrm_tag')),
+            'Not null returned on non-existent tag'
+        );
+
+        // Check non-existent contact ID
+        $this->assertNull(
+            CRM_RcBase_Api_Get::contactHasTag(
+                $this->getNextAutoIncrementValue('civicrm_contact'),
+                $tag_id
+            ),
+            'Not null returned on non-existent contact ID'
+        );
+
+        // Check invalid ID
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        CRM_RcBase_Api_Get::contactHasTag(-1, $tag_id);
+    }
 }
