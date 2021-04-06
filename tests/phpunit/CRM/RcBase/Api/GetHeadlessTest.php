@@ -197,7 +197,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
 
         // Check non-existent location type
         $this->assertNull(
-            CRM_RcBase_Api_Get::emailID($contact_id, 5),
+            CRM_RcBase_Api_Get::emailID($contact_id, $this->getNextAutoIncrementValue('civicrm_location_type')),
             'Not null returned on non-existent location type ID'
         );
 
@@ -242,7 +242,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
 
         // Check non-existent location type
         $this->assertNull(
-            CRM_RcBase_Api_Get::phoneID($contact_id, 5),
+            CRM_RcBase_Api_Get::phoneID($contact_id, $this->getNextAutoIncrementValue('civicrm_location_type')),
             'Not null returned on non-existent location type ID'
         );
 
@@ -287,7 +287,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
 
         // Check non-existent location type
         $this->assertNull(
-            CRM_RcBase_Api_Get::addressID($contact_id, 5),
+            CRM_RcBase_Api_Get::addressID($contact_id, $this->getNextAutoIncrementValue('civicrm_location_type')),
             'Not null returned on non-existent location type ID'
         );
 
@@ -337,7 +337,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
 
         // Check non-existent relationship type
         $this->assertNull(
-            CRM_RcBase_Api_Get::relationshipID($contact_id, $contact_id, 5),
+            CRM_RcBase_Api_Get::relationshipID($contact_id, $contact_id, $this->getNextAutoIncrementValue('civicrm_relationship_type')),
             'Not null returned on non-existent relationship type ID'
         );
 
