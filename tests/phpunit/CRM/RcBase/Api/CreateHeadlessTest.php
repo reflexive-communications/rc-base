@@ -144,7 +144,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
     /**
      * @throws CRM_Core_Exception
      */
-    public function testCreateEmailWithMissingRequiredFields()
+    public function testCreateEmailWithMissingRequiredFieldsThrowsException()
     {
         // Create contact
         $contact_id = $this->individualCreate([], self::getNextContactSequence());
@@ -155,6 +155,24 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         ];
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
         $this->expectExceptionMessage("Mandatory values missing", "Invalid exception message.");
+        CRM_RcBase_Api_Create::email($contact_id, $email);
+    }
+
+    /**
+     * @throws CRM_Core_Exception
+     */
+    public function testCreateEmailWithNonExistentContactThrowsException()
+    {
+        // Get non-existent contact ID
+        $contact_id = $this->getNextAutoIncrementValue('civicrm_contact');
+
+        // Create email
+        $email = [
+            'email' => 'ovidius@senate.rome',
+            'location_type_id' => 2,
+        ];
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("DB Error: constraint violation", "Invalid exception message.");
         CRM_RcBase_Api_Create::email($contact_id, $email);
     }
 
@@ -424,5 +442,67 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
         $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
         CRM_RcBase_Api_Create::activity(-5, $activity);
+    }
+
+    /**
+     * @throws CRM_Core_Exception
+     */
+    public function testTagContact()
+    {
+        // Create contact
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+
+        // Create tag
+        $tag = [
+            'name' => 'Test tag',
+        ];
+        $tag_id = $this->cvApi4Create('Tag', $tag);
+
+        // Number of entity tags already in DB
+        $all_entity_tag_old = $this->cvApi4Get('EntityTag', ['id']);
+
+        // Add tag to contact
+        $entity_tag_id = CRM_RcBase_Api_Create::tagContact($contact_id, $tag_id);
+
+        $all_entity_tag_new = $this->cvApi4Get('EntityTag', ['id']);
+
+        $this->assertCount(
+            count($all_entity_tag_old) + 1,
+            $all_entity_tag_new,
+            'No new entity tag created'
+        );
+
+        // Get from DB
+        $id = $this->cvApi4Get('EntityTag', ['id'], [
+            'entity_table=civicrm_contact',
+            "entity_id=${contact_id}",
+            "tag_id=${tag_id}",
+        ]);
+        $this->assertCount(1, $id, 'Not one result returned for "id"');
+
+        // Check valid ID
+        $this->assertSame($id[0]['id'], $entity_tag_id, 'Bad entity tag ID returned');
+
+        // Check invalid ID
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        CRM_RcBase_Api_Create::tagContact(-20, $tag_id);
+    }
+
+    /**
+     * @throws CRM_Core_Exception
+     */
+    public function testTagContactWithNonExistentTagThrowsException()
+    {
+        // Create contact
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+
+        // Get non-existent tag ID
+        $tag_id = $this->getNextAutoIncrementValue('civicrm_tag');
+
+        // Check non-existent tag ID
+        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
+        $this->expectExceptionMessage("DB Error: constraint violation", "Invalid exception message.");
+        CRM_RcBase_Api_Create::tagContact($contact_id, $tag_id);
     }
 }
