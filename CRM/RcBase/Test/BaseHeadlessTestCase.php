@@ -176,8 +176,6 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
      *                          ]
      *
      * @return array Results
-     *
-     * @throws CRM_Core_Exception
      */
     protected function cvApi4Get(string $entity, array $select = [], array $where = []): array
     {
@@ -203,15 +201,21 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
         $result = cv($command);
 
         // Check results
-        $this->assertIsArray($result, "Not an array returned from '${command}'");
+        if (!is_array($result)) {
+            $this->fail("Not an array returned from '${command}'");
+        }
 
         // Check each record
         foreach ($result as $record) {
-            $this->assertIsArray($record, "Not an array returned from '${command}'");
+            if (!is_array($result)) {
+                $this->fail("Not an array returned from '${command}'");
+            }
 
             // Check if selected fields are present
             foreach ($select as $item) {
-                $this->assertArrayHasKey($item, $record, "${item} not returned");
+                if (!array_key_exists($item, $record)) {
+                    $this->fail("${item} not returned");
+                }
             }
         }
 
@@ -225,8 +229,6 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
      * @param  array   $params  Params of entity
      *
      * @return int Created entity ID
-     *
-     * @throws CRM_Core_Exception
      */
     protected function cvApi4Create(string $entity, array $params = []): int
     {
@@ -245,10 +247,19 @@ class CRM_RcBase_Test_BaseHeadlessTestCase extends TestCase implements HeadlessI
         // Run command
         $result = cv($command);
 
-        $this->assertIsArray($result, "Not an array returned from '${command}'");
-        $this->assertEquals(1, count($result), "Not one result returned from '${command}'");
-        $this->assertIsArray($result[0], "Not an array returned from '${command}'");
-        $this->assertArrayHasKey('id', $result[0], 'ID not found.');
+        // Check results
+        if (!is_array($result)) {
+            $this->fail("Not an array returned from '${command}'");
+        }
+        if (count($result) != 1) {
+            $this->fail("Not one result returned from '${command}'");
+        }
+        if (!is_array($result[0])) {
+            $this->fail("Not an array returned from '${command}'");
+        }
+        if (!array_key_exists('id', $result[0])) {
+            $this->fail('ID not found.');
+        }
 
         return (int)$result[0]['id'];
     }
