@@ -433,7 +433,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
 
         // Check non-existent activities returned
         $activities = CRM_RcBase_Api_Get::allActivity($contact_id_target, 5);
-        $this->assertCount(0, $activities, 'Non existent activites returned');
+        $this->assertCount(0, $activities, 'Non existent activities returned');
 
         // Check activities when contact is source
         $activities = CRM_RcBase_Api_Get::allActivity(

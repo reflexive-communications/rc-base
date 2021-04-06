@@ -8,7 +8,9 @@
 class CRM_RcBase_Api_SaveHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCase
 {
     /**
-     * @throws CRM_Core_Exception
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public function testSaveTagWithNotTaggedContact()
     {
@@ -48,7 +50,9 @@ class CRM_RcBase_Api_SaveHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCa
     }
 
     /**
-     * @throws CRM_Core_Exception
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
      */
     public function testSaveTagWithTaggedContact()
     {
