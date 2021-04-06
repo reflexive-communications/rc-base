@@ -15,7 +15,7 @@ env:
 
 jobs:
   code-style:
-    name:    Code style check with PHP-CS-Fixer
+    name:    Code style check
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
