@@ -72,8 +72,8 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $contact = [
             'contact_type' => 'Individual',
         ];
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Update::entity('Contact', -5, $contact);
     }
 
@@ -88,8 +88,8 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $contact = [
             'contact_type' => 'Invalid contact type',
         ];
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("DB Error: syntax error", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('DB Error: syntax error', 'Invalid exception message.');
         CRM_RcBase_Api_Update::contact($contact_id, $contact);
     }
 
@@ -116,8 +116,8 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
 
         // Update new contact
         $contact_new = ['external_identifier' => $contact_previous['external_identifier'],];
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("DB Error: already exists", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('DB Error: already exists', 'Invalid exception message.');
         CRM_RcBase_Api_Update::contact($contact_id_new, $contact_new);
     }
 

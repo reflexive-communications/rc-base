@@ -39,5 +39,4 @@ class CRM_RcBase_Processor_UrlEncodedForm
     {
         return CRM_RcBase_Processor_Base::sanitize($_REQUEST);
     }
-
 }

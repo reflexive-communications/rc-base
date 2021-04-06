@@ -1,8 +1,9 @@
 <?php
 
-abstract class CRM_RcBase_Config {
-
+abstract class CRM_RcBase_Config
+{
     private $configName;
+
     private $configuration;
 
     /**
@@ -10,8 +11,9 @@ abstract class CRM_RcBase_Config {
      *
      * @param string $extensionName prefix for db.
      */
-    public function __construct(string $extensionName) {
-        $this->configName = $extensionName."_config";
+    public function __construct(string $extensionName)
+    {
+        $this->configName = $extensionName.'_config';
         $this->configuration = $this->defaultConfiguration();
     }
 
@@ -27,7 +29,8 @@ abstract class CRM_RcBase_Config {
      *
      * @return bool the status of the db write process.
      */
-    public function create(): bool {
+    public function create(): bool
+    {
         Civi::settings()->add([$this->configName => $this->configuration]);
         // check the save process with loading the saved content and compare
         // it with the current configuration
@@ -40,7 +43,8 @@ abstract class CRM_RcBase_Config {
      *
      * @return bool the status of the deletion process.
      */
-    public function remove(): bool {
+    public function remove(): bool
+    {
         Civi::settings()->revert($this->configName);
         // check the deletion process with loading the saved content and compare
         // it with null.
@@ -58,11 +62,12 @@ abstract class CRM_RcBase_Config {
      *
      * @throws CRM_Core_Exception.
      */
-    public function load(): void {
+    public function load(): void
+    {
         $conf = Civi::settings()->get($this->configName);
         // if not loaded well, it throws exception.
         if (is_null($conf) || !is_array($conf)) {
-            throw new CRM_Core_Exception($this->configName." config invalid.");
+            throw new CRM_Core_Exception($this->configName.' config invalid.');
         }
         $this->configuration = $conf;
     }
@@ -74,7 +79,8 @@ abstract class CRM_RcBase_Config {
      *
      * @return bool the status of the update process.
      */
-    public function update(array $newConfig): bool {
+    public function update(array $newConfig): bool
+    {
         Civi::settings()->set($this->configName, $newConfig);
         // check the save process with loading the saved content and compare
         // it with the newConfig configuration
@@ -93,9 +99,10 @@ abstract class CRM_RcBase_Config {
      *
      * @throws CRM_Core_Exception.
      */
-    public function get(): array {
+    public function get(): array
+    {
         if (is_null($this->configuration)) {
-            throw new CRM_Core_Exception($this->configName." config is missing.");
+            throw new CRM_Core_Exception($this->configName.' config is missing.');
         }
         return $this->configuration;
     }

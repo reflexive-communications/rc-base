@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
  */
 class CRM_RcBase_Processor_UrlEncodedFormTest extends TestCase
 {
-
     public function testParseGet()
     {
         unset($_GET);
@@ -48,5 +47,4 @@ class CRM_RcBase_Processor_UrlEncodedFormTest extends TestCase
         $_POST = $post;
         $this->assertSame($post_sanitized, CRM_RcBase_Processor_UrlEncodedForm::parsePost(), 'Invalid data returned.');
     }
-
 }

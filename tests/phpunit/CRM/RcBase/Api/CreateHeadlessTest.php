@@ -32,7 +32,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $data = $this->cvApi4Get(
             'Contact',
             ['contact_type', 'first_name', 'middle_name', 'last_name', 'external_identifier'],
-            ["id=".$id[0]['id']]
+            ['id='.$id[0]['id']]
         );
         $this->assertCount(1, $data, 'Not one result returned for "data"');
 
@@ -56,8 +56,8 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         CRM_RcBase_Api_Create::contact($contact);
 
         // Create same contact
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("DB Error: already exists", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('DB Error: already exists', 'Invalid exception message.');
         CRM_RcBase_Api_Create::contact($contact);
     }
 
@@ -83,7 +83,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $data = $this->cvApi4Get(
             'Contact',
             ['contact_type', 'first_name', 'middle_name', 'last_name', 'external_identifier'],
-            ["id=".$id[0]['id']]
+            ['id='.$id[0]['id']]
         );
         $this->assertCount(1, $data, 'Not one result returned for "data"');
 
@@ -124,7 +124,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $data = $this->cvApi4Get(
             'Email',
             ['email', 'location_type_id'],
-            ["id=".$id[0]['id']]
+            ['id='.$id[0]['id']]
         );
         $this->assertCount(1, $data, 'Not one result returned for "data"');
 
@@ -136,8 +136,8 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $this->assertSame($data[0], $email, 'Bad email data returned');
 
         // Check invalid ID
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Create::email(0, $email);
     }
 
@@ -153,8 +153,8 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $email = [
             'location_type_id' => 2,
         ];
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Mandatory values missing", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Mandatory values missing', 'Invalid exception message.');
         CRM_RcBase_Api_Create::email($contact_id, $email);
     }
 
@@ -171,8 +171,8 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
             'email' => 'ovidius@senate.rome',
             'location_type_id' => 2,
         ];
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("DB Error: constraint violation", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('DB Error: constraint violation', 'Invalid exception message.');
         CRM_RcBase_Api_Create::email($contact_id, $email);
     }
 
@@ -205,7 +205,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $data = $this->cvApi4Get(
             'Phone',
             ['phone', 'location_type_id'],
-            ["id=".$id[0]['id']]
+            ['id='.$id[0]['id']]
         );
         $this->assertCount(1, $data, 'Not one result returned for "data"');
 
@@ -217,8 +217,8 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $this->assertSame($data[0], $phone, 'Bad phone data returned');
 
         // Check invalid ID
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Create::phone(-4, $phone);
     }
 
@@ -251,7 +251,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $data = $this->cvApi4Get(
             'Address',
             ['city', 'location_type_id'],
-            ["id=".$id[0]['id']]
+            ['id='.$id[0]['id']]
         );
         $this->assertCount(1, $data, 'Not one result returned for "data"');
 
@@ -263,8 +263,8 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $this->assertSame($data[0], $address, 'Bad address data returned');
 
         // Check invalid ID
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Create::address(0, $address);
     }
 
@@ -304,7 +304,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $data = $this->cvApi4Get(
             'Relationship',
             ['contact_id_b', 'relationship_type_id', 'description'],
-            ["id=".$id[0]['id']]
+            ['id='.$id[0]['id']]
         );
         $this->assertCount(1, $data, 'Not one result returned for "data"');
 
@@ -316,8 +316,8 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $this->assertSame($data[0], $relationship, 'Bad relationship data returned');
 
         // Check invalid ID
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Create::relationship(0, $relationship);
     }
 
@@ -355,7 +355,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $data = $this->cvApi4Get(
             'Contribution',
             ['financial_type_id', 'total_amount', 'trxn_id'],
-            ["id=".$id[0]['id']]
+            ['id='.$id[0]['id']]
         );
         $this->assertCount(1, $data, 'Not one result returned for "data"');
 
@@ -367,8 +367,8 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $this->assertSame($data[0], $contribution, 'Bad contribution data returned');
 
         // Check invalid ID
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Create::contribution(-20, $contribution);
     }
 
@@ -389,8 +389,8 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         CRM_RcBase_Api_Create::contribution($contact_id, $contribution);
 
         // Create same contribution
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Duplicate error", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Duplicate error', 'Invalid exception message.');
         CRM_RcBase_Api_Create::contribution($contact_id, $contribution);
     }
 
@@ -426,7 +426,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $data = $this->cvApi4Get(
             'Activity',
             ['activity_type_id', 'subject'],
-            ["id=".$id[0]['id']]
+            ['id='.$id[0]['id']]
         );
         $this->assertCount(1, $data, 'Not one result returned for "data"');
 
@@ -439,8 +439,8 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $this->assertSame($data[0], $activity, 'Bad activity data returned');
 
         // Check invalid ID
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Create::activity(-5, $activity);
     }
 
@@ -484,8 +484,8 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $this->assertSame($id[0]['id'], $entity_tag_id, 'Bad entity tag ID returned');
 
         // Check invalid ID
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Create::tagContact(-20, $tag_id);
     }
 
@@ -501,8 +501,8 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $tag_id = $this->getNextAutoIncrementValue('civicrm_tag');
 
         // Check non-existent tag ID
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("DB Error: constraint violation", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('DB Error: constraint violation', 'Invalid exception message.');
         CRM_RcBase_Api_Create::tagContact($contact_id, $tag_id);
     }
 }

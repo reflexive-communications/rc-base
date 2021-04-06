@@ -58,11 +58,11 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
         );
 
         // Check empty email
-        $this->assertNull(CRM_RcBase_Api_Get::contactIDFromEmail(""), 'Not null returned on empty email');
+        $this->assertNull(CRM_RcBase_Api_Get::contactIDFromEmail(''), 'Not null returned on empty email');
 
         // Check non-existent email
         $this->assertNull(
-            CRM_RcBase_Api_Get::contactIDFromEmail("nonexistent@rome.com"),
+            CRM_RcBase_Api_Get::contactIDFromEmail('nonexistent@rome.com'),
             'Not null returned on non-existent email'
         );
     }
@@ -99,11 +99,11 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
         );
 
         // Check empty id
-        $this->assertNull(CRM_RcBase_Api_Get::contactIDFromExternalID(""), 'Not null returned on empty email');
+        $this->assertNull(CRM_RcBase_Api_Get::contactIDFromExternalID(''), 'Not null returned on empty email');
 
         // Check non-existent id
         $this->assertNull(
-            CRM_RcBase_Api_Get::contactIDFromExternalID("11-nonexistent"),
+            CRM_RcBase_Api_Get::contactIDFromExternalID('11-nonexistent'),
             'Not null returned on non-existent email'
         );
     }
@@ -154,8 +154,8 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
         );
 
         // Check invalid ID
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Get::contactData(0);
     }
 
@@ -166,8 +166,8 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
      */
     public function testGetContactDataWithInvalidId()
     {
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Get::contactData(-5);
     }
 
@@ -211,8 +211,8 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
         );
 
         // Check invalid ID
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Get::emailID(-1, $email['location_type_id']);
     }
 
@@ -256,8 +256,8 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
         );
 
         // Check invalid ID
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Get::phoneID(-5, $phone['location_type_id']);
     }
 
@@ -301,8 +301,8 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
         );
 
         // Check invalid ID
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Get::addressID($contact_id, 0);
     }
 
@@ -352,8 +352,8 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
         );
 
         // Check invalid ID
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Get::relationshipID($contact_id, $contact_id_other, -5);
     }
 
@@ -458,8 +458,8 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
         $this->assertCount(1, $activities, 'Bad number of activities when contact is the assignee');
 
         // Check invalid ID
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Get::allActivity($contact_id_target, 5, -5);
     }
 
@@ -509,8 +509,8 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCas
         );
 
         // Check invalid ID
-        $this->expectException(CRM_Core_Exception::class, "Invalid exception class");
-        $this->expectExceptionMessage("Invalid ID", "Invalid exception message.");
+        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
+        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
         CRM_RcBase_Api_Get::contactHasTag(-1, $tag_id);
     }
 }

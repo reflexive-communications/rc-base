@@ -251,7 +251,6 @@ class CRM_RcBase_Api_Get
         int $relationship_type_id,
         bool $check_permissions = false
     ): ?int {
-
         if ($contact_id < 1 || $other_contact_id < 1 || $relationship_type_id < 1) {
             throw new CRM_Core_Exception('Invalid ID.');
         }

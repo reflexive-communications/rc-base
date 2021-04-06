@@ -15,22 +15,24 @@ const DEFAULT_CONFIGURATION = [
 ];
 const CONFIG_NAME = "rcBase_test";
 
-class TestConfig extends CRM_RcBase_Config {
-    public function defaultConfiguration(): array {
+class TestConfig extends CRM_RcBase_Config
+{
+    public function defaultConfiguration(): array
+    {
         return DEFAULT_CONFIGURATION;
     }
 }
 /**
  * Config class test cases.
- * It tests the testConfig class that extends from the config and implements the 
+ * It tests the testConfig class that extends from the config and implements the
  * defaultConfiguration method.
  *
  * @group headless
  */
-class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface {
-
-
-    public function setUpHeadless() {
+class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface
+{
+    public function setUpHeadless()
+    {
         return Test::headless()
             ->installMe(__DIR__)
             ->apply();
@@ -40,7 +42,8 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
      *
      * @throws CRM_Extension_Exception_ParseException
      */
-    public static function setUpBeforeClass(): void {
+    public static function setUpBeforeClass(): void
+    {
         Test::headless()
             ->installMe(__DIR__)
             ->apply(true);
@@ -50,36 +53,42 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
      *
      * @throws CRM_Extension_Exception_ParseException
      */
-    public static function tearDownAfterClass(): void {
+    public static function tearDownAfterClass(): void
+    {
         Test::headless()
             ->uninstallMe(__DIR__)
             ->apply(true);
     }
 
-    public function setUp(): void {
+    public function setUp(): void
+    {
         parent::setUp();
     }
 
-    public function tearDown(): void {
+    public function tearDown(): void
+    {
         $this->getConfig()->remove();
         parent::tearDown();
     }
 
-    private function getConfig() {
+    private function getConfig()
+    {
         return new TestConfig(CONFIG_NAME);
     }
 
     /**
      * It checks that the create function works well.
      */
-    public function testCreate() {
+    public function testCreate()
+    {
         $config = $this->getConfig();
         self::assertTrue($config->create(), "Create config has to be successful.");
         $cfg = $config->get();
         self::assertSame(DEFAULT_CONFIGURATION, $cfg, "Invalid configuration has been returned.");
         self::assertTrue($config->create(), "Create config has to be successful multiple times.");
     }
-    public function testCreateAfterChanges() {
+    public function testCreateAfterChanges()
+    {
         $config = $this->getConfig();
         self::assertTrue($config->create(), "Create config has to be successful.");
         $cfg = $config->get();
@@ -108,7 +117,8 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
     /**
      * It checks that the remove function works well.
      */
-    public function testRemove() {
+    public function testRemove()
+    {
         $config = $this->getConfig();
         // preset the config.
         Civi::settings()->add([CONFIG_NAME => DEFAULT_CONFIGURATION]);
@@ -118,7 +128,8 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
     /**
      * It checks that the get function works well.
      */
-    public function testGet() {
+    public function testGet()
+    {
         $config = $this->getConfig();
         // preset the config.
         Civi::settings()->add([CONFIG_NAME =>DEFAULT_CONFIGURATION]);
@@ -134,7 +145,8 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
     /**
      * It checks that the update function works well.
      */
-    public function testUpdate() {
+    public function testUpdate()
+    {
         $config = $this->getConfig();
         // preset the config.
         Civi::settings()->add([CONFIG_NAME => DEFAULT_CONFIGURATION]);
@@ -154,13 +166,15 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
     /**
      * It checks that the get function works well.
      */
-    public function testLoadEmptyConfig() {
+    public function testLoadEmptyConfig()
+    {
         $config = $this->getConfig();
         self::expectException(CRM_Core_Exception::class, "Invalid exception class.");
         self::expectExceptionMessage(CONFIG_NAME."_config config invalid.", "Invalid exception message.");
         self::assertEmpty($config->load(), "Load result supposed to be empty.");
     }
-    public function testLoadCreatedConfig() {
+    public function testLoadCreatedConfig()
+    {
         $config = $this->getConfig();
         // preset the config.
         $config->create();
