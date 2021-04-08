@@ -337,7 +337,11 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
 
         // Check non-existent relationship type
         self::assertNull(
-            CRM_RcBase_Api_Get::relationshipID($contact_id, $contact_id, CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_relationship_type')),
+            CRM_RcBase_Api_Get::relationshipID(
+                $contact_id,
+                $contact_id,
+                CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_relationship_type')
+            ),
             'Not null returned on non-existent relationship type ID'
         );
 
