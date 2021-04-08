@@ -5,7 +5,7 @@
  *
  * @group headless
  */
-class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTestCase
+class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
 {
     /**
      * @throws CRM_Core_Exception
@@ -20,15 +20,15 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
             'external_identifier' => self::getNextExternalID(),
             'job_title' => 'consul',
         ];
-        $contact_id = $this->cvApi4Create('Contact', $contact);
+        $contact_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Contact', $contact);
 
         // Old data
-        $data_old = $this->cvApi4Get(
+        $data_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
             'Contact',
             ['contact_type', 'first_name', 'last_name', 'middle_name', 'external_identifier', 'job_title'],
             ["id=${contact_id}"]
         );
-        $all_contact_old = $this->cvApi4Get('Contact', ['id']);
+        $all_contact_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Contact', ['id']);
 
         // Change data & update
         $contact = [
@@ -45,22 +45,22 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         CRM_RcBase_Api_Update::contact($contact_id, $contact);
 
         // New data
-        $data_new = $this->cvApi4Get(
+        $data_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
             'Contact',
             ['contact_type', 'first_name', 'last_name', 'middle_name', 'external_identifier', 'job_title'],
             ["id=${contact_id}"]
         );
-        $all_contact_new = $this->cvApi4Get('Contact', ['id']);
+        $all_contact_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Contact', ['id']);
 
         // Check number of entities not changed
-        $this->assertCount(count($all_contact_old), $all_contact_new, 'New contact created');
+        self::assertCount(count($all_contact_old), $all_contact_new, 'New contact created');
 
         // Check if data changed
-        $this->assertNotSame($data_old, $data_new, 'Data not changed.');
+        self::assertNotSame($data_old, $data_new, 'Data not changed.');
 
         // Check data
         unset($data_new[0]['id']);
-        $this->assertSame($data_new[0], $contact, 'Bad updated contact data.');
+        self::assertSame($data_new[0], $contact, 'Bad updated contact data.');
     }
 
     /**
@@ -72,8 +72,8 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $contact = [
             'contact_type' => 'Individual',
         ];
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
-        $this->expectExceptionMessage('Invalid ID', 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Invalid ID');
         CRM_RcBase_Api_Update::entity('Contact', -5, $contact);
     }
 
@@ -88,8 +88,8 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         $contact = [
             'contact_type' => 'Invalid contact type',
         ];
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
-        $this->expectExceptionMessage('DB Error: syntax error', 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('DB Error: syntax error');
         CRM_RcBase_Api_Update::contact($contact_id, $contact);
     }
 
@@ -104,7 +104,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
             'first_name' => 'Sulla',
             'external_identifier' => self::getNextExternalID(),
         ];
-        $contact_id_previous = $this->cvApi4Create('Contact', $contact_previous);
+        $contact_id_previous = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Contact', $contact_previous);
 
         // Create new contact
         $contact_new = [
@@ -112,12 +112,12 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
             'first_name' => 'Caesar',
             'external_identifier' => self::getNextExternalID(),
         ];
-        $contact_id_new = $this->cvApi4Create('Contact', $contact_new);
+        $contact_id_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Contact', $contact_new);
 
         // Update new contact
         $contact_new = ['external_identifier' => $contact_previous['external_identifier'],];
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class');
-        $this->expectExceptionMessage('DB Error: already exists', 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('DB Error: already exists');
         CRM_RcBase_Api_Update::contact($contact_id_new, $contact_new);
     }
 
@@ -134,15 +134,15 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
             'email' => 'ceasar@senate.rome',
             'location_type_id' => 1,
         ];
-        $email_id = $this->cvApi4Create('Email', $email);
+        $email_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Email', $email);
 
         // Old data
-        $data_old = $this->cvApi4Get(
+        $data_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
             'Email',
             ['contact_id', 'email', 'location_type_id'],
             ["id=${email_id}"]
         );
-        $all_email_old = $this->cvApi4Get('Email', ['id']);
+        $all_email_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Email', ['id']);
 
         // Change data & update
         $email['email'] = 'julius@senate.rome';
@@ -150,22 +150,22 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
         CRM_RcBase_Api_Update::email($email_id, $email);
 
         // New data
-        $data_new = $this->cvApi4Get(
+        $data_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
             'Email',
             ['contact_id', 'email', 'location_type_id'],
             ["id=${email_id}"]
         );
-        $all_email_new = $this->cvApi4Get('Email', ['id']);
+        $all_email_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Email', ['id']);
 
         // Check number of entities not changed
-        $this->assertCount(count($all_email_old), $all_email_new, 'New email created');
+        self::assertCount(count($all_email_old), $all_email_new, 'New email created');
 
         // Check if data changed
-        $this->assertNotSame($data_old, $data_new, 'Data not changed.');
+        self::assertNotSame($data_old, $data_new, 'Data not changed.');
 
         // Check data
         unset($data_new[0]['id']);
-        $this->assertSame($data_new[0], $email, 'Bad updated email data.');
+        self::assertSame($data_new[0], $email, 'Bad updated email data.');
     }
 
     /**
@@ -181,37 +181,37 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
             'phone' => '+1234',
             'location_type_id' => 1,
         ];
-        $phone_id = $this->cvApi4Create('Phone', $phone);
+        $phone_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Phone', $phone);
 
         // Old data
-        $data_old = $this->cvApi4Get(
+        $data_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
             'Phone',
             ['contact_id', 'phone', 'location_type_id'],
             ["id=${phone_id}"]
         );
-        $all_phone_old = $this->cvApi4Get('Phone', ['id']);
+        $all_phone_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Phone', ['id']);
 
         // Change data & update
         $phone['phone'] = '+98765';
         CRM_RcBase_Api_Update::phone($phone_id, $phone);
 
         // New data
-        $data_new = $this->cvApi4Get(
+        $data_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
             'Phone',
             ['contact_id', 'phone', 'location_type_id'],
             ["id=${phone_id}"]
         );
-        $all_phone_new = $this->cvApi4Get('Phone', ['id']);
+        $all_phone_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Phone', ['id']);
 
         // Check number of entities not changed
-        $this->assertCount(count($all_phone_old), $all_phone_new, 'New phone created');
+        self::assertCount(count($all_phone_old), $all_phone_new, 'New phone created');
 
         // Check if data changed
-        $this->assertNotSame($data_old, $data_new, 'Data not changed.');
+        self::assertNotSame($data_old, $data_new, 'Data not changed.');
 
         // Check data
         unset($data_new[0]['id']);
-        $this->assertSame($data_new[0], $phone, 'Bad updated phone data.');
+        self::assertSame($data_new[0], $phone, 'Bad updated phone data.');
     }
 
     /**
@@ -227,37 +227,37 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
             'city' => 'Rome',
             'location_type_id' => 1,
         ];
-        $address_id = $this->cvApi4Create('Address', $address);
+        $address_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Address', $address);
 
         // Old data
-        $data_old = $this->cvApi4Get(
+        $data_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
             'Address',
             ['contact_id', 'city', 'location_type_id'],
             ["id=${address_id}"]
         );
-        $all_address_old = $this->cvApi4Get('Address', ['id']);
+        $all_address_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Address', ['id']);
 
         // Change data & update
         $address['city'] = 'Alexandria';
         CRM_RcBase_Api_Update::address($address_id, $address);
 
         // New data
-        $data_new = $this->cvApi4Get(
+        $data_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
             'Address',
             ['contact_id', 'city', 'location_type_id'],
             ["id=${address_id}"]
         );
-        $all_address_new = $this->cvApi4Get('Address', ['id']);
+        $all_address_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Address', ['id']);
 
         // Check number of entities not changed
-        $this->assertCount(count($all_address_old), $all_address_new, 'New address created');
+        self::assertCount(count($all_address_old), $all_address_new, 'New address created');
 
         // Check if data changed
-        $this->assertNotSame($data_old, $data_new, 'Data not changed.');
+        self::assertNotSame($data_old, $data_new, 'Data not changed.');
 
         // Check data
         unset($data_new[0]['id']);
-        $this->assertSame($data_new[0], $address, 'Bad updated address data.');
+        self::assertSame($data_new[0], $address, 'Bad updated address data.');
     }
 
     /**
@@ -276,37 +276,37 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
             'relationship_type_id' => 1,
             'description' => 'Test',
         ];
-        $relationship_id = $this->cvApi4Create('Relationship', $relationship);
+        $relationship_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Relationship', $relationship);
 
         // Old data
-        $data_old = $this->cvApi4Get(
+        $data_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
             'Relationship',
             ['contact_id_a', 'contact_id_b', 'relationship_type_id', 'description'],
             ["id=${relationship_id}"]
         );
-        $all_relationship_old = $this->cvApi4Get('Relationship', ['id']);
+        $all_relationship_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Relationship', ['id']);
 
         // Change data & update
         $relationship['contact_id_b'] = $contact_id_other_new;
         CRM_RcBase_Api_Update::relationship($relationship_id, $relationship);
 
         // New data
-        $data_new = $this->cvApi4Get(
+        $data_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
             'Relationship',
             ['contact_id_a', 'contact_id_b', 'relationship_type_id', 'description'],
             ["id=${relationship_id}"]
         );
-        $all_relationship_new = $this->cvApi4Get('Relationship', ['id']);
+        $all_relationship_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Relationship', ['id']);
 
         // Check number of entities not changed
-        $this->assertCount(count($all_relationship_old), $all_relationship_new, 'New relationship created');
+        self::assertCount(count($all_relationship_old), $all_relationship_new, 'New relationship created');
 
         // Check if data changed
-        $this->assertNotSame($data_old, $data_new, 'Data not changed.');
+        self::assertNotSame($data_old, $data_new, 'Data not changed.');
 
         // Check data
         unset($data_new[0]['id']);
-        $this->assertSame($data_new[0], $relationship, 'Bad updated address data.');
+        self::assertSame($data_new[0], $relationship, 'Bad updated address data.');
     }
 
     /**
@@ -324,38 +324,38 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Test_BaseHeadlessTest
             'activity_type_id' => 1,
             'subject' => 'Test',
         ];
-        $activity_id = $this->cvApi4Create('Activity', $activity);
+        $activity_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Activity', $activity);
 
         // Old data
-        $data_old = $this->cvApi4Get(
+        $data_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
             'Activity',
             ['activity_type_id', 'subject'],
             ["id=${activity_id}"]
         );
-        $all_activity_old = $this->cvApi4Get('Activity', ['id']);
+        $all_activity_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Activity', ['id']);
 
         // Change data & update
         $activity['activity_type_id'] = 2;
         CRM_RcBase_Api_Update::activity($activity_id, $activity);
 
         // New data
-        $data_new = $this->cvApi4Get(
+        $data_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
             'Activity',
             ['activity_type_id', 'subject'],
             ["id=${activity_id}"]
         );
-        $all_activity_new = $this->cvApi4Get('Activity', ['id']);
+        $all_activity_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Activity', ['id']);
 
         // Check number of entities not changed
-        $this->assertCount(count($all_activity_old), $all_activity_new, 'New activity created');
+        self::assertCount(count($all_activity_old), $all_activity_new, 'New activity created');
 
         // Check if data changed
-        $this->assertNotSame($data_old, $data_new, 'Data not changed.');
+        self::assertNotSame($data_old, $data_new, 'Data not changed.');
 
         // Check data
         unset($data_new[0]['id']);
         unset($activity['source_contact_id']);
         unset($activity['target_contact_id']);
-        $this->assertSame($data_new[0], $activity, 'Bad updated address data.');
+        self::assertSame($data_new[0], $activity, 'Bad updated address data.');
     }
 }
