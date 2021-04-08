@@ -68,7 +68,7 @@ XML;
             ],
         ];
         $result = CRM_RcBase_Processor_XML::parse($xml_string);
-        $this->assertSame($expected, $result, 'Invalid XML returned.');
+        self::assertSame($expected, $result, 'Invalid XML returned.');
     }
 
     /**
@@ -110,9 +110,9 @@ XML;
 
         $result = CRM_RcBase_Processor_XML::parse($xml_string, false);
 
-        $this->assertInstanceOf(SimpleXMLElement::class, $result, 'Not a SimpleXMLElement returned.');
-        $this->assertEquals($expected, $result, 'Invalid XML returned.');
-        $this->assertEquals($expected->asXML(), $result->asXML(), 'Different XML returned.');
+        self::assertInstanceOf(SimpleXMLElement::class, $result, 'Not a SimpleXMLElement returned.');
+        self::assertEquals($expected, $result, 'Invalid XML returned.');
+        self::assertEquals($expected->asXML(), $result->asXML(), 'Different XML returned.');
     }
 
     /**
@@ -121,11 +121,14 @@ XML;
     public function testInvalidXmlThrowsException()
     {
         $invalid_xml = '<?xml version="1.0"?><movies><movie><title>Star Wars</title>';
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage('Invalid XML received', 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Invalid XML received');
         CRM_RcBase_Processor_XML::parse($invalid_xml);
     }
 
+    /**
+     * @throws \CRM_Core_Exception
+     */
     public function testParseFileStream()
     {
         $expected = [
@@ -141,7 +144,7 @@ XML;
             ],
         ];
         $result = CRM_RcBase_Processor_XML::parseStream('file://'.__DIR__.'/test.xml');
-        $this->assertSame($expected, $result, 'Invalid XML returned.');
+        self::assertSame($expected, $result, 'Invalid XML returned.');
     }
 
     /**
@@ -215,9 +218,12 @@ XML;
         // Restore original wrapper
         stream_wrapper_restore('php');
 
-        $this->assertSame($expected, $result, 'Invalid XML returned.');
+        self::assertSame($expected, $result, 'Invalid XML returned.');
     }
 
+    /**
+     * @throws \CRM_Core_Exception
+     */
     public function testSkipXxeContent()
     {
         $xxe_xml = <<<XML
@@ -234,6 +240,6 @@ XML;
 
         $result = CRM_RcBase_Processor_XML::parse($xxe_xml);
 
-        $this->assertSame($expected, $result, 'Invalid XML returned.');
+        self::assertSame($expected, $result, 'Invalid XML returned.');
     }
 }

@@ -74,7 +74,7 @@ class CRM_RcBase_Processor_JSONTest extends TestCase
     public function testValidJson($json, $object)
     {
         $result = CRM_RcBase_Processor_JSON::parse($json);
-        $this->assertSame($object, $result, 'Invalid JSON returned.');
+        self::assertSame($object, $result, 'Invalid JSON returned.');
     }
 
     /**
@@ -83,19 +83,25 @@ class CRM_RcBase_Processor_JSONTest extends TestCase
     public function testInvalidJsonThrowsException()
     {
         $json = '["string 1"=,"string 2"]';
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage('Invalid JSON received', 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Invalid JSON received');
         CRM_RcBase_Processor_JSON::parse($json);
     }
 
+    /**
+     * @throws \CRM_Core_Exception
+     */
     public function testParseDataStream()
     {
         $base64_enc = 'eyLDlsOcw5PFkMOaw4nDgcWww40iOiAiw7bDvMOzxZHDusOpw6HFscOtIn0K';
         $expected = ['ÖÜÓŐÚÉÁŰÍ' => 'öüóőúéáűí'];
         $result = CRM_RcBase_Processor_JSON::parseStream('data://text/plain;base64,'.$base64_enc);
-        $this->assertSame($expected, $result, 'Invalid JSON returned.');
+        self::assertSame($expected, $result, 'Invalid JSON returned.');
     }
 
+    /**
+     * @throws \CRM_Core_Exception
+     */
     public function testParseFileStream()
     {
         $expected = [
@@ -115,13 +121,13 @@ class CRM_RcBase_Processor_JSONTest extends TestCase
                 ],
         ];
         $result = CRM_RcBase_Processor_JSON::parseStream('file://'.__DIR__.'/test.json');
-        $this->assertSame($expected, $result, 'Invalid JSON returned.');
+        self::assertSame($expected, $result, 'Invalid JSON returned.');
     }
 
     public function testFailedParseStreamThrowsException()
     {
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage('Failed to open stream', 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Failed to open stream');
         CRM_RcBase_Processor_JSON::parseStream('file://'.__DIR__.'/non-existent.json');
     }
 
@@ -143,7 +149,7 @@ class CRM_RcBase_Processor_JSONTest extends TestCase
             = '{"0":"string","1":"5","2":5,"3":-5,"4":1.1,"5":true,"field_1":"value_2","field_2":"value_2","6":["a","b","c"],"ÖÜÓŐÚÉÁŰÍ":"öüóőúéáűí"}';
 
         $result = CRM_RcBase_Processor_JSON::encode($data);
-        $this->assertSame($json, $result, 'Invalid JSON returned.');
+        self::assertSame($json, $result, 'Invalid JSON returned.');
     }
 
     /**
@@ -178,6 +184,6 @@ class CRM_RcBase_Processor_JSONTest extends TestCase
         // Parse raw data from the request body
         $result = CRM_RcBase_Processor_JSON::parsePost();
 
-        $this->assertSame($expected, $result, 'Invalid JSON returned.');
+        self::assertSame($expected, $result, 'Invalid JSON returned.');
     }
 }

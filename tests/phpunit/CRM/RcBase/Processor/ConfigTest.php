@@ -89,7 +89,7 @@ class CRM_RcBase_Processor_ConfigTest extends TestCase
     public function testParseIniString($ini_string, $expected)
     {
         $result = CRM_RcBase_Processor_Config::parseIniString($ini_string);
-        $this->assertSame($expected, $result, 'Failed to parse ini string');
+        self::assertSame($expected, $result, 'Failed to parse ini string');
     }
 
     /**
@@ -104,7 +104,7 @@ class CRM_RcBase_Processor_ConfigTest extends TestCase
     public function testParsingHeaders($ini_string, $process_sections, $expected)
     {
         $result = CRM_RcBase_Processor_Config::parseIniString($ini_string, $process_sections);
-        $this->assertSame($expected, $result, 'Failed to parse ini string');
+        self::assertSame($expected, $result, 'Failed to parse ini string');
     }
 
     /**
@@ -113,8 +113,8 @@ class CRM_RcBase_Processor_ConfigTest extends TestCase
     public function testParseInvalidStringThrowsException()
     {
         $ini_string = 'options=off second=no newline';
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage('Failed to parse ini string', 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Failed to parse ini string');
         CRM_RcBase_Processor_Config::parseIniString($ini_string);
     }
 
@@ -126,7 +126,7 @@ class CRM_RcBase_Processor_ConfigTest extends TestCase
         $ini_string = 'bool=true';
         $expected = ['bool' => '1',];
         $result = CRM_RcBase_Processor_Config::parseIniString($ini_string, true, INI_SCANNER_NORMAL);
-        $this->assertSame($expected, $result, 'Failed to parse ini string');
+        self::assertSame($expected, $result, 'Failed to parse ini string');
     }
 
     /**
@@ -137,7 +137,7 @@ class CRM_RcBase_Processor_ConfigTest extends TestCase
         $ini_string = 'bool=on';
         $expected = ['bool' => true,];
         $result = CRM_RcBase_Processor_Config::parseIniString($ini_string, true, INI_SCANNER_TYPED);
-        $this->assertSame($expected, $result, 'Failed to parse ini string');
+        self::assertSame($expected, $result, 'Failed to parse ini string');
     }
 
     /**
@@ -156,7 +156,7 @@ class CRM_RcBase_Processor_ConfigTest extends TestCase
             ],
         ];
         $result = CRM_RcBase_Processor_Config::parseIniFile($filename);
-        $this->assertSame($expected, $result, 'Failed to parse ini file');
+        self::assertSame($expected, $result, 'Failed to parse ini file');
     }
 
     /**
@@ -174,7 +174,7 @@ class CRM_RcBase_Processor_ConfigTest extends TestCase
             ],
         ];
         $result = CRM_RcBase_Processor_Config::parseIniFile($filename);
-        $this->assertSame($expected, $result, 'Failed to parse ini file');
+        self::assertSame($expected, $result, 'Failed to parse ini file');
     }
 
     /**
@@ -183,8 +183,8 @@ class CRM_RcBase_Processor_ConfigTest extends TestCase
     public function testMissingIniFileThrowsException()
     {
         $filename = __DIR__.'/non-existent.ini';
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage('Failed to parse ini file', 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Failed to parse ini file');
         CRM_RcBase_Processor_Config::parseIniFile($filename);
     }
 }

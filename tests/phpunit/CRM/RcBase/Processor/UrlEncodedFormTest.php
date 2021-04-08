@@ -14,7 +14,7 @@ class CRM_RcBase_Processor_UrlEncodedFormTest extends TestCase
         unset($_GET);
         $get = ['token' => '12345', 'route' => 'echo',];
         $_GET = $get;
-        $this->assertSame($get, CRM_RcBase_Processor_UrlEncodedForm::parseGet(), 'Invalid data returned.');
+        self::assertSame($get, CRM_RcBase_Processor_UrlEncodedForm::parseGet(), 'Invalid data returned.');
     }
 
     public function testParsePost()
@@ -22,7 +22,7 @@ class CRM_RcBase_Processor_UrlEncodedFormTest extends TestCase
         unset($_POST);
         $post = ['string' => 'string', 'integer' => 1, 'bool' => true];
         $_POST = $post;
-        $this->assertSame($post, CRM_RcBase_Processor_UrlEncodedForm::parsePost(), 'Invalid data returned.');
+        self::assertSame($post, CRM_RcBase_Processor_UrlEncodedForm::parsePost(), 'Invalid data returned.');
     }
 
     public function testParseRequest()
@@ -36,7 +36,7 @@ class CRM_RcBase_Processor_UrlEncodedFormTest extends TestCase
         $expected = ['token' => '12345', 'route' => 'echo', 'string' => 'string', 'integer' => 1, 'bool' => true];
 
         $_REQUEST = array_merge($get, $post);
-        $this->assertSame($expected, CRM_RcBase_Processor_UrlEncodedForm::parseRequest(), 'Invalid data returned.');
+        self::assertSame($expected, CRM_RcBase_Processor_UrlEncodedForm::parseRequest(), 'Invalid data returned.');
     }
 
     public function testSanitize()
@@ -45,6 +45,6 @@ class CRM_RcBase_Processor_UrlEncodedFormTest extends TestCase
         $post = ['string  ' => 'string', 'integer<script>hack</script>' => 1, 'bool' => true];
         $post_sanitized = ['string' => 'string', 'integerhack' => 1, 'bool' => true];
         $_POST = $post;
-        $this->assertSame($post_sanitized, CRM_RcBase_Processor_UrlEncodedForm::parsePost(), 'Invalid data returned.');
+        self::assertSame($post_sanitized, CRM_RcBase_Processor_UrlEncodedForm::parsePost(), 'Invalid data returned.');
     }
 }
