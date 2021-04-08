@@ -28,6 +28,7 @@ class CRM_RcBase_Test_UtilsBasicTest extends TestCase
     {
         $test = new ReflectionTestClass();
         self::expectException(Error::class);
+        self::expectExceptionMessage('Call to protected method');
         $test->privateMethod();
     }
 
@@ -35,6 +36,7 @@ class CRM_RcBase_Test_UtilsBasicTest extends TestCase
     {
         $test = new ReflectionTestClass();
         self::expectException(Error::class);
+        self::expectExceptionMessage('Cannot access private property');
         $test->restricted = 'public';
     }
 
