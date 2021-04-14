@@ -20,7 +20,7 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
     {
         // not set.
         $result = CRM_RcBase_Processor_Base::detectContentType();
-        $this->assertEquals('CRM_RcBase_Processor_UrlEncodedForm', $result, 'Invalid class returned.');
+        self::assertEquals('CRM_RcBase_Processor_UrlEncodedForm', $result, 'Invalid class returned.');
         $testData = [
             'application/json' => 'CRM_RcBase_Processor_JSON',
             'application/javascript' => 'CRM_RcBase_Processor_JSON',
@@ -32,7 +32,7 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         foreach ($testData as $k => $v) {
             $_SERVER['CONTENT_TYPE'] = $k;
             $result = CRM_RcBase_Processor_Base::detectContentType();
-            $this->assertEquals($v, $result, 'Invalid class returned.');
+            self::assertEquals($v, $result, 'Invalid class returned.');
         }
     }
 
@@ -70,7 +70,7 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
     public function testSanitizeString($input, $expected)
     {
         $result = CRM_RcBase_Processor_Base::sanitizeString($input);
-        $this->assertEquals($expected, $result, 'Invalid sanitized string returned.');
+        self::assertEquals($expected, $result, 'Invalid sanitized string returned.');
     }
 
     /**
@@ -103,7 +103,7 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
     public function testSanitizeWithBasicInputTypes($input, $expected)
     {
         $result = CRM_RcBase_Processor_Base::sanitize($input);
-        $this->assertEquals($expected, $result, 'Invalid sanitized value returned.');
+        self::assertEquals($expected, $result, 'Invalid sanitized value returned.');
     }
 
     /**
@@ -164,7 +164,7 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
             'UTF-8' => 'kéményŐÜÖÓúőü$!#~`\\|',
         ];
         $result = CRM_RcBase_Processor_Base::sanitize($input);
-        $this->assertEquals($expected, $result, 'Invalid sanitized array returned.');
+        self::assertEquals($expected, $result, 'Invalid sanitized array returned.');
     }
 
     public function testValidateInputMissingTypeThrowsException()
@@ -174,8 +174,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $name = 'testname';
         $required = false;
         $allowedValues = [];
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage('Variable type missing', 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Variable type missing');
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name, $required, $allowedValues);
     }
 
@@ -186,8 +186,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $name = '';
         $required = false;
         $allowedValues = [];
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage('Variable name missing', 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Variable name missing');
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name, $required, $allowedValues);
     }
 
@@ -198,8 +198,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $name = 'testname';
         $required = true;
         $allowedValues = [];
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage('Missing parameter: '.$name, 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Missing parameter: '.$name);
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name, $required, $allowedValues);
     }
 
@@ -210,8 +210,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $name = 'testname';
         $required = false;
         $allowedValues = [];
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage('Not supported type: '.$type, 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Not supported type: '.$type);
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name, $required, $allowedValues);
     }
 
@@ -222,8 +222,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $name = 'testname';
         $required = false;
         $allowedValues = ['ON', 'OFF'];
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage('Not allowed value for: '.$name.' ('.$value.')', 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Not allowed value for: '.$name.' ('.$value.')');
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name, $required, $allowedValues);
     }
 
@@ -233,8 +233,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $type = 'string';
         $name = 'array instead string';
 
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage("${name} is not type of: ${type}", 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage("${name} is not type of: ${type}");
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
     }
 
@@ -244,8 +244,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $type = 'email';
         $name = 'missing local part';
 
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage("${name} is not type of: ${type}", 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage("${name} is not type of: ${type}");
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
     }
 
@@ -255,8 +255,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $type = 'email';
         $name = 'missing domain';
 
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage("${name} is not type of: ${type}", 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage("${name} is not type of: ${type}");
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
     }
 
@@ -266,8 +266,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $type = 'email';
         $name = 'missing top level domain';
 
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage("${name} is not type of: ${type}", 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage("${name} is not type of: ${type}");
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
     }
 
@@ -277,8 +277,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $type = 'int';
         $name = 'string';
 
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage("${name} is not type of: ${type}", 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage("${name} is not type of: ${type}");
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
     }
 
@@ -288,8 +288,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $type = 'float';
         $name = 'string';
 
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage("${name} is not type of: ${type}", 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage("${name} is not type of: ${type}");
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
     }
 
@@ -299,8 +299,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $type = 'bool';
         $name = 'string';
 
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage("${name} is not type of: ${type}", 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage("${name} is not type of: ${type}");
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
     }
 
@@ -310,8 +310,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $type = 'date';
         $name = 'date with time';
 
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage("${name} is not type of: ${type}", 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage("${name} is not type of: ${type}");
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
     }
 
@@ -321,8 +321,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $type = 'datetime';
         $name = 'missing day';
 
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage("${name} is not type of: ${type}", 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage("${name} is not type of: ${type}");
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
     }
 
@@ -332,8 +332,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $type = 'datetime';
         $name = 'missing day month';
 
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage("${name} is not type of: ${type}", 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage("${name} is not type of: ${type}");
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
     }
 
@@ -343,8 +343,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $type = 'datetime';
         $name = 'random string';
 
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage("${name} is not type of: ${type}", 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage("${name} is not type of: ${type}");
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
     }
 
@@ -354,8 +354,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $type = 'datetimeIso';
         $name = 'missing seconds decimals';
 
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage("${name} is not type of: ${type}", 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage("${name} is not type of: ${type}");
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
     }
 
@@ -365,8 +365,8 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $type = 'datetimeIso';
         $name = 'more than 6 seconds decimals';
 
-        $this->expectException(CRM_Core_Exception::class, 'Invalid exception class.');
-        $this->expectExceptionMessage("${name} is not type of: ${type}", 'Invalid exception message.');
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage("${name} is not type of: ${type}");
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name);
     }
 
@@ -474,12 +474,12 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
     public function testValidateInputValidValues($value, $type, $name, $required, $allowedValues)
     {
         try {
-            $this->assertEmpty(
+            self::assertEmpty(
                 CRM_RcBase_Processor_Base::validateInput($value, $type, $name, $required, $allowedValues),
                 'Should be empty for valid setup.'
             );
         } catch (Exception $ex) {
-            $this->fail('Should not throw exception for valid setup. '.$ex->getMessage());
+            self::fail('Should not throw exception for valid setup. '.$ex->getMessage());
         }
     }
 }

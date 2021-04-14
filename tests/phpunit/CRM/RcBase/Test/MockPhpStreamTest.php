@@ -40,14 +40,14 @@ class CRM_RcBase_Test_MockPhpStreamTest extends TestCase
         $data = 'original';
         file_put_contents("php://${stream}", $data);
         $result = file_get_contents("php://${stream}");
-        $this->assertSame($data, $result, 'Invalid data returned.');
+        self::assertSame($data, $result, 'Invalid data returned.');
 
         // Update data
         $data = 'changed';
         file_put_contents('php://input', $data);
         $result_changed = file_get_contents('php://input');
-        $this->assertSame($data, $result_changed, 'Invalid data returned.');
+        self::assertSame($data, $result_changed, 'Invalid data returned.');
 
-        $this->assertNotSame($result, $result_changed, 'Result not changed.');
+        self::assertNotSame($result, $result_changed, 'Result not changed.');
     }
 }
