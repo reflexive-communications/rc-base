@@ -21,21 +21,21 @@ class CRM_RcBase_Test_UtilsTest extends CRM_RcBase_HeadlessTestCase
         ]);
         $last_id = $results->first()['id'];
 
-        self::assertSame($last_id + 1, CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_tag'), 'Bad value returned');
+        self::assertSame($last_id + 1, CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_tag'), 'Bad value returned');
     }
 
     public function testMissingTableNameThrowsException()
     {
         self::expectException(CRM_Core_Exception::class);
         self::expectExceptionMessage('Missing table name');
-        CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('');
+        CRM_RcBase_Test_Utils::getNextAutoIncrementValue('');
     }
 
     public function testMissingSqlThrowsException()
     {
         self::expectException(CRM_Core_Exception::class);
         self::expectExceptionMessage('Missing SQL query');
-        CRM_RcBase_Test_UtilsHeadless::rawSqlQuery('');
+        CRM_RcBase_Test_Utils::rawSqlQuery('');
     }
 
     /**
@@ -52,14 +52,14 @@ class CRM_RcBase_Test_UtilsTest extends CRM_RcBase_HeadlessTestCase
         ]);
         $id_expected = $results->first()['id'];
 
-        $id_cv = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Tag', ['id'], ['name=another_test_tag']);
+        $id_cv = CRM_RcBase_Test_Utils::cvApi4Get('Tag', ['id'], ['name=another_test_tag']);
         self::assertCount(1, $id_cv);
         self::assertSame($id_expected, $id_cv[0]['id'], 'Bad ID returned on get');
 
         $tag = [
             'name' => 'one_more_test_tag',
         ];
-        $id_created = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Tag', $tag);
+        $id_created = CRM_RcBase_Test_Utils::cvApi4Create('Tag', $tag);
         self::assertSame($id_expected + 1, $id_created, 'Bad ID returned on create');
     }
 }
