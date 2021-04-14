@@ -3,9 +3,9 @@
 use Civi\Test;
 
 /**
- * Contains helper functions for headless unit-testing
+ * Contains helper functions for unit-testing
  */
-class CRM_RcBase_Test_UtilsHeadless
+class CRM_RcBase_Test_Utils
 {
     /**
      * Executes a raw SQL query on the DB

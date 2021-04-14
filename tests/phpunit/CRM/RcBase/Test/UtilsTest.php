@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Test Utils Basic class
+ * Test Utils class
  *
  * @group headless
  */
-class CRM_RcBase_Test_UtilsHeadlessTest extends CRM_RcBase_HeadlessTestCase
+class CRM_RcBase_Test_UtilsTest extends CRM_RcBase_HeadlessTestCase
 {
     /**
      * @throws \API_Exception
