@@ -10,6 +10,7 @@ use Civi\Api4\Generic\Result;
 use Civi\Api4\LocationType;
 use Civi\Api4\Phone;
 use Civi\Api4\Relationship;
+use Civi\Api4\Tag;
 
 /**
  * Common Get Actions
@@ -360,5 +361,31 @@ class CRM_RcBase_Api_Get
             ->execute();
 
         return self::parseResultsFirst($results, 'id');
+    }
+
+    /**
+     * Get ID of the parent of a tag
+     *
+     * @param int $tag_id Tag ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null Parent Tag ID if found, null if not found
+     *
+     * @throws API_Exception
+     * @throws CRM_Core_Exception
+     */
+    public static function parentTagId(int $tag_id, bool $check_permissions = false): ?int
+    {
+        if ($tag_id < 1) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
+
+        $results = Tag::get($check_permissions)
+            ->addSelect('parent_id')
+            ->addWhere('id', '=', $tag_id)
+            ->setLimit(1)
+            ->execute();
+
+        return self::parseResultsFirst($results, 'parent_id');
     }
 }
