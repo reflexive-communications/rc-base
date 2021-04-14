@@ -16,20 +16,20 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $contact = $this->nextSampleIndividual();
 
         // Number of contacts already in DB
-        $all_contact_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Contact', ['id']);
+        $all_contact_old = CRM_RcBase_Test_Utils::cvApi4Get('Contact', ['id']);
 
         // Create contact
         $contact_id = CRM_RcBase_Api_Create::contact($contact);
 
-        $all_contact_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Contact', ['id']);
+        $all_contact_new = CRM_RcBase_Test_Utils::cvApi4Get('Contact', ['id']);
 
         self::assertCount(count($all_contact_old) + 1, $all_contact_new, 'No new contact created');
 
         // Get from DB
-        $id = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Contact', ['id'], ["external_identifier=${contact['external_identifier']}"]);
+        $id = CRM_RcBase_Test_Utils::cvApi4Get('Contact', ['id'], ["external_identifier=${contact['external_identifier']}"]);
         self::assertCount(1, $id, 'Not one result returned for "id"');
 
-        $data = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
+        $data = CRM_RcBase_Test_Utils::cvApi4Get(
             'Contact',
             ['contact_type', 'first_name', 'middle_name', 'last_name', 'external_identifier'],
             ['id='.$id[0]['id']]
@@ -77,10 +77,10 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $contact_id = CRM_RcBase_Api_Create::contact($contact);
 
         // Get from DB
-        $id = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Contact', ['id'], ["external_identifier=${contact['external_identifier']}"]);
+        $id = CRM_RcBase_Test_Utils::cvApi4Get('Contact', ['id'], ["external_identifier=${contact['external_identifier']}"]);
         self::assertCount(1, $id, 'Not one result returned for "id"');
 
-        $data = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
+        $data = CRM_RcBase_Test_Utils::cvApi4Get(
             'Contact',
             ['contact_type', 'first_name', 'middle_name', 'last_name', 'external_identifier'],
             ['id='.$id[0]['id']]
@@ -104,7 +104,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $contact_id = $this->individualCreate([], self::getNextContactSequence());
 
         // Number of emails already in DB
-        $all_email_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Email', ['id']);
+        $all_email_old = CRM_RcBase_Test_Utils::cvApi4Get('Email', ['id']);
 
         // Create email
         $email = [
@@ -113,15 +113,15 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         ];
         $email_id = CRM_RcBase_Api_Create::email($contact_id, $email);
 
-        $all_email_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Email', ['id']);
+        $all_email_new = CRM_RcBase_Test_Utils::cvApi4Get('Email', ['id']);
 
         self::assertCount(count($all_email_old) + 1, $all_email_new, 'No new email created');
 
         // Get from DB
-        $id = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Email', ['id'], ["email=${email['email']}"]);
+        $id = CRM_RcBase_Test_Utils::cvApi4Get('Email', ['id'], ["email=${email['email']}"]);
         self::assertCount(1, $id, 'Not one result returned for "id"');
 
-        $data = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
+        $data = CRM_RcBase_Test_Utils::cvApi4Get(
             'Email',
             ['email', 'location_type_id'],
             ['id='.$id[0]['id']]
@@ -164,7 +164,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testCreateEmailWithNonExistentContactThrowsException()
     {
         // Get non-existent contact ID
-        $contact_id = CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_contact');
+        $contact_id = CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_contact');
 
         // Create email
         $email = [
@@ -185,7 +185,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $contact_id = $this->individualCreate([], self::getNextContactSequence());
 
         // Number of phones already in DB
-        $all_phone_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Phone', ['id']);
+        $all_phone_old = CRM_RcBase_Test_Utils::cvApi4Get('Phone', ['id']);
 
         // Create phone
         $phone = [
@@ -194,15 +194,15 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         ];
         $phone_id = CRM_RcBase_Api_Create::phone($contact_id, $phone);
 
-        $all_phone_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Phone', ['id']);
+        $all_phone_new = CRM_RcBase_Test_Utils::cvApi4Get('Phone', ['id']);
 
         self::assertCount(count($all_phone_old) + 1, $all_phone_new, 'No new phone created');
 
         // Get from DB
-        $id = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Phone', ['id'], ["phone=${phone['phone']}"]);
+        $id = CRM_RcBase_Test_Utils::cvApi4Get('Phone', ['id'], ["phone=${phone['phone']}"]);
         self::assertCount(1, $id, 'Not one result returned for "id"');
 
-        $data = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
+        $data = CRM_RcBase_Test_Utils::cvApi4Get(
             'Phone',
             ['phone', 'location_type_id'],
             ['id='.$id[0]['id']]
@@ -231,7 +231,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $contact_id = $this->individualCreate([], self::getNextContactSequence());
 
         // Number of addresses already in DB
-        $all_address_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Address', ['id']);
+        $all_address_old = CRM_RcBase_Test_Utils::cvApi4Get('Address', ['id']);
 
         // Create address
         $address = [
@@ -240,15 +240,15 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         ];
         $address_id = CRM_RcBase_Api_Create::address($contact_id, $address);
 
-        $all_address_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Address', ['id']);
+        $all_address_new = CRM_RcBase_Test_Utils::cvApi4Get('Address', ['id']);
 
         self::assertCount(count($all_address_old) + 1, $all_address_new, 'No new address created');
 
         // Get from DB
-        $id = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Address', ['id'], ["city=${address['city']}"]);
+        $id = CRM_RcBase_Test_Utils::cvApi4Get('Address', ['id'], ["city=${address['city']}"]);
         self::assertCount(1, $id, 'Not one result returned for "id"');
 
-        $data = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
+        $data = CRM_RcBase_Test_Utils::cvApi4Get(
             'Address',
             ['city', 'location_type_id'],
             ['id='.$id[0]['id']]
@@ -279,7 +279,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $contact_id_other = $this->individualCreate([], self::getNextContactSequence());
 
         // Number of relationships already in DB
-        $all_relationship_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Relationship', ['id']);
+        $all_relationship_old = CRM_RcBase_Test_Utils::cvApi4Get('Relationship', ['id']);
 
         // Create relationship
         $relationship = [
@@ -289,7 +289,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         ];
         $relationship_id = CRM_RcBase_Api_Create::relationship($contact_id, $relationship);
 
-        $all_relationship_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Relationship', ['id']);
+        $all_relationship_new = CRM_RcBase_Test_Utils::cvApi4Get('Relationship', ['id']);
 
         self::assertCount(
             count($all_relationship_old) + 1,
@@ -298,10 +298,10 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         );
 
         // Get from DB
-        $id = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Relationship', ['id'], ["description=${relationship['description']}"]);
+        $id = CRM_RcBase_Test_Utils::cvApi4Get('Relationship', ['id'], ["description=${relationship['description']}"]);
         self::assertCount(1, $id, 'Not one result returned for "id"');
 
-        $data = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
+        $data = CRM_RcBase_Test_Utils::cvApi4Get(
             'Relationship',
             ['contact_id_b', 'relationship_type_id', 'description'],
             ['id='.$id[0]['id']]
@@ -330,7 +330,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $contact_id = $this->individualCreate([], self::getNextContactSequence());
 
         // Number of contributions already in DB
-        $all_contribution_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Contribution', ['id']);
+        $all_contribution_old = CRM_RcBase_Test_Utils::cvApi4Get('Contribution', ['id']);
 
         // Create contribution
         $contribution = [
@@ -340,7 +340,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         ];
         $contribution_id = CRM_RcBase_Api_Create::contribution($contact_id, $contribution);
 
-        $all_contribution_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Contribution', ['id']);
+        $all_contribution_new = CRM_RcBase_Test_Utils::cvApi4Get('Contribution', ['id']);
 
         self::assertCount(
             count($all_contribution_old) + 1,
@@ -349,10 +349,10 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         );
 
         // Get from DB
-        $id = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Contribution', ['id'], ["trxn_id=${contribution['trxn_id']}"]);
+        $id = CRM_RcBase_Test_Utils::cvApi4Get('Contribution', ['id'], ["trxn_id=${contribution['trxn_id']}"]);
         self::assertCount(1, $id, 'Not one result returned for "id"');
 
-        $data = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
+        $data = CRM_RcBase_Test_Utils::cvApi4Get(
             'Contribution',
             ['financial_type_id', 'total_amount', 'trxn_id'],
             ['id='.$id[0]['id']]
@@ -405,7 +405,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $contact_id_source = $this->individualCreate([], self::getNextContactSequence());
 
         // Number of activities already in DB
-        $all_activity_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Activity', ['id']);
+        $all_activity_old = CRM_RcBase_Test_Utils::cvApi4Get('Activity', ['id']);
 
         // Create activity
         $activity = [
@@ -415,15 +415,15 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         ];
         $activity_id = CRM_RcBase_Api_Create::activity($contact_id, $activity);
 
-        $all_activity_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Activity', ['id']);
+        $all_activity_new = CRM_RcBase_Test_Utils::cvApi4Get('Activity', ['id']);
 
         self::assertCount(count($all_activity_old) + 1, $all_activity_new, 'No new activity created');
 
         // Get from DB
-        $id = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Activity', ['id'], ["subject=${activity['subject']}"]);
+        $id = CRM_RcBase_Test_Utils::cvApi4Get('Activity', ['id'], ["subject=${activity['subject']}"]);
         self::assertCount(1, $id, 'Not one result returned for "id"');
 
-        $data = CRM_RcBase_Test_UtilsHeadless::cvApi4Get(
+        $data = CRM_RcBase_Test_Utils::cvApi4Get(
             'Activity',
             ['activity_type_id', 'subject'],
             ['id='.$id[0]['id']]
@@ -456,15 +456,15 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $tag = [
             'name' => 'Test tag',
         ];
-        $tag_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Tag', $tag);
+        $tag_id = CRM_RcBase_Test_Utils::cvApi4Create('Tag', $tag);
 
         // Number of entity tags already in DB
-        $all_entity_tag_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('EntityTag', ['id']);
+        $all_entity_tag_old = CRM_RcBase_Test_Utils::cvApi4Get('EntityTag', ['id']);
 
         // Add tag to contact
         $entity_tag_id = CRM_RcBase_Api_Create::tagContact($contact_id, $tag_id);
 
-        $all_entity_tag_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('EntityTag', ['id']);
+        $all_entity_tag_new = CRM_RcBase_Test_Utils::cvApi4Get('EntityTag', ['id']);
 
         self::assertCount(
             count($all_entity_tag_old) + 1,
@@ -473,7 +473,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         );
 
         // Get from DB
-        $id = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('EntityTag', ['id'], [
+        $id = CRM_RcBase_Test_Utils::cvApi4Get('EntityTag', ['id'], [
             'entity_table=civicrm_contact',
             "entity_id=${contact_id}",
             "tag_id=${tag_id}",
@@ -498,7 +498,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $contact_id = $this->individualCreate([], self::getNextContactSequence());
 
         // Get non-existent tag ID
-        $tag_id = CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_tag');
+        $tag_id = CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_tag');
 
         // Check non-existent tag ID
         self::expectException(CRM_Core_Exception::class);

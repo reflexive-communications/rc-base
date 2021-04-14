@@ -26,19 +26,19 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
             'email' => 'ceasar@senate.rome',
             'location_type_id' => 1,
         ];
-        $email_id_a = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Email', $email_a);
+        $email_id_a = CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_a);
         $email_b = [
             'contact_id' => $contact_id_a,
             'email' => 'ceasar@home.rome',
             'location_type_id' => 2,
         ];
-        $email_id_b = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Email', $email_b);
+        $email_id_b = CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_b);
         $email_c = [
             'contact_id' => $contact_id_b,
             'email' => 'antonius@senate.rome',
             'location_type_id' => 1,
         ];
-        $email_id_c = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Email', $email_c);
+        $email_id_c = CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_c);
 
         // Check valid email
         self::assertSame(
@@ -129,8 +129,8 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         );
 
         // Get data
-        $data_a = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Contact', [], ["external_identifier=${external_id_a}"]);
-        $data_b = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('Contact', [], ["external_identifier=${external_id_b}"]);
+        $data_a = CRM_RcBase_Test_Utils::cvApi4Get('Contact', [], ["external_identifier=${external_id_a}"]);
+        $data_b = CRM_RcBase_Test_Utils::cvApi4Get('Contact', [], ["external_identifier=${external_id_b}"]);
 
         // Check if valid
         self::assertSame(
@@ -149,7 +149,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
 
         // Check non-existent contact ID
         self::assertNull(
-            CRM_RcBase_Api_Get::contactData(CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_contact')),
+            CRM_RcBase_Api_Get::contactData(CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_contact')),
             'Not null returned on non-existent contact ID'
         );
 
@@ -186,7 +186,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
             'email' => 'hannibal@senate.carthago',
             'location_type_id' => 3,
         ];
-        $email_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Email', $email);
+        $email_id = CRM_RcBase_Test_Utils::cvApi4Create('Email', $email);
 
         // Check valid email
         self::assertSame(
@@ -197,14 +197,14 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
 
         // Check non-existent location type
         self::assertNull(
-            CRM_RcBase_Api_Get::emailID($contact_id, CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_location_type')),
+            CRM_RcBase_Api_Get::emailID($contact_id, CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_location_type')),
             'Not null returned on non-existent location type ID'
         );
 
         // Check non-existent contact ID
         self::assertNull(
             CRM_RcBase_Api_Get::emailID(
-                CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_contact'),
+                CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_contact'),
                 $email['location_type_id']
             ),
             'Not null returned on non-existent contact ID'
@@ -231,7 +231,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
             'location_type_id' => 1,
             'phone' => '+36101234567',
         ];
-        $phone_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Phone', $phone);
+        $phone_id = CRM_RcBase_Test_Utils::cvApi4Create('Phone', $phone);
 
         // Check valid phone
         self::assertSame(
@@ -242,14 +242,14 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
 
         // Check non-existent location type
         self::assertNull(
-            CRM_RcBase_Api_Get::phoneID($contact_id, CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_location_type')),
+            CRM_RcBase_Api_Get::phoneID($contact_id, CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_location_type')),
             'Not null returned on non-existent location type ID'
         );
 
         // Check non-existent contact ID
         self::assertNull(
             CRM_RcBase_Api_Get::phoneID(
-                CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_contact'),
+                CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_contact'),
                 $phone['location_type_id']
             ),
             'Not null returned on non-existent contact ID'
@@ -276,7 +276,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
             'location_type_id' => 1,
             'city' => 'Capua',
         ];
-        $address_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Address', $address);
+        $address_id = CRM_RcBase_Test_Utils::cvApi4Create('Address', $address);
 
         // Check valid address
         self::assertSame(
@@ -287,14 +287,14 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
 
         // Check non-existent location type
         self::assertNull(
-            CRM_RcBase_Api_Get::addressID($contact_id, CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_location_type')),
+            CRM_RcBase_Api_Get::addressID($contact_id, CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_location_type')),
             'Not null returned on non-existent location type ID'
         );
 
         // Check non-existent contact ID
         self::assertNull(
             CRM_RcBase_Api_Get::addressID(
-                CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_contact'),
+                CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_contact'),
                 $address['location_type_id']
             ),
             'Not null returned on non-existent contact ID'
@@ -322,7 +322,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
             'contact_id_b' => $contact_id_other,
             'relationship_type_id' => 1,
         ];
-        $relationship_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Relationship', $relationship);
+        $relationship_id = CRM_RcBase_Test_Utils::cvApi4Create('Relationship', $relationship);
 
         // Check valid relationship
         self::assertSame(
@@ -340,7 +340,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
             CRM_RcBase_Api_Get::relationshipID(
                 $contact_id,
                 $contact_id,
-                CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_relationship_type')
+                CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_relationship_type')
             ),
             'Not null returned on non-existent relationship type ID'
         );
@@ -348,7 +348,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         // Check non-existent contact ID
         self::assertNull(
             CRM_RcBase_Api_Get::relationshipID(
-                CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_contact'),
+                CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_contact'),
                 $contact_id_other,
                 $relationship['relationship_type_id']
             ),
@@ -403,11 +403,11 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
             'assignee_contact_id' => $contact_id_assignee_a,
         ];
 
-        CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Activity', $activity_a);
-        CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Activity', $activity_a);
-        CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Activity', $activity_b);
-        CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Activity', $activity_b);
-        CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Activity', $activity_b);
+        CRM_RcBase_Test_Utils::cvApi4Create('Activity', $activity_a);
+        CRM_RcBase_Test_Utils::cvApi4Create('Activity', $activity_a);
+        CRM_RcBase_Test_Utils::cvApi4Create('Activity', $activity_b);
+        CRM_RcBase_Test_Utils::cvApi4Create('Activity', $activity_b);
+        CRM_RcBase_Test_Utils::cvApi4Create('Activity', $activity_b);
 
         // Add other activities
         $activity_a['source_contact_id'] = $contact_id_source_b;
@@ -415,10 +415,10 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
 
         $activity_b['assignee_contact_id'] = $contact_id_assignee_b;
 
-        CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Activity', $activity_a);
-        CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Activity', $activity_b);
-        CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Activity', $activity_b);
-        CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Activity', $activity_b);
+        CRM_RcBase_Test_Utils::cvApi4Create('Activity', $activity_a);
+        CRM_RcBase_Test_Utils::cvApi4Create('Activity', $activity_b);
+        CRM_RcBase_Test_Utils::cvApi4Create('Activity', $activity_b);
+        CRM_RcBase_Test_Utils::cvApi4Create('Activity', $activity_b);
 
         // Check activities when contact is target
         $activities = CRM_RcBase_Api_Get::allActivity(
@@ -480,7 +480,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $tag = [
             'name' => 'Test tag',
         ];
-        $tag_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Tag', $tag);
+        $tag_id = CRM_RcBase_Test_Utils::cvApi4Create('Tag', $tag);
 
         // Add tag to contact
         $entity_tag = [
@@ -488,7 +488,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
             'entity_id' => $contact_id,
             'tag_id' => $tag_id,
         ];
-        $entity_tag_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('EntityTag', $entity_tag);
+        $entity_tag_id = CRM_RcBase_Test_Utils::cvApi4Create('EntityTag', $entity_tag);
 
         // Check valid tag
         self::assertSame(
@@ -499,14 +499,14 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
 
         // Check non-existent tag
         self::assertNull(
-            CRM_RcBase_Api_Get::contactHasTag($contact_id, CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_tag')),
+            CRM_RcBase_Api_Get::contactHasTag($contact_id, CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_tag')),
             'Not null returned on non-existent tag'
         );
 
         // Check non-existent contact ID
         self::assertNull(
             CRM_RcBase_Api_Get::contactHasTag(
-                CRM_RcBase_Test_UtilsHeadless::getNextAutoIncrementValue('civicrm_contact'),
+                CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_contact'),
                 $tag_id
             ),
             'Not null returned on non-existent contact ID'

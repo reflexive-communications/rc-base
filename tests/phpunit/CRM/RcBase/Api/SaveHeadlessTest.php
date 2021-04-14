@@ -21,15 +21,15 @@ class CRM_RcBase_Api_SaveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $tag = [
             'name' => 'Test tag',
         ];
-        $tag_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Tag', $tag);
+        $tag_id = CRM_RcBase_Test_Utils::cvApi4Create('Tag', $tag);
 
         // Number of entity tags already in DB
-        $all_entity_tag_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('EntityTag', ['id']);
+        $all_entity_tag_old = CRM_RcBase_Test_Utils::cvApi4Get('EntityTag', ['id']);
 
         // Save tag to contact
         $entity_tag_id = CRM_RcBase_Api_Save::tagContact($contact_id, $tag_id);
 
-        $all_entity_tag_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('EntityTag', ['id']);
+        $all_entity_tag_new = CRM_RcBase_Test_Utils::cvApi4Get('EntityTag', ['id']);
 
         self::assertCount(
             count($all_entity_tag_old) + 1,
@@ -38,7 +38,7 @@ class CRM_RcBase_Api_SaveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         );
 
         // Get from DB
-        $id = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('EntityTag', ['id'], [
+        $id = CRM_RcBase_Test_Utils::cvApi4Get('EntityTag', ['id'], [
             'entity_table=civicrm_contact',
             "entity_id=${contact_id}",
             "tag_id=${tag_id}",
@@ -63,7 +63,7 @@ class CRM_RcBase_Api_SaveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $tag = [
             'name' => 'Another test tag',
         ];
-        $tag_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('Tag', $tag);
+        $tag_id = CRM_RcBase_Test_Utils::cvApi4Create('Tag', $tag);
 
         // Add tag to contact
         $entity_tag = [
@@ -71,15 +71,15 @@ class CRM_RcBase_Api_SaveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
             'entity_id' => $contact_id,
             'tag_id' => $tag_id,
         ];
-        $entity_tag_id = CRM_RcBase_Test_UtilsHeadless::cvApi4Create('EntityTag', $entity_tag);
+        $entity_tag_id = CRM_RcBase_Test_Utils::cvApi4Create('EntityTag', $entity_tag);
 
         // Number of entity tags already in DB
-        $all_entity_tag_old = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('EntityTag', ['id']);
+        $all_entity_tag_old = CRM_RcBase_Test_Utils::cvApi4Get('EntityTag', ['id']);
 
         // Save tag to contact
         $entity_tag_id_save = CRM_RcBase_Api_Save::tagContact($contact_id, $tag_id);
 
-        $all_entity_tag_new = CRM_RcBase_Test_UtilsHeadless::cvApi4Get('EntityTag', ['id']);
+        $all_entity_tag_new = CRM_RcBase_Test_Utils::cvApi4Get('EntityTag', ['id']);
 
         self::assertCount(
             count($all_entity_tag_old),
