@@ -517,4 +517,39 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         self::expectExceptionMessage('Invalid ID');
         CRM_RcBase_Api_Get::contactHasTag(-1, $tag_id);
     }
+
+    /**
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     */
+    public function testParentTag()
+    {
+        // Create parent tag
+        $tag = [
+            'name' => 'Parent tag',
+        ];
+        $parent_tag_id = CRM_RcBase_Test_Utils::cvApi4Create('Tag', $tag);
+
+        // Create child tag
+        $tag = [
+            'name' => 'Child tag',
+            'parent_id' => $parent_tag_id,
+        ];
+        $child_tag_id = CRM_RcBase_Test_Utils::cvApi4Create('Tag', $tag);
+
+        // Check tags
+        self::assertSame($parent_tag_id, CRM_RcBase_Api_Get::parentTagId($child_tag_id), 'Bad parent tag ID returned for child');
+        self::assertNull(CRM_RcBase_Api_Get::parentTagId($parent_tag_id), 'Not null returned for parent');
+
+        // Check non-existent tag
+        self::assertNull(
+            CRM_RcBase_Api_Get::parentTagId(CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_tag')),
+            'Not null returned for non-existent tag'
+        );
+
+        // Check invalid ID
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Invalid ID');
+        CRM_RcBase_Api_Get::parentTagId(-1);
+    }
 }
