@@ -388,4 +388,43 @@ class CRM_RcBase_Api_Get
 
         return self::parseResultsFirst($results, 'parent_id');
     }
+
+    /**
+     * Get value of a setting
+     *
+     * @param string $setting Name of setting to retrieve
+     * @param int|null $contact_id Contact ID for contact related setting (optional)
+     * @param int $domain_id Domain ID (defaults to 1)
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return mixed Value of setting if found, null if not found
+     *
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public static function settingValue(string $setting, ?int $contact_id = null, int $domain_id = 1, bool $check_permissions = false)
+    {
+        if (empty($setting)) {
+            throw new CRM_Core_Exception('Setting name missing');
+        }
+
+        if ($domain_id < 1) {
+            throw new CRM_Core_Exception('Invalid Domain ID.');
+        }
+
+        $params = [
+            'select' => [$setting],
+            'domainId' => $domain_id,
+            'checkPermissions' => $check_permissions,
+        ];
+
+        if (!empty($contact_id)) {
+            $params['contactId'] = $contact_id;
+        }
+
+        $results = civicrm_api4('Setting', 'get', $params);
+
+        return self::parseResultsFirst($results, 'value');
+    }
 }
