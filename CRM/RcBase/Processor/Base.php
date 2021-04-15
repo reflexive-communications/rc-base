@@ -9,7 +9,6 @@
  */
 class CRM_RcBase_Processor_Base
 {
-
     /**
      * Detect content-type
      *
@@ -17,23 +16,26 @@ class CRM_RcBase_Processor_Base
      */
     public static function detectContentType(): string
     {
-        // If content-type is set use it
-        if (isset($_SERVER['CONTENT_TYPE'])) {
-            switch ($_SERVER['CONTENT_TYPE']) {
-                case 'application/json':
-                case 'application/javascript':
-                    return CRM_RcBase_Processor_JSON::class;
-                case 'text/xml':
-                case 'application/xml':
-                    return CRM_RcBase_Processor_XML::class;
-                case 'application/x-www-form-urlencoded':
-                default:
-                    return CRM_RcBase_Processor_UrlEncodedForm::class;
-            }
+        // If content-type not set --> fallback to URL encoded
+        if (empty($_SERVER['CONTENT_TYPE'])) {
+            return CRM_RcBase_Processor_UrlEncodedForm::class;
         }
 
-        // Fallback to URL encoded
-        return CRM_RcBase_Processor_UrlEncodedForm::class;
+        // Parse header
+        $fields = explode(';', $_SERVER['CONTENT_TYPE']);
+        $media_type = trim(array_shift($fields));
+
+        switch ($media_type) {
+            case 'application/json':
+            case 'application/javascript':
+                return CRM_RcBase_Processor_JSON::class;
+            case 'text/xml':
+            case 'application/xml':
+                return CRM_RcBase_Processor_XML::class;
+            case 'application/x-www-form-urlencoded':
+            default:
+                return CRM_RcBase_Processor_UrlEncodedForm::class;
+        }
     }
 
     /**
