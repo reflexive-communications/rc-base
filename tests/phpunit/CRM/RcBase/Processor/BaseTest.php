@@ -9,31 +9,52 @@ use PHPUnit\Framework\TestCase;
  */
 class CRM_RcBase_Processor_BaseTest extends TestCase
 {
+    /**
+     * Content types
+     *
+     * @return \string[][]
+     */
+    public function provideContentTypes()
+    {
+        return [
+            'json' => ['application/json', 'CRM_RcBase_Processor_JSON'],
+            'json with whitespace' => [' application/json ', 'CRM_RcBase_Processor_JSON'],
+            'json with charset' => ['application/json;charset=UTF-8', 'CRM_RcBase_Processor_JSON'],
+            'json with charset and whitespace' => ["\tapplication/json  ;\t\tcharset=UTF-8  ", 'CRM_RcBase_Processor_JSON'],
+            'javascript' => ['application/javascript', 'CRM_RcBase_Processor_JSON'],
+            'text/xml' => ['text/xml', 'CRM_RcBase_Processor_XML'],
+            'application/xml' => ['application/xml', 'CRM_RcBase_Processor_XML'],
+            'x-www-form-urlencoded' => ['application/x-www-form-urlencoded', 'CRM_RcBase_Processor_UrlEncodedForm'],
+            'text/html fallback to default' => ['text/html', 'CRM_RcBase_Processor_UrlEncodedForm'],
+            'random string' => ['something/other/string', 'CRM_RcBase_Processor_UrlEncodedForm'],
+        ];
+    }
 
     /**
      * Detect content-type.
      * If not set, it returns default.
      * If set with handled value it returns the relevant class string.
      * If set with unknown value, it returns default.
+     *
+     * @dataProvider provideContentTypes
      */
-    public function testDetectContentType()
+    public function testDetectContentType($header, $expected)
     {
-        // not set.
+        $_SERVER['CONTENT_TYPE'] = $header;
+        $result = CRM_RcBase_Processor_Base::detectContentType();
+        self::assertEquals($expected, $result, 'Invalid class returned.');
+    }
+
+    /**
+     * Detect content-type.
+     * If not set, it returns default.
+     */
+    public function testDetectContentTypeWithNoHeadersSet()
+    {
+        // not set
+        unset($_SERVER['CONTENT_TYPE']);
         $result = CRM_RcBase_Processor_Base::detectContentType();
         self::assertEquals('CRM_RcBase_Processor_UrlEncodedForm', $result, 'Invalid class returned.');
-        $testData = [
-            'application/json' => 'CRM_RcBase_Processor_JSON',
-            'application/javascript' => 'CRM_RcBase_Processor_JSON',
-            'text/xml' => 'CRM_RcBase_Processor_XML',
-            'application/xml' => 'CRM_RcBase_Processor_XML',
-            'text/html' => 'CRM_RcBase_Processor_UrlEncodedForm',
-            'something/other/string' => 'CRM_RcBase_Processor_UrlEncodedForm',
-        ];
-        foreach ($testData as $k => $v) {
-            $_SERVER['CONTENT_TYPE'] = $k;
-            $result = CRM_RcBase_Processor_Base::detectContentType();
-            self::assertEquals($v, $result, 'Invalid class returned.');
-        }
     }
 
     /**
