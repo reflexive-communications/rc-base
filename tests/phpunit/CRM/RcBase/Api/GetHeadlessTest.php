@@ -1,6 +1,7 @@
 <?php
 
 use Civi\API\Exception\UnauthorizedException;
+use Civi\Api4\Setting;
 
 /**
  * Test API Get class
@@ -575,6 +576,45 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         self::expectException(CRM_Core_Exception::class);
         self::expectExceptionMessage('Setting name missing');
         CRM_RcBase_Api_Get::settingValue('');
+    }
+
+    /**
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \CRM_Core_Exception
+     */
+    public function testSettingValueWithContactId()
+    {
+        // Create contact
+        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+
+        // Set value
+        $setting_name = 'resCacheCode';
+        $setting_value = 'test-cache-code';
+        Setting::set()
+            ->addValue($setting_name, $setting_value)
+            ->setDomainId(1)
+            ->setContactId($contact_id)
+            ->execute();
+
+        // Check setting
+        $result = Setting::get()
+            ->addSelect($setting_name)
+            ->setDomainId(1)
+            ->setContactId($contact_id)
+            ->execute();
+        self::assertCount(1, $result, 'Bad number of results');
+        self::assertSame($setting_value, $result[0]['value'], 'Failed to set contact setting.');
+
+        // Create Config object (this caches settings) and force a rebuild from DB
+        CRM_Core_Config::singleton(true, true);
+
+        self::assertSame($setting_value, CRM_RcBase_Api_Get::settingValue($setting_name, $contact_id), 'Bad setting value returned');
+
+        // Invalid Domain
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Invalid Domain ID');
+        CRM_RcBase_Api_Get::settingValue('dateformatDatetime', null, -5);
     }
 
     /**
