@@ -552,4 +552,40 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         self::expectExceptionMessage('Invalid ID');
         CRM_RcBase_Api_Get::parentTagId(-1);
     }
+
+    /**
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \CRM_Core_Exception
+     */
+    public function testSettingValue()
+    {
+        // Set value
+        $setting_name = 'dateformatDatetime';
+        $setting_value = '"%Y %B %E, %H:%M"';
+        $result = cv(sprintf("api4 Setting.Set +v '%s=%s'", $setting_name, $setting_value));
+        self::assertCount(1, $result, 'Bad number of results from cv');
+
+        // Create Config object (this caches settings) and force a rebuild from DB
+        CRM_Core_Config::singleton(true, true);
+
+        self::assertSame($result[0]['value'], CRM_RcBase_Api_Get::settingValue($setting_name), 'Bad setting value returned');
+
+        // Missing setting name
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Setting name missing');
+        CRM_RcBase_Api_Get::settingValue('');
+    }
+
+    /**
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \CRM_Core_Exception
+     */
+    public function testSettingValueNonExistentSettingThrowsException()
+    {
+        self::expectException(API_Exception::class);
+        self::expectExceptionMessage('Unknown settings');
+        CRM_RcBase_Api_Get::settingValue('non-existent');
+    }
 }
