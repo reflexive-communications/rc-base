@@ -244,7 +244,7 @@ class CRM_RcBase_Processor_BaseTest extends TestCase
         $required = false;
         $allowedValues = ['ON', 'OFF'];
         self::expectException(CRM_Core_Exception::class);
-        self::expectExceptionMessage('Not allowed value for: '.$name.' ('.$value.')');
+        self::expectExceptionMessage('Not allowed value for: '.$name.' (value: '.$value.')');
         CRM_RcBase_Processor_Base::validateInput($value, $type, $name, $required, $allowedValues);
     }
 
