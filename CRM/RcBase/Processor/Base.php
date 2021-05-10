@@ -174,12 +174,12 @@ class CRM_RcBase_Processor_Base
         }
 
         if (!$valid) {
-            throw new CRM_Core_Exception(sprintf('%s is not type of: %s', $name, $type));
+            throw new CRM_Core_Exception(sprintf('%s is not type of: %s (value: %s)', $name, $type, var_export($value, true)));
         }
 
         // Allowed values values set --> check
         if (!empty($allowed_values) && !in_array($value, $allowed_values)) {
-            throw new CRM_Core_Exception(sprintf('Not allowed value for: %s (%s)', $name, $value));
+            throw new CRM_Core_Exception(sprintf('Not allowed value for: %s (value: %s)', $name, $value));
         }
     }
 }

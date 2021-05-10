@@ -22,7 +22,7 @@ jobs:
       - name: PHP-CS-Fixer
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
-          args: --config=.php_cs.dist --dry-run -v
+          args: --config=.php-cs-fixer.dist --dry-run -v
 
   unit-tests:
     name:    Unit tests
@@ -59,6 +59,7 @@ jobs:
 
       - name: Basic apache module and config
         run:  |
+              sudo add-apt-repository ppa:ondrej/php
               sudo apt-get update
               sudo apt-get install libapache2-mod-php7.3
               sudo a2enmod rewrite
