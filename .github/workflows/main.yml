@@ -22,7 +22,7 @@ jobs:
       - name: PHP-CS-Fixer
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
-          args: --config=.php_cs.dist --dry-run -v
+          args: --config=.php-cs-fixer.dist --dry-run -v
 
   unit-tests:
     name:    Unit tests
