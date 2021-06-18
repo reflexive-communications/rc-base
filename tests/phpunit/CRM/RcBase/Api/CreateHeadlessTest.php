@@ -505,4 +505,43 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         self::expectExceptionMessage('DB Error: constraint violation');
         CRM_RcBase_Api_Create::tagContact($contact_id, $tag_id);
     }
+
+    /**
+     * @throws CRM_Core_Exception
+     */
+    public function testCreateGroup()
+    {
+        // Number of groups already in DB
+        $all_groups_old = CRM_RcBase_Test_Utils::cvApi4Get('Group', ['id']);
+
+        // Create group
+        $group = [
+            'title' => 'Placeholder group',
+            'name' => 'place_holder_group',
+            'description' => 'This is some description',
+        ];
+        $group_id = CRM_RcBase_Api_Create::group($group);
+
+        $all_groups_new = CRM_RcBase_Test_Utils::cvApi4Get('Group', ['id']);
+
+        self::assertCount(count($all_groups_old) + 1, $all_groups_new, 'No new group created');
+
+        // Get from DB
+        $id = CRM_RcBase_Test_Utils::cvApi4Get('Group', ['id'], ["name=${group['name']}"]);
+        self::assertCount(1, $id, 'Not one result returned for "id"');
+
+        $data = CRM_RcBase_Test_Utils::cvApi4Get(
+            'Group',
+            ['title', 'name', 'description'],
+            ['id='.$id[0]['id']]
+        );
+        self::assertCount(1, $data, 'Not one result returned for "data"');
+
+        // Check valid ID
+        self::assertSame($id[0]['id'], $group_id, 'Bad group ID returned');
+
+        // Check valid data
+        unset($data[0]['id']);
+        self::assertSame($data[0], $group, 'Bad group data returned');
+    }
 }

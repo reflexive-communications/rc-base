@@ -213,4 +213,19 @@ class CRM_RcBase_Api_Create
 
         return self::entity('EntityTag', $values, $check_permissions);
     }
+
+    /**
+     * Create group
+     *
+     * @param array $values Group data
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int Group ID
+     *
+     * @throws CRM_Core_Exception
+     */
+    public static function group(array $values = [], bool $check_permissions = false): int
+    {
+        return self::entity('Group', $values, $check_permissions);
+    }
 }
