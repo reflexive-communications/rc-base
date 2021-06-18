@@ -7,6 +7,7 @@ use Civi\Api4\Contact;
 use Civi\Api4\Email;
 use Civi\Api4\EntityTag;
 use Civi\Api4\Generic\Result;
+use Civi\Api4\Group;
 use Civi\Api4\LocationType;
 use Civi\Api4\Phone;
 use Civi\Api4\Relationship;
@@ -426,5 +427,31 @@ class CRM_RcBase_Api_Get
         $results = civicrm_api4('Setting', 'get', $params);
 
         return self::parseResultsFirst($results, 'value');
+    }
+
+    /**
+     * Get group ID from group name
+     *
+     * @param string $name Group name
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null Group ID if found, null if not found
+     *
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public static function groupIDByName(string $name, bool $check_permissions = false): ?int
+    {
+        if (empty($name)) {
+            return null;
+        }
+
+        $results = Group::get($check_permissions)
+            ->addSelect('id')
+            ->addWhere('name', '=', $name)
+            ->setLimit(1)
+            ->execute();
+
+        return self::parseResultsFirst($results, 'id');
     }
 }
