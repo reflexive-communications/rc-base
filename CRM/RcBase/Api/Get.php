@@ -454,4 +454,30 @@ class CRM_RcBase_Api_Get
 
         return self::parseResultsFirst($results, 'id');
     }
+
+    /**
+     * Get tag ID from tag name
+     *
+     * @param string $name Tag name
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null Tag ID if found, null if not found
+     *
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public static function tagIDByName(string $name, bool $check_permissions = false): ?int
+    {
+        if (empty($name)) {
+            return null;
+        }
+
+        $results = Tag::get($check_permissions)
+            ->addSelect('id')
+            ->addWhere('name', '=', $name)
+            ->setLimit(1)
+            ->execute();
+
+        return self::parseResultsFirst($results, 'id');
+    }
 }
