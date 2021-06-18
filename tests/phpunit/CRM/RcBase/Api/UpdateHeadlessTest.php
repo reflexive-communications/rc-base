@@ -405,4 +405,50 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         unset($data_new[0]['id']);
         self::assertSame($data_new[0], $group, 'Bad updated group data.');
     }
+
+    /**
+     * @throws CRM_Core_Exception
+     */
+    public function testUpdateTag()
+    {
+        // Create tag
+        $tag = [
+            'name' => 'test_tag',
+            'description' => 'This is a test tag',
+            'is_reserved' => true,
+            'is_selectable' => false,
+        ];
+        $tag_id = CRM_RcBase_Test_Utils::cvApi4Create('Tag', $tag);
+
+        // Old data
+        $data_old = CRM_RcBase_Test_Utils::cvApi4Get(
+            'Tag',
+            ['name', 'description', 'is_reserved', 'is_selectable'],
+            ["id=${tag_id}"]
+        );
+        $all_tag_old = CRM_RcBase_Test_Utils::cvApi4Get('Tag', ['id']);
+
+        // Change data & update
+        $tag['is_reserved'] = false;
+        $tag['is_selectable'] = true;
+        CRM_RcBase_Api_Update::tag($tag_id, $tag);
+
+        // New data
+        $data_new = CRM_RcBase_Test_Utils::cvApi4Get(
+            'Tag',
+            ['name', 'description', 'is_reserved', 'is_selectable'],
+            ["id=${tag_id}"]
+        );
+        $all_tag_new = CRM_RcBase_Test_Utils::cvApi4Get('Tag', ['id']);
+
+        // Check number of entities not changed
+        self::assertCount(count($all_tag_old), $all_tag_new, 'New tag created');
+
+        // Check if data changed
+        self::assertNotSame($data_old, $data_new, 'Data not changed.');
+
+        // Check data
+        unset($data_new[0]['id']);
+        self::assertSame($data_new[0], $tag, 'Bad updated tag data.');
+    }
 }
