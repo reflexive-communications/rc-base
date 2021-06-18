@@ -544,4 +544,44 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         unset($data[0]['id']);
         self::assertSame($data[0], $group, 'Bad group data returned');
     }
+
+    /**
+     * @throws CRM_Core_Exception
+     */
+    public function testCreateTag()
+    {
+        // Number of tags already in DB
+        $all_tags_old = CRM_RcBase_Test_Utils::cvApi4Get('Tag', ['id']);
+
+        // Create tag
+        $tag = [
+            'name' => 'test_tag',
+            'description' => 'This is a test tag',
+            'is_reserved' => true,
+            'is_selectable' => false,
+        ];
+        $tag_id = CRM_RcBase_Api_Create::tag($tag);
+
+        $all_tags_new = CRM_RcBase_Test_Utils::cvApi4Get('Tag', ['id']);
+
+        self::assertCount(count($all_tags_old) + 1, $all_tags_new, 'No new tag created');
+
+        // Get from DB
+        $id = CRM_RcBase_Test_Utils::cvApi4Get('Tag', ['id'], ["name=${tag['name']}"]);
+        self::assertCount(1, $id, 'Not one result returned for "id"');
+
+        $data = CRM_RcBase_Test_Utils::cvApi4Get(
+            'Tag',
+            ['name', 'description', 'is_reserved', 'is_selectable'],
+            ['id='.$id[0]['id']]
+        );
+        self::assertCount(1, $data, 'Not one result returned for "data"');
+
+        // Check valid ID
+        self::assertSame($id[0]['id'], $tag_id, 'Bad tag ID returned');
+
+        // Check valid data
+        unset($data[0]['id']);
+        self::assertSame($data[0], $tag, 'Bad tag data returned');
+    }
 }
