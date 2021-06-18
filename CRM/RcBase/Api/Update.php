@@ -151,4 +151,20 @@ class CRM_RcBase_Api_Update
     {
         return self::entity('Activity', $activity_id, $values, $check_permissions);
     }
+
+    /**
+     * Update group
+     *
+     * @param int $group_id Group ID
+     * @param array $values Group data
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return array Updated Group data
+     *
+     * @throws \CRM_Core_Exception
+     */
+    public static function group(int $group_id, array $values = [], bool $check_permissions = false): array
+    {
+        return self::entity('Group', $group_id, $values, $check_permissions);
+    }
 }
