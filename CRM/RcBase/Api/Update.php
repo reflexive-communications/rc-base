@@ -151,4 +151,36 @@ class CRM_RcBase_Api_Update
     {
         return self::entity('Activity', $activity_id, $values, $check_permissions);
     }
+
+    /**
+     * Update group
+     *
+     * @param int $group_id Group ID
+     * @param array $values Group data
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return array Updated Group data
+     *
+     * @throws \CRM_Core_Exception
+     */
+    public static function group(int $group_id, array $values = [], bool $check_permissions = false): array
+    {
+        return self::entity('Group', $group_id, $values, $check_permissions);
+    }
+
+    /**
+     * Update tag
+     *
+     * @param int $tag_id Tag ID
+     * @param array $values Tag data
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return array Updated Tag data
+     *
+     * @throws \CRM_Core_Exception
+     */
+    public static function tag(int $tag_id, array $values = [], bool $check_permissions = false): array
+    {
+        return self::entity('Tag', $tag_id, $values, $check_permissions);
+    }
 }

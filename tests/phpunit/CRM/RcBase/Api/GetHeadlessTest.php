@@ -628,4 +628,47 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         self::expectExceptionMessage('Unknown settings');
         CRM_RcBase_Api_Get::settingValue('non-existent');
     }
+
+    /**
+     * @throws UnauthorizedException|API_Exception
+     * @throws CRM_Core_Exception
+     */
+    public function testGetGroupIdByName()
+    {
+        // Create group
+        $group_data = [
+            'title' => 'Placeholder group',
+            'name' => 'place_holder_group',
+        ];
+        $group_id = CRM_RcBase_Test_Utils::cvApi4Create('Group', $group_data);
+
+        // Check valid group
+        self::assertSame($group_id, CRM_RcBase_Api_Get::groupIDByName($group_data['name']), 'Bad group ID returned');
+
+        // Check invalid
+        self::assertNull(CRM_RcBase_Api_Get::groupIDByName('non-existent'), 'Bad group ID returned on non-existent group');
+        self::assertNull(CRM_RcBase_Api_Get::groupIDByName(''), 'Bad group ID returned on empty group name');
+    }
+
+    /**
+     * @throws UnauthorizedException|API_Exception
+     * @throws CRM_Core_Exception
+     */
+    public function testGetTagIdByName()
+    {
+        // Create tag
+        $tag_data = [
+            'name' => 'test_tag',
+            'description' => 'This is a test tag',
+            'is_reserved' => true,
+        ];
+        $tag_id = CRM_RcBase_Test_Utils::cvApi4Create('Tag', $tag_data);
+
+        // Check valid group
+        self::assertSame($tag_id, CRM_RcBase_Api_Get::tagIDByName($tag_data['name']), 'Bad tag ID returned');
+
+        // Check invalid
+        self::assertNull(CRM_RcBase_Api_Get::tagIDByName('non-existent'), 'Bad tag ID returned on non-existent tag');
+        self::assertNull(CRM_RcBase_Api_Get::tagIDByName(''), 'Bad tag ID returned on empty tag name');
+    }
 }
