@@ -654,6 +654,26 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
      * @throws UnauthorizedException|API_Exception
      * @throws CRM_Core_Exception
      */
+    public function testGetGroupIdByTitle()
+    {
+        // Create group
+        $group_data = [
+            'title' => 'Test group by title',
+        ];
+        $group_id = CRM_RcBase_Test_Utils::cvApi4Create('Group', $group_data);
+
+        // Check valid group
+        self::assertSame($group_id, CRM_RcBase_Api_Get::groupIDByTitle($group_data['title']), 'Bad group ID returned');
+
+        // Check invalid
+        self::assertNull(CRM_RcBase_Api_Get::groupIDByTitle('non-existent'), 'Bad group ID returned on non-existent group');
+        self::assertNull(CRM_RcBase_Api_Get::groupIDByTitle(''), 'Bad group ID returned on empty group title');
+    }
+
+    /**
+     * @throws UnauthorizedException|API_Exception
+     * @throws CRM_Core_Exception
+     */
     public function testGetTagIdByName()
     {
         // Create tag

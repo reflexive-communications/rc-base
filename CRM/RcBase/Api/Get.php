@@ -456,6 +456,32 @@ class CRM_RcBase_Api_Get
     }
 
     /**
+     * Get group ID from group title
+     *
+     * @param string $title Group title
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null Group ID if found, null if not found
+     *
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public static function groupIDByTitle(string $title, bool $check_permissions = false): ?int
+    {
+        if (empty($title)) {
+            return null;
+        }
+
+        $results = Group::get($check_permissions)
+            ->addSelect('id')
+            ->addWhere('title', '=', $title)
+            ->setLimit(1)
+            ->execute();
+
+        return self::parseResultsFirst($results, 'id');
+    }
+
+    /**
      * Get tag ID from tag name
      *
      * @param string $name Tag name
