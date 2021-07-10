@@ -34,6 +34,7 @@ class CRM_RcBase_Api_Create
                 ]
             );
         } catch (Throwable $ex) {
+            Civi::log()->debug('Rc-Base | Create | '.$entity.' | Exception: '.var_export($ex, true));
             throw new CRM_Core_Exception(sprintf('Failed to create %s, reason: %s', $entity, $ex->getMessage()));
         }
 
