@@ -82,7 +82,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
      */
     public function testUpdateContactInvalidFieldValueTypeThrowsException()
     {
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Update contact
         $contact = [
@@ -126,7 +126,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
      */
     public function testUpdateEmail()
     {
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Create email
         $email = [
@@ -173,7 +173,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
      */
     public function testUpdatePhone()
     {
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Create phone
         $phone = [
@@ -219,7 +219,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
      */
     public function testUpdateAddress()
     {
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Create address
         $address = [
@@ -265,9 +265,9 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
      */
     public function testUpdateRelationship()
     {
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
-        $contact_id_other = $this->individualCreate([], self::getNextContactSequence());
-        $contact_id_other_new = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
+        $contact_id_other = $this->individualCreate();
+        $contact_id_other_new = $this->individualCreate();
 
         // Create relationship
         $relationship = [
@@ -314,8 +314,8 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
      */
     public function testUpdateActivity()
     {
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
-        $contact_id_source = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
+        $contact_id_source = $this->individualCreate();
 
         // Create activity
         $activity = [

@@ -101,7 +101,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testCreateEmail()
     {
         // Create contact
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Number of emails already in DB
         $all_email_old = CRM_RcBase_Test_Utils::cvApi4Get('Email', ['id']);
@@ -147,7 +147,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testCreateEmailWithMissingRequiredFieldsThrowsException()
     {
         // Create contact
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Create email
         $email = [
@@ -182,7 +182,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testCreatePhone()
     {
         // Create contact
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Number of phones already in DB
         $all_phone_old = CRM_RcBase_Test_Utils::cvApi4Get('Phone', ['id']);
@@ -228,7 +228,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testCreateAddress()
     {
         // Create contact
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Number of addresses already in DB
         $all_address_old = CRM_RcBase_Test_Utils::cvApi4Get('Address', ['id']);
@@ -274,9 +274,9 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testCreateRelationship()
     {
         // Create contact
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
         // Create other contact
-        $contact_id_other = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id_other = $this->individualCreate();
 
         // Number of relationships already in DB
         $all_relationship_old = CRM_RcBase_Test_Utils::cvApi4Get('Relationship', ['id']);
@@ -327,7 +327,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testCreateContribution()
     {
         // Create contact
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Number of contributions already in DB
         $all_contribution_old = CRM_RcBase_Test_Utils::cvApi4Get('Contribution', ['id']);
@@ -378,7 +378,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testCreateContributionWithDuplicateTransactionIdThrowsException()
     {
         // Create contact
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Create contribution
         $contribution = [
@@ -400,9 +400,9 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testCreateActivity()
     {
         // Create contact
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
         // Create source contact
-        $contact_id_source = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id_source = $this->individualCreate();
 
         // Number of activities already in DB
         $all_activity_old = CRM_RcBase_Test_Utils::cvApi4Get('Activity', ['id']);
@@ -450,7 +450,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testTagContact()
     {
         // Create contact
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Create tag
         $tag = [
@@ -495,7 +495,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testTagContactWithNonExistentTagThrowsException()
     {
         // Create contact
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Get non-existent tag ID
         $tag_id = CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_tag');
