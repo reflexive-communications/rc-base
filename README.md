@@ -4,6 +4,9 @@
 
 This extension does nothing, it is only required by some other extensions. It contains shared components, libraries.
 
+**Extra permissions available:**
+- access custom API: this can be used for an unprivileged CMS user to access custom API endpoints
+
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
 ### Config aka. CRM\_RcBase\_Config
