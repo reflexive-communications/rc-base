@@ -1,7 +1,6 @@
 <?php
 
 use Civi\API\Exception\UnauthorizedException;
-use Civi\Api4\Setting;
 
 /**
  * Test API Get class
@@ -579,18 +578,18 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         // Set value
         $setting_name = 'resCacheCode';
         $setting_value = 'test-cache-code';
-        Setting::set()
-            ->addValue($setting_name, $setting_value)
-            ->setDomainId(1)
-            ->setContactId($contact_id)
-            ->execute();
+        civicrm_api4('Setting', 'set', [
+            'values' => [$setting_name => $setting_value],
+            'domainId' => 1,
+            'contactId' => $contact_id,
+        ]);
 
         // Check setting
-        $result = Setting::get()
-            ->addSelect($setting_name)
-            ->setDomainId(1)
-            ->setContactId($contact_id)
-            ->execute();
+        $result = civicrm_api4('Setting', 'get', [
+            'select' => [$setting_name],
+            'domainId' => 1,
+            'contactId' => $contact_id,
+        ]);
         self::assertCount(1, $result, 'Bad number of results');
         self::assertSame($setting_value, $result[0]['value'], 'Failed to set contact setting.');
 
