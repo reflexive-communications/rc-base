@@ -186,3 +186,13 @@ function rc_base_civicrm_themes(&$themes)
 //  ));
 //  _rc_base_civix_navigationMenu($menu);
 //}
+// Custom functions.
+/**
+ * Implementation of hook_civicrm_container
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_container
+ */
+function rc_base_civicrm_container($container)
+{
+    $container->addCompilerPass(new Civi\RcBase\CompilerPass());
+}
