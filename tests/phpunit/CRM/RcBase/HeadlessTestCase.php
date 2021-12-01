@@ -19,6 +19,7 @@ class CRM_RcBase_HeadlessTestCase extends TestCase implements HeadlessInterface
     {
         // Resets DB
         Test::headless()
+            ->install('action-provider')
             ->installMe(__DIR__)
             ->apply(true);
     }
