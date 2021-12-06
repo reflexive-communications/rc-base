@@ -34,6 +34,7 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
     public function setUpHeadless()
     {
         return Test::headless()
+            ->install('action-provider')
             ->installMe(__DIR__)
             ->apply();
     }
@@ -45,6 +46,7 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
     public static function setUpBeforeClass(): void
     {
         Test::headless()
+            ->install('action-provider')
             ->installMe(__DIR__)
             ->apply(true);
     }
@@ -57,6 +59,7 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
     {
         Test::headless()
             ->uninstallMe(__DIR__)
+            ->uninstall('action-provider')
             ->apply(true);
     }
 

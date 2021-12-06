@@ -2,7 +2,7 @@
 
 ![CI](https://github.com/reflexive-communications/rc-base/workflows/CI/badge.svg)
 
-This extension does nothing, it is only required by some other extensions. It contains shared components, libraries.
+It contains shared components, libraries.
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
@@ -47,10 +47,15 @@ if (!$config->update($newConfig)) {
 }
 ```
 
+### Actions
+
+This extension provides an action-provider action for creating relationships between an organization (identified by name) and a contact (identified by contact id). The relationship could be configured.
+
 ## Requirements
 
 * PHP v7.3+
 * CiviCRM ((5.24 might work below - not tested))
+* action-provider 1.63+
 
 ## Installation
 

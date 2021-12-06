@@ -88,6 +88,13 @@ jobs:
               sudo mv dsg/apache2.conf ${{ env.APACHE_DIR }}/apache2.conf
               ./dsg/scripts.sh ci-build --project-base-path "${PROJECT_BASE_PATH}" --project-name "${SITE_NAME}" --db-name "${DB_NAME}" --db-user-name "${DB_USER}" --site-admin-user-name "${SITE_ADMIN_NAME}" --site-admin-password "${SITE_ADMIN_PW}" --apache-conf-dir "${APACHE_CONF_DIR}" --db-host "${DB_HOST}" --db-port "${DB_PORT}" --root-db-user-pw "${MYSQL_DB_PASS}" --local-deploy-target "${LOCAL_DEPLOY_TARGET}" -s --composer-app "${COMPOSER_APP}"
 
+      - name: Clone and enable dependencies from gitlab.
+        run:  |
+              cd ${{ env.LOCAL_DEPLOY_TARGET }}"/"${{ env.SITE_NAME }}"/web/sites/default/files/civicrm/ext"
+              sudo git clone https://lab.civicrm.org/extensions/action-provider.git
+              cd ${{ env.LOCAL_DEPLOY_TARGET }}"/"${{ env.SITE_NAME }}
+              cv --no-interaction --cwd=${{ env.LOCAL_DEPLOY_TARGET }}/${{ env.SITE_NAME }} ext:enable action-provider
+
       - name: Check out the code
         uses: actions/checkout@v2
         with:
