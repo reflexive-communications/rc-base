@@ -159,30 +159,12 @@ function rc_base_civicrm_themes(&$themes)
     _rc_base_civix_civicrm_themes($themes);
 }
 
-// --- Functions below this ship commented out. Uncomment as required. ---
+// --- Functions below are implemented by us. ---
 
 /**
- * Implements hook_civicrm_preProcess().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_preProcess
+ * Implements hook_civicrm_permission().
  */
-//function rc_base_civicrm_preProcess($formName, &$form) {
-//
-//}
-
-/**
- * Implements hook_civicrm_navigationMenu().
- *
- * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_navigationMenu
- */
-//function rc_base_civicrm_navigationMenu(&$menu) {
-//  _rc_base_civix_insert_navigation_menu($menu, 'Mailings', array(
-//    'label' => E::ts('New subliminal message'),
-//    'name' => 'mailing_subliminal_message',
-//    'url' => 'civicrm/mailing/subliminal',
-//    'permission' => 'access CiviMail',
-//    'operator' => 'OR',
-//    'separator' => 0,
-//  ));
-//  _rc_base_civix_navigationMenu($menu);
-//}
+function rc_base_civicrm_permission(&$permissions)
+{
+    CRM_RcBase_Permissions::addCustomPermissions($permissions);
+}

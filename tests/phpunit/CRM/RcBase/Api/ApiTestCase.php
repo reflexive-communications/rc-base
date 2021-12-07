@@ -1,23 +1,11 @@
 <?php
 
-use Civi\Test\Api3DocTrait;
-use Civi\Test\ContactTestTrait;
-use Civi\Test\DbTestTrait;
-use Civi\Test\GenericAssertionsTrait;
-use Civi\Test\MailingTestTrait;
-
 /**
  * Base test class for API headless tests
  * Contains helper functions for testing
  */
 class CRM_RcBase_Api_ApiTestCase extends CRM_RcBase_HeadlessTestCase
 {
-    use Api3DocTrait;
-    use GenericAssertionsTrait;
-    use DbTestTrait;
-    use ContactTestTrait;
-    use MailingTestTrait;
-
     /**
      * External ID counter
      *
@@ -63,15 +51,28 @@ class CRM_RcBase_Api_ApiTestCase extends CRM_RcBase_HeadlessTestCase
      */
     protected function nextSampleIndividual(): array
     {
-        // Assemble Contact data
-        $contact = $this->sampleContact('Individual', self::getNextContactSequence());
-        $contact['external_identifier'] = self::getNextExternalID();
-        // Remove unnecessary fields
-        unset($contact['prefix_id']);
-        unset($contact['suffix_id']);
-        // Remove email
-        unset($contact['email']);
+        return [
+            'contact_type' => 'Individual',
+            'first_name' => 'user'.self::getNextContactSequence(),
+            'middle_name' => 'middle',
+            'last_name' => 'Test',
+            'external_identifier' => self::getNextExternalID(),
+        ];
+    }
 
-        return $contact;
+    /**
+     * Create contact
+     *
+     * @param array $extra_params Extra parameters to the Contact entity
+     *
+     * @return int Contact ID
+     *
+     * @throws \CRM_Core_Exception
+     */
+    protected function individualCreate(array $extra_params = []): int
+    {
+        $params_def = $this->nextSampleIndividual();
+
+        return CRM_RcBase_Test_Utils::cvApi4Create('Contact', array_merge($params_def, $extra_params));
     }
 }

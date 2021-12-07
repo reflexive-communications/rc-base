@@ -15,7 +15,7 @@ class CRM_RcBase_Api_SaveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testSaveTagWithNotTaggedContact()
     {
         // Create contact
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Create tag
         $tag = [
@@ -57,7 +57,7 @@ class CRM_RcBase_Api_SaveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testSaveTagWithTaggedContact()
     {
         // Create contact
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Create tag
         $tag = [

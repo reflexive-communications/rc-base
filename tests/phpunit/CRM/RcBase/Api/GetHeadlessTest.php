@@ -1,7 +1,6 @@
 <?php
 
 use Civi\API\Exception\UnauthorizedException;
-use Civi\Api4\Setting;
 
 /**
  * Test API Get class
@@ -18,8 +17,8 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testGetContactIdFromEmail()
     {
         // Create contacts
-        $contact_id_a = $this->individualCreate([], self::getNextContactSequence());
-        $contact_id_b = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id_a = $this->individualCreate();
+        $contact_id_b = $this->individualCreate();
 
         // Create emails
         $email_a = [
@@ -78,14 +77,8 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $external_id_a = self::getNextExternalID();
         $external_id_b = self::getNextExternalID();
 
-        $contact_id_a = $this->individualCreate(
-            ['external_identifier' => $external_id_a],
-            self::getNextContactSequence()
-        );
-        $contact_id_b = $this->individualCreate(
-            ['external_identifier' => $external_id_b],
-            self::getNextContactSequence()
-        );
+        $contact_id_a = $this->individualCreate(['external_identifier' => $external_id_a]);
+        $contact_id_b = $this->individualCreate(['external_identifier' => $external_id_b]);
 
         // Check valid id
         self::assertSame(
@@ -120,14 +113,8 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $external_id_a = self::getNextExternalID();
         $external_id_b = self::getNextExternalID();
 
-        $contact_id_a = $this->individualCreate(
-            ['external_identifier' => $external_id_a],
-            self::getNextContactSequence()
-        );
-        $contact_id_b = $this->individualCreate(
-            ['external_identifier' => $external_id_b],
-            self::getNextContactSequence()
-        );
+        $contact_id_a = $this->individualCreate(['external_identifier' => $external_id_a]);
+        $contact_id_b = $this->individualCreate(['external_identifier' => $external_id_b]);
 
         // Get data
         $data_a = CRM_RcBase_Test_Utils::cvApi4Get('Contact', [], ["external_identifier=${external_id_a}"]);
@@ -179,7 +166,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testGetEmailId()
     {
         // Create contacts
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Create email
         $email = [
@@ -224,7 +211,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testGetPhoneId()
     {
         // Create contacts
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Create phone
         $phone = [
@@ -269,7 +256,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testGetAddressId()
     {
         // Create contacts
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Create address
         $address = [
@@ -314,8 +301,8 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testGetRelationshipId()
     {
         // Create contacts
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
-        $contact_id_other = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
+        $contact_id_other = $this->individualCreate();
 
         // Create relationship
         $relationship = [
@@ -384,11 +371,11 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testGetAllActivity()
     {
         // Create contacts
-        $contact_id_source_a = $this->individualCreate([], self::getNextContactSequence());
-        $contact_id_source_b = $this->individualCreate([], self::getNextContactSequence());
-        $contact_id_target = $this->individualCreate([], self::getNextContactSequence());
-        $contact_id_assignee_a = $this->individualCreate([], self::getNextContactSequence());
-        $contact_id_assignee_b = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id_source_a = $this->individualCreate();
+        $contact_id_source_b = $this->individualCreate();
+        $contact_id_target = $this->individualCreate();
+        $contact_id_assignee_a = $this->individualCreate();
+        $contact_id_assignee_b = $this->individualCreate();
 
         // Add activities
         $activity_a = [
@@ -475,7 +462,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testContactHasTag()
     {
         // Create contact
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Create tag
         $tag = [
@@ -586,23 +573,23 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testSettingValueWithContactId()
     {
         // Create contact
-        $contact_id = $this->individualCreate([], self::getNextContactSequence());
+        $contact_id = $this->individualCreate();
 
         // Set value
         $setting_name = 'resCacheCode';
         $setting_value = 'test-cache-code';
-        Setting::set()
-            ->addValue($setting_name, $setting_value)
-            ->setDomainId(1)
-            ->setContactId($contact_id)
-            ->execute();
+        civicrm_api4('Setting', 'set', [
+            'values' => [$setting_name => $setting_value],
+            'domainId' => 1,
+            'contactId' => $contact_id,
+        ]);
 
         // Check setting
-        $result = Setting::get()
-            ->addSelect($setting_name)
-            ->setDomainId(1)
-            ->setContactId($contact_id)
-            ->execute();
+        $result = civicrm_api4('Setting', 'get', [
+            'select' => [$setting_name],
+            'domainId' => 1,
+            'contactId' => $contact_id,
+        ]);
         self::assertCount(1, $result, 'Bad number of results');
         self::assertSame($setting_value, $result[0]['value'], 'Failed to set contact setting.');
 
