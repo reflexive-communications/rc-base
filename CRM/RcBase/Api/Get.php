@@ -316,13 +316,13 @@ class CRM_RcBase_Api_Get
         }
 
         $query = ActivityContact::get($check_permissions)
-            ->addSelect('activity.*')
+            ->addSelect('activity_id.*')
             ->addWhere('contact_id', '=', $contact_id)
             ->addWhere('record_type_id', '=', $record_type_id);
 
         // Add filter
         if ($activity_type_id > 0) {
-            $query = $query->addWhere('activity.activity_type_id', '=', $activity_type_id);
+            $query = $query->addWhere('activity_id.activity_type_id', '=', $activity_type_id);
         }
 
         $results = $query->execute();
