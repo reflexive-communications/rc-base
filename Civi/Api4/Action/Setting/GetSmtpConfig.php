@@ -11,7 +11,8 @@ use Throwable;
 /**
  * Get SMTP config
  *
- * Wrapper for Settings.Get +s mailing_backend
+ * Wrapper for Settings.Get +s mailing_backend, more convenient to use on the CLI,
+ * also decrypts encrypted SMTP password.
  */
 class GetSmtpConfig extends AbstractAction
 {
