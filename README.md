@@ -26,7 +26,7 @@ Below is a summary, for more details check the API Explorer.
 - `Setting::setSmtpConfig`
     - Allows for more convenient setting of SMTP configs mainly on the CLI (terminal)
     - If encryption is enabled, it will encrypt plain-text passwords
-    - Idempotent: checks first if the new config is different than the old one, and changes only if it's needed
+    - Idempotent: checks first and changes config only if it's needed, and report back if no change was done
 
 #### API wrappers
 
