@@ -31,7 +31,7 @@ class GetSmtpConfig extends AbstractAction
      *
      * @var string
      */
-    protected $config = '';
+    protected string $config = '';
 
     /**
      * @inheritDoc
