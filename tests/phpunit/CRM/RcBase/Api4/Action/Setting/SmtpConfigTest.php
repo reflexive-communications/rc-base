@@ -13,7 +13,7 @@ class CRM_RcBase_Api4_SmtpConfigTest extends CRM_RcBase_HeadlessTestCase
         = [
             'smtpServer' => 'smtp.example.com',
             'smtpPort' => '465',
-            'smtpAuth' => false,
+            'smtpAuth' => '0',
             'smtpUsername' => 'admin',
             'smtpPassword' => 'pass',
         ];
@@ -29,6 +29,24 @@ class CRM_RcBase_Api4_SmtpConfigTest extends CRM_RcBase_HeadlessTestCase
             ->addValue('mailing_backend', self::DEFAULT_SMTP_CONFIG)
             ->execute();
         self::assertCount(1, $results, 'Failed to set default config');
+    }
+
+    /**
+     * Return current mailing settings
+     *
+     * @return array
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    protected function getMailingSettings(): array
+    {
+        $settings = Setting::get()
+            ->addSelect('mailing_backend')
+            ->execute();
+        self::assertCount(1, $settings, 'Failed to get configs');
+        self::assertArrayHasKey('value', $settings[0], 'Failed to get configs');
+
+        return $settings[0]['value'];
     }
 
     /**
@@ -98,19 +116,15 @@ class CRM_RcBase_Api4_SmtpConfigTest extends CRM_RcBase_HeadlessTestCase
             ->setNeedAuth($new_configs['need_auth'])
             ->execute();
 
-        $smtp_configs = Setting::get()
-            ->addSelect('mailing_backend')
-            ->execute();
-        self::assertCount(1, $smtp_configs, 'Failed to get configs');
-        self::assertArrayHasKey('value', $smtp_configs[0], 'Failed to get configs');
-        self::assertArrayHasKey('smtpServer', $smtp_configs[0]['value'], 'Missing config: smtpServer');
-        self::assertEquals($new_configs['server'], $smtp_configs[0]['value']['smtpServer']);
-        self::assertArrayHasKey('smtpPort', $smtp_configs[0]['value'], 'Missing config: smtpPort');
-        self::assertEquals($new_configs['port'], $smtp_configs[0]['value']['smtpPort']);
-        self::assertArrayHasKey('smtpAuth', $smtp_configs[0]['value'], 'Missing config: smtpAuth');
-        self::assertEquals($new_configs['need_auth'], $smtp_configs[0]['value']['smtpAuth']);
-        self::assertArrayHasKey('smtpUsername', $smtp_configs[0]['value'], 'Missing config: smtpUsername');
-        self::assertEquals($new_configs['user'], $smtp_configs[0]['value']['smtpUsername']);
+        $smtp_configs = $this->getMailingSettings();
+        self::assertArrayHasKey('smtpServer', $smtp_configs, 'Missing config: smtpServer');
+        self::assertEquals($new_configs['server'], $smtp_configs['smtpServer']);
+        self::assertArrayHasKey('smtpPort', $smtp_configs, 'Missing config: smtpPort');
+        self::assertEquals($new_configs['port'], $smtp_configs['smtpPort']);
+        self::assertArrayHasKey('smtpAuth', $smtp_configs, 'Missing config: smtpAuth');
+        self::assertEquals($new_configs['need_auth'], $smtp_configs['smtpAuth']);
+        self::assertArrayHasKey('smtpUsername', $smtp_configs, 'Missing config: smtpUsername');
+        self::assertEquals($new_configs['user'], $smtp_configs['smtpUsername']);
     }
 
     /**
@@ -138,6 +152,46 @@ class CRM_RcBase_Api4_SmtpConfigTest extends CRM_RcBase_HeadlessTestCase
             ->execute();
         self::assertCount(1, $pass, 'Failed to get password');
         self::assertArrayHasKey('pass', $pass[0], 'Failed to get password');
+        self::assertArrayNotHasKey('no_change', $pass[0], 'Password was not changed');
         self::assertEquals($new_pass, $pass[0]['pass'], 'Failed to change password');
+    }
+
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public function testSetSameValuesReturnNoChange()
+    {
+        // Set password, if encryption is enabled there will be change
+        // As the default is not encrypted, and `setSmtpConfig` encrypts
+        $changed = Setting::setSmtpConfig()
+            ->setPass(self::DEFAULT_SMTP_CONFIG['smtpPassword'])
+            ->execute();
+        self::assertCount(1, $changed, 'Failed to set password');
+
+        // Set password again, now there should be no change
+        $settings_before = $this->getMailingSettings();
+        $changed = Setting::setSmtpConfig()
+            ->setPass(self::DEFAULT_SMTP_CONFIG['smtpPassword'])
+            ->execute();
+        $settings_after = $this->getMailingSettings();
+        self::assertCount(1, $changed, 'Failed to set password');
+        self::assertArrayHasKey('no_change', $changed[0], 'Password was changed');
+        self::assertEquals($settings_before, $settings_after, 'Config has changed.');
+
+        // Set same server
+        $settings_before = $this->getMailingSettings();
+        $changed = Setting::setSmtpConfig()
+            ->setServer(self::DEFAULT_SMTP_CONFIG['smtpServer'])
+            ->setPort(self::DEFAULT_SMTP_CONFIG['smtpPort'])
+            ->setUser(self::DEFAULT_SMTP_CONFIG['smtpUsername'])
+            ->setPass(self::DEFAULT_SMTP_CONFIG['smtpPassword'])
+            ->setNeedAuth(self::DEFAULT_SMTP_CONFIG['smtpAuth'])
+            ->execute();
+        $settings_after = $this->getMailingSettings();
+        self::assertCount(1, $changed, 'Failed to set server');
+        self::assertArrayHasKey('no_change', $changed[0], 'Config has changed.');
+        self::assertEquals($settings_before, $settings_after, 'Config has changed.');
     }
 }
