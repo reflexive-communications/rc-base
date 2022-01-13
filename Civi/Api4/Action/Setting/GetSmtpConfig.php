@@ -9,7 +9,8 @@ use Civi\Api4\Setting;
 use Throwable;
 
 /**
- * Get SMTP configs
+ * Get SMTP config
+ *
  * Wrapper for Settings.Get +s mailing_backend
  */
 class GetSmtpConfig extends AbstractAction
@@ -28,6 +29,15 @@ class GetSmtpConfig extends AbstractAction
 
     /**
      * Name of config to return
+     *
+     * Available configs:
+     * server (SMTP server URL),
+     * port (SMTP server port),
+     * user (SMTP username),
+     * pass (SMTP password),
+     * need_auth (is authentication required).
+     *
+     * If left empty, it will return all configs.
      *
      * @var string
      */
