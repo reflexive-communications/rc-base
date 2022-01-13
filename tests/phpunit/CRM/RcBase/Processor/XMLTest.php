@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
  */
 class CRM_RcBase_Processor_XMLTest extends TestCase
 {
-
     /**
      * @throws \CRM_Core_Exception
      */

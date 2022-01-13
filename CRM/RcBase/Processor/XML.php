@@ -9,7 +9,6 @@
  */
 class CRM_RcBase_Processor_XML
 {
-
     /**
      * Parse XML string
      *

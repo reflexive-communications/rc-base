@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
  */
 class CRM_RcBase_Test_MockPhpStreamTest extends TestCase
 {
-
     /**
      * Provide streams for the php:// stream wrapper
      *
