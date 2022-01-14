@@ -8,9 +8,9 @@
  */
 class CRM_RcBase_ExtensionUtil
 {
-    const SHORT_NAME = 'rc_base';
-    const LONG_NAME = 'rc-base';
-    const CLASS_PREFIX = 'CRM_RcBase';
+    public const SHORT_NAME = 'rc_base';
+    public const LONG_NAME = 'rc-base';
+    public const CLASS_PREFIX = 'CRM_RcBase';
 
     /**
      * Translate a string using the extension's domain.

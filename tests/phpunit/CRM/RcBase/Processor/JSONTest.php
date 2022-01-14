@@ -9,7 +9,6 @@ use PHPUnit\Framework\TestCase;
  */
 class CRM_RcBase_Processor_JSONTest extends TestCase
 {
-
     /**
      * Provide valid JSON
      *

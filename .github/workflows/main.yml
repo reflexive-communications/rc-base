@@ -67,8 +67,9 @@ jobs:
       - name: Get DSG application.
         uses: actions/checkout@v2
         with:
-          repository: akosgarai/dsg
+          repository: reflexive-communications/dsg
           path: dsg
+          ref: drush
 
       - name: Build drupal site with civicrm.
         env:

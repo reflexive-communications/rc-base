@@ -9,7 +9,6 @@
  */
 class CRM_RcBase_Processor_UrlEncodedForm
 {
-
     /**
      * Parse GET request parameters
      *
