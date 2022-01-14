@@ -130,10 +130,9 @@ class CRM_RcBase_Api4_SmtpConfigTest extends CRM_RcBase_HeadlessTestCase
     /**
      * @return void
      */
-    public function testSetNoParamsReturnEmpty()
+    public function testSetNoParamsReturnsEmpty()
     {
-        $results = Setting::setSmtpConfig()
-            ->execute();
+        $results = Setting::setSmtpConfig()->execute();
         self::assertCount(0, $results, 'Not empty result set when no params to set');
     }
 
