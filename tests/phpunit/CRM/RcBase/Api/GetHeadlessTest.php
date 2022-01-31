@@ -716,5 +716,10 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $subtype = CRM_RcBase_Api_Get::contactSubType($contact_id);
         self::assertCount(2, $subtype, 'Wrong number of subtypes: should be 2');
         self::assertSame([$sub_type_a['name'], $sub_type_b['name']], $subtype, 'Wrong subtypes returned');
+
+        // Check invalid ID
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Invalid ID');
+        CRM_RcBase_Api_Get::contactSubType(-1);
     }
 }

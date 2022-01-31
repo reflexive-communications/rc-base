@@ -516,9 +516,14 @@ class CRM_RcBase_Api_Get
      *
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \CRM_Core_Exception
      */
     public static function contactSubType(int $contact_id): array
     {
+        if ($contact_id < 1) {
+            throw new CRM_Core_Exception('Invalid ID.');
+        }
+
         $results = Contact::get()
             ->addSelect('contact_sub_type')
             ->addWhere('id', '=', $contact_id)
