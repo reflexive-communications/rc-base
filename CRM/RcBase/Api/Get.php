@@ -506,4 +506,25 @@ class CRM_RcBase_Api_Get
 
         return self::parseResultsFirst($results, 'id');
     }
+
+    /**
+     * Get current sub-types of a contact
+     *
+     * @param int $contact_id Contact ID
+     *
+     * @return array List of sub-types
+     *
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public static function contactSubType(int $contact_id): array
+    {
+        $results = Contact::get()
+            ->addSelect('contact_sub_type')
+            ->addWhere('id', '=', $contact_id)
+            ->setLimit(1)
+            ->execute();
+
+        return self::parseResultsFirst($results, 'contact_sub_type') ?? [];
+    }
 }
