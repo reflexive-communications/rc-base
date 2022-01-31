@@ -53,7 +53,7 @@ class CRM_RcBase_Api_Save
      */
     public static function addSubTypeToContact(int $contact_id, array $subtypes, bool $check_permissions = false): array
     {
-        $current_sub_types = CRM_RcBase_Api_Get::contactSubType($contact_id);
+        $current_sub_types = CRM_RcBase_Api_Get::contactSubType($contact_id, $check_permissions);
         return CRM_RcBase_Api_Update::contact($contact_id, ['contact_sub_type' => array_merge($current_sub_types, $subtypes),], $check_permissions);
     }
 }
