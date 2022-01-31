@@ -511,6 +511,7 @@ class CRM_RcBase_Api_Get
      * Get current sub-types of a contact
      *
      * @param int $contact_id Contact ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array List of sub-types
      *
@@ -518,13 +519,13 @@ class CRM_RcBase_Api_Get
      * @throws \Civi\API\Exception\UnauthorizedException
      * @throws \CRM_Core_Exception
      */
-    public static function contactSubType(int $contact_id): array
+    public static function contactSubType(int $contact_id, bool $check_permissions = false): array
     {
         if ($contact_id < 1) {
             throw new CRM_Core_Exception('Invalid ID.');
         }
 
-        $results = Contact::get()
+        $results = Contact::get($check_permissions)
             ->addSelect('contact_sub_type')
             ->addWhere('id', '=', $contact_id)
             ->setLimit(1)
