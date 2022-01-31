@@ -89,4 +89,57 @@ class CRM_RcBase_Api_SaveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         // Check valid ID
         self::assertNull($entity_tag_id_save, 'Not null returned when no tagging was needed');
     }
+
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public function testAddSubTypeToContact()
+    {
+        // Create subtypes
+        $sub_type_a = [
+            'name' => 'individual_sub_type_a',
+            'label' => 'Sub-Type A',
+            'parent_id.name' => 'Individual',
+        ];
+        $sub_type_b = [
+            'name' => 'individual_sub_type_b',
+            'label' => 'Sub-Type B',
+            'parent_id.name' => 'Individual',
+        ];
+        CRM_RcBase_Test_Utils::cvApi4Create('ContactType', $sub_type_a);
+        CRM_RcBase_Test_Utils::cvApi4Create('ContactType', $sub_type_b);
+
+        // Create contact - no subtype
+        $contact_id = $this->individualCreate();
+        $contact_data = CRM_RcBase_Test_Utils::cvApi4Get(
+            'Contact',
+            ['contact_sub_type'],
+            ["id=${contact_id}"]
+        );
+        self::assertCount(1, $contact_data, 'Wrong number of contacts returned');
+        self::assertNull($contact_data[0]['contact_sub_type'], 'Wrong subtypes returned');
+
+        // Add subtype A
+        CRM_RcBase_Api_Save::addSubTypeToContact($contact_id, [$sub_type_a['name']]);
+        $contact_data = CRM_RcBase_Test_Utils::cvApi4Get(
+            'Contact',
+            ['contact_sub_type'],
+            ["id=${contact_id}"]
+        );
+        self::assertCount(1, $contact_data, 'Wrong number of contacts returned');
+        self::assertSame([$sub_type_a['name']], $contact_data[0]['contact_sub_type'], 'Wrong subtypes returned');
+
+        // Add subtype B too
+        CRM_RcBase_Api_Save::addSubTypeToContact($contact_id, [$sub_type_b['name']]);
+        $contact_data = CRM_RcBase_Test_Utils::cvApi4Get(
+            'Contact',
+            ['contact_sub_type'],
+            ["id=${contact_id}"]
+        );
+        self::assertCount(1, $contact_data, 'Wrong number of contacts returned');
+        self::assertSame([$sub_type_a['name'], $sub_type_b['name']], $contact_data[0]['contact_sub_type'], 'Wrong subtypes returned');
+    }
 }

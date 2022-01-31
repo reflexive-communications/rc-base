@@ -678,4 +678,48 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         self::assertNull(CRM_RcBase_Api_Get::tagIDByName('non-existent'), 'Bad tag ID returned on non-existent tag');
         self::assertNull(CRM_RcBase_Api_Get::tagIDByName(''), 'Bad tag ID returned on empty tag name');
     }
+
+    /**
+     * @throws \CRM_Core_Exception
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public function testContactSubType()
+    {
+        // Create subtypes
+        $sub_type_a = [
+            'name' => 'individual_sub_type_a',
+            'label' => 'Sub-Type A',
+            'parent_id.name' => 'Individual',
+        ];
+        $sub_type_b = [
+            'name' => 'individual_sub_type_b',
+            'label' => 'Sub-Type B',
+            'parent_id.name' => 'Individual',
+        ];
+        CRM_RcBase_Test_Utils::cvApi4Create('ContactType', $sub_type_a);
+        CRM_RcBase_Test_Utils::cvApi4Create('ContactType', $sub_type_b);
+
+        // Create contact - no subtype
+        $contact_id = $this->individualCreate();
+        $subtype = CRM_RcBase_Api_Get::contactSubType($contact_id);
+        self::assertCount(0, $subtype, 'Wrong number of subtypes: should be zero');
+
+        // Create contact - sub-type A
+        $contact_id = $this->individualCreate(['contact_sub_type' => [$sub_type_a['name']],]);
+        $subtype = CRM_RcBase_Api_Get::contactSubType($contact_id);
+        self::assertCount(1, $subtype, 'Wrong number of subtypes: should be one');
+        self::assertSame([$sub_type_a['name']], $subtype, 'Wrong subtype returned');
+
+        // Create contact - sub-type A and B
+        $contact_id = $this->individualCreate(['contact_sub_type' => [$sub_type_a['name'], $sub_type_b['name']],]);
+        $subtype = CRM_RcBase_Api_Get::contactSubType($contact_id);
+        self::assertCount(2, $subtype, 'Wrong number of subtypes: should be 2');
+        self::assertSame([$sub_type_a['name'], $sub_type_b['name']], $subtype, 'Wrong subtypes returned');
+
+        // Check invalid ID
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('Invalid ID');
+        CRM_RcBase_Api_Get::contactSubType(-1);
+    }
 }
