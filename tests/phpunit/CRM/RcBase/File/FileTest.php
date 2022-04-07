@@ -4,6 +4,8 @@ use PHPUnit\Framework\TestCase;
 
 /**
  * Test CRM_RcBase_File
+ *
+ * @group unit
  */
 class CRM_RcBase_File_FileTest extends TestCase
 {
