@@ -1,6 +1,6 @@
 # rc-base
 
-![CI](https://github.com/reflexive-communications/rc-base/workflows/CI/badge.svg)
+[![CI](https://github.com/reflexive-communications/rc-base/actions/workflows/main.yml/badge.svg)](https://github.com/reflexive-communications/rc-base/actions/workflows/main.yml)
 
 This extension does nothing, it's only required by some other extensions. It contains shared components, libraries.
 

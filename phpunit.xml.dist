@@ -1,28 +1,30 @@
 <?xml version="1.0"?>
-<phpunit colors="true"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
+         colors="true"
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          convertDeprecationsToExceptions="true"
          bootstrap="tests/phpunit/bootstrap.php"
          testdox="true">
+    <coverage>
+        <include>
+            <directory suffix=".php">./</directory>
+        </include>
+        <exclude>
+            <!-- Skip test directory -->
+            <directory>./tests</directory>
+            <!-- Skip generated files -->
+            <file>./rc_base.php</file>
+            <file>./rc_base.civix.php</file>
+        </exclude>
+    </coverage>
     <testsuites>
         <testsuite name="all">
             <directory>./tests/phpunit</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist>
-            <directory suffix=".php">./</directory>
-            <exclude>
-                <!-- Skip the test directory -->
-                <directory>./tests</directory>
-                <!-- Skip the generated files -->
-                <file>./rc_base.php</file>
-                <file>./rc_base.civix.php</file>
-            </exclude>
-        </whitelist>
-    </filter>
     <listeners>
         <listener class="Civi\Test\CiviTestListener">
             <arguments/>
