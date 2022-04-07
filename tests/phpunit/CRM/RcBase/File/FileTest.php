@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
  */
 class CRM_RcBase_File_FileTest extends TestCase
 {
-    public function provideFiles(): array
+    public function provideFilesToCheck(): array
     {
         return [
             'identical files' => [__DIR__.'/file_1', __DIR__.'/file_1', true],
@@ -17,7 +17,7 @@ class CRM_RcBase_File_FileTest extends TestCase
     }
 
     /**
-     * @dataProvider provideFiles
+     * @dataProvider provideFilesToCheck
      *
      * @param $file_a
      * @param $file_b
@@ -36,5 +36,24 @@ class CRM_RcBase_File_FileTest extends TestCase
         self::expectException(CRM_Core_Exception::class);
         self::expectExceptionMessage('Failed to read file');
         CRM_RcBase_File::checkFilesEqual(__DIR__.'/non-existent.file', __DIR__.'/non-existent.file');
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     */
+    public function testCopyFiles()
+    {
+        $source = __DIR__.'/file_1';
+        $target = __DIR__.'/copy_file_'.time();
+        self::assertTrue(CRM_RcBase_File::copyFile($source, $target), 'Failed to copy files');
+        self::assertTrue(CRM_RcBase_File::checkFilesEqual($source, $target), 'Source and target differ after copy');
+    }
+
+    public function testCopyFilesWithUnreadableSource()
+    {
+        $source = __DIR__.'/non-existent.file';
+        $target = __DIR__.'/copy_file_'.time();
+        self::assertFalse(CRM_RcBase_File::copyFile($source, $target), 'Not false returned on unreadable source file');
     }
 }

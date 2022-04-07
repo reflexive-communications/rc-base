@@ -37,19 +37,19 @@ class CRM_RcBase_File
     /**
      * Copy file contents to destination
      *
-     * @param string $from Source file path
-     * @param string $to Destination file path
+     * @param string $source Source file path
+     * @param string $target Destination file path
      *
      * @return bool Success/Failure
      */
-    public static function copyFile(string $from, string $to): bool
+    public static function copyFile(string $source, string $target): bool
     {
-        if (!is_readable($from)) {
+        if (!is_readable($source)) {
             return false;
         }
-        $contents = file_get_contents($from);
+        $contents = file_get_contents($source);
 
-        if (!file_put_contents($to, $contents)) {
+        if (file_put_contents($target, $contents) === false) {
             return false;
         }
 
