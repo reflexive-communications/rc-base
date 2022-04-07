@@ -19,11 +19,11 @@ class CRM_RcBase_File
      */
     public static function checkFilesEqual(string $file_a, string $file_b): bool
     {
-        if (!is_readable($file_a)) {
-            throw new CRM_Core_Exception(sprintf('Failed to read file: "%s"', $file_a));
-        }
-        if (!is_readable($file_b)) {
-            throw new CRM_Core_Exception(sprintf('Failed to read file: "%s"', $file_b));
+        $files = [$file_a, $file_b];
+        foreach ($files as $file) {
+            if (!is_readable($file)) {
+                throw new CRM_Core_Exception(sprintf('Failed to read file: "%s"', $file));
+            }
         }
 
         if (filesize($file_a) !== filesize($file_b)) {
