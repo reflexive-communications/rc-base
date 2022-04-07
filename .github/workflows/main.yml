@@ -16,7 +16,7 @@ jobs:
       - name: PHP-CS-Fixer
         uses: docker://oskarstark/php-cs-fixer-ga
         with:
-          args: --rules=@PSR2 --dry-run -v .
+          args: --config=.php-cs-fixer.dist --dry-run -v
   tests:
     name: Unit tests
     runs-on: ubuntu-20.04
