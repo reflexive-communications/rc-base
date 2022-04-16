@@ -20,13 +20,16 @@ New CMS permissions:
 
 Below is a summary, for more details check the API Explorer.
 
-- `Setting::getSmtpConfig`
+- `Setting::getSmtpConfig`, APIv4
     - Returns current SMTP config nicely formatted. If SMTP password is encrypted, decrypted text is provided.
     - You can select which config to return (or all)
-- `Setting::setSmtpConfig`
+- `Setting::setSmtpConfig`, APIv4
     - Allows for more convenient setting of SMTP configs mainly on the CLI (terminal)
     - If encryption is enabled, it will encrypt plain-text passwords
     - Idempotent: checks first and changes config only if it's needed, and report back if no change was done
+- `Extension::haspendingupgrade`, APIv3
+    - Thin wrapper for `CRM_Extension_Upgrades::hasPending()`
+    - Returns `1` if there are pending DB upgrades for extensions, `0` otherwise
 
 #### API wrappers
 
