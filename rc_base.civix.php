@@ -21,6 +21,7 @@ class CRM_RcBase_ExtensionUtil
      * @param string $text
      *   Canonical message text (generally en_US).
      * @param array $params
+     *
      * @return string
      *   Translated text.
      * @see ts
@@ -39,6 +40,7 @@ class CRM_RcBase_ExtensionUtil
      * @param string|NULL $file
      *   Ex: NULL.
      *   Ex: 'css/foo.css'.
+     *
      * @return string
      *   Ex: 'http://example.org/sites/default/ext/org.example.foo'.
      *   Ex: 'http://example.org/sites/default/ext/org.example.foo/css/foo.css'.
@@ -57,6 +59,7 @@ class CRM_RcBase_ExtensionUtil
      * @param string|NULL $file
      *   Ex: NULL.
      *   Ex: 'css/foo.css'.
+     *
      * @return string
      *   Ex: '/var/www/example.org/sites/default/ext/org.example.foo'.
      *   Ex: '/var/www/example.org/sites/default/ext/org.example.foo/css/foo.css'.
@@ -64,7 +67,7 @@ class CRM_RcBase_ExtensionUtil
     public static function path($file = null)
     {
         // return CRM_Core_Resources::singleton()->getPath(self::LONG_NAME, $file);
-        return __DIR__ . ($file === null ? '' : (DIRECTORY_SEPARATOR . $file));
+        return __DIR__.($file === null ? '' : (DIRECTORY_SEPARATOR.$file));
     }
 
     /**
@@ -72,12 +75,13 @@ class CRM_RcBase_ExtensionUtil
      *
      * @param string $suffix
      *   Ex: 'Page_HelloWorld' or 'Page\\HelloWorld'.
+     *
      * @return string
      *   Ex: 'CRM_Foo_Page_HelloWorld'.
      */
     public static function findClass($suffix)
     {
-        return self::CLASS_PREFIX . '_' . str_replace('\\', '_', $suffix);
+        return self::CLASS_PREFIX.'_'.str_replace('\\', '_', $suffix);
     }
 }
 
@@ -96,10 +100,10 @@ function _rc_base_civix_civicrm_config(&$config = null)
     }
     $configured = true;
 
-    $template =& CRM_Core_Smarty::singleton();
+    $template = CRM_Core_Smarty::singleton();
 
-    $extRoot = dirname(__FILE__) . DIRECTORY_SEPARATOR;
-    $extDir = $extRoot . 'templates';
+    $extRoot = __DIR__.DIRECTORY_SEPARATOR;
+    $extDir = $extRoot.'templates';
 
     if (is_array($template->template_dir)) {
         array_unshift($template->template_dir, $extDir);
@@ -107,7 +111,7 @@ function _rc_base_civix_civicrm_config(&$config = null)
         $template->template_dir = [$extDir, $template->template_dir];
     }
 
-    $include_path = $extRoot . PATH_SEPARATOR . get_include_path();
+    $include_path = $extRoot.PATH_SEPARATOR.get_include_path();
     set_include_path($include_path);
 }
 
@@ -120,7 +124,7 @@ function _rc_base_civix_civicrm_config(&$config = null)
  */
 function _rc_base_civix_civicrm_xmlMenu(&$files)
 {
-    foreach (_rc_base_civix_glob(__DIR__ . '/xml/Menu/*.xml') as $file) {
+    foreach (_rc_base_civix_glob(__DIR__.'/xml/Menu/*.xml') as $file) {
         $files[] = $file;
     }
 }
@@ -221,7 +225,7 @@ function _rc_base_civix_civicrm_upgrade($op, CRM_Queue_Queue $queue = null)
  */
 function _rc_base_civix_upgrader()
 {
-    if (!file_exists(__DIR__ . '/CRM/RcBase/Upgrader.php')) {
+    if (!file_exists(__DIR__.'/CRM/RcBase/Upgrader.php')) {
         return null;
     } else {
         return CRM_RcBase_Upgrader_Base::instance();
@@ -232,7 +236,8 @@ function _rc_base_civix_upgrader()
  * Search directory tree for files which match a glob pattern.
  *
  * Note: Dot-directories (like "..", ".git", or ".svn") will be ignored.
- * Note: In Civi 4.3+, delegate to CRM_Utils_File::findFiles()
+ * Note: Delegate to CRM_Utils_File::findFiles(), this function kept only
+ * for backward compatibility of extension code that uses it.
  *
  * @param string $dir base dir
  * @param string $pattern , glob pattern, eg "*.txt"
@@ -241,31 +246,7 @@ function _rc_base_civix_upgrader()
  */
 function _rc_base_civix_find_files($dir, $pattern)
 {
-    if (is_callable(['CRM_Utils_File', 'findFiles'])) {
-        return CRM_Utils_File::findFiles($dir, $pattern);
-    }
-
-    $todos = [$dir];
-    $result = [];
-    while (!empty($todos)) {
-        $subdir = array_shift($todos);
-        foreach (_rc_base_civix_glob("$subdir/$pattern") as $match) {
-            if (!is_dir($match)) {
-                $result[] = $match;
-            }
-        }
-        if ($dh = opendir($subdir)) {
-            while (false !== ($entry = readdir($dh))) {
-                $path = $subdir . DIRECTORY_SEPARATOR . $entry;
-                if ($entry[0] == '.') {
-                } elseif (is_dir($path)) {
-                    $todos[] = $path;
-                }
-            }
-            closedir($dh);
-        }
-    }
-    return $result;
+    return CRM_Utils_File::findFiles($dir, $pattern);
 }
 
 /**
@@ -304,21 +285,21 @@ function _rc_base_civix_civicrm_managed(&$entities)
  */
 function _rc_base_civix_civicrm_caseTypes(&$caseTypes)
 {
-    if (!is_dir(__DIR__ . '/xml/case')) {
+    if (!is_dir(__DIR__.'/xml/case')) {
         return;
     }
 
-    foreach (_rc_base_civix_glob(__DIR__ . '/xml/case/*.xml') as $file) {
+    foreach (_rc_base_civix_glob(__DIR__.'/xml/case/*.xml') as $file) {
         $name = preg_replace('/\.xml$/', '', basename($file));
         if ($name != CRM_Case_XMLProcessor::mungeCaseType($name)) {
             $errorMessage = sprintf("Case-type file name is malformed (%s vs %s)", $name, CRM_Case_XMLProcessor::mungeCaseType($name));
             throw new CRM_Core_Exception($errorMessage);
         }
         $caseTypes[$name] = [
-      'module' => E::LONG_NAME,
-      'name' => $name,
-      'file' => $file,
-    ];
+            'module' => E::LONG_NAME,
+            'name' => $name,
+            'file' => $file,
+        ];
     }
 }
 
@@ -333,11 +314,11 @@ function _rc_base_civix_civicrm_caseTypes(&$caseTypes)
  */
 function _rc_base_civix_civicrm_angularModules(&$angularModules)
 {
-    if (!is_dir(__DIR__ . '/ang')) {
+    if (!is_dir(__DIR__.'/ang')) {
         return;
     }
 
-    $files = _rc_base_civix_glob(__DIR__ . '/ang/*.ang.php');
+    $files = _rc_base_civix_glob(__DIR__.'/ang/*.ang.php');
     foreach ($files as $file) {
         $name = preg_replace(':\.ang\.php$:', '', basename($file));
         $module = include $file;
@@ -355,7 +336,7 @@ function _rc_base_civix_civicrm_angularModules(&$angularModules)
  */
 function _rc_base_civix_civicrm_themes(&$themes)
 {
-    $files = _rc_base_civix_glob(__DIR__ . '/*.theme.php');
+    $files = _rc_base_civix_glob(__DIR__.'/*.theme.php');
     foreach ($files as $file) {
         $themeMeta = include $file;
         if (empty($themeMeta['name'])) {
@@ -377,6 +358,7 @@ function _rc_base_civix_civicrm_themes(&$themes)
  * This wrapper provides consistency.
  *
  * @link http://php.net/glob
+ *
  * @param string $pattern
  *
  * @return array
@@ -403,11 +385,11 @@ function _rc_base_civix_insert_navigation_menu(&$menu, $path, $item)
     // If we are done going down the path, insert menu
     if (empty($path)) {
         $menu[] = [
-      'attributes' => array_merge([
-        'label'      => CRM_Utils_Array::value('name', $item),
-        'active'     => 1,
-      ], $item),
-    ];
+            'attributes' => array_merge([
+                'label' => CRM_Utils_Array::value('name', $item),
+                'active' => 1,
+            ], $item),
+        ];
         return true;
     } else {
         // Find an recurse into the next level down
@@ -479,7 +461,7 @@ function _rc_base_civix_fixNavigationMenuItems(&$nodes, &$maxNavID, $parentID)
  */
 function _rc_base_civix_civicrm_alterSettingsFolders(&$metaDataFolders = null)
 {
-    $settingsDir = __DIR__ . DIRECTORY_SEPARATOR . 'settings';
+    $settingsDir = __DIR__.DIRECTORY_SEPARATOR.'settings';
     if (!in_array($settingsDir, $metaDataFolders) && is_dir($settingsDir)) {
         $metaDataFolders[] = $settingsDir;
     }
