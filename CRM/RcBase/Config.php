@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @deprecated
+ */
 abstract class CRM_RcBase_Config
 {
     private $configName;
