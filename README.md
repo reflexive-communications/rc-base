@@ -44,6 +44,9 @@ Generic PHP IO processors for JSON, URL-encoded, XML or INI files or streams.
 A Base class (`CRM_RcBase_Config`) that wraps `Civi::Settings()` for easier use. For details check
 the [Developer Notes](DEVELOPER.md).
 
+### Settings
+Helper class (`CRM_RcBase_Setting`) for managing settings, basically a thin wrapper for `Civi::Settings()`.
+
 ## Requirements
 
 * PHP v7.4+
