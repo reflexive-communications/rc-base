@@ -37,6 +37,42 @@ class CRM_RcBase_SettingTest extends CRM_RcBase_HeadlessTestCase
      * @return void
      * @throws \CRM_Core_Exception
      */
+    public function testSaveSecret()
+    {
+        $name = 'secret-key';
+        $secret = 'topsecret';
+        CRM_RcBase_Setting::saveSecret($name, $secret);
+
+        $raw_value = Civi::settings()->get($name);
+        self::assertFalse(Civi::service('crypto.token')->isPlainText($raw_value), 'Secret was not encrypted');
+
+        $saved = CRM_RcBase_Setting::get($name);
+        self::assertSame($secret, $saved, 'Wrong secret returned');
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     */
+    public function testRotateSecret()
+    {
+        $name = 'rotate-secret-key';
+        $secret = 'original_pass';
+        CRM_RcBase_Setting::saveSecret($name, $secret);
+        $original_encrypted = Civi::settings()->get($name);
+        self::assertFalse(Civi::service('crypto.token')->isPlainText($original_encrypted), 'Secret was not encrypted');
+
+        CRM_RcBase_Setting::rotateSecret($name);
+        $rotated_encrypted = Civi::settings()->get($name);
+        self::assertFalse(Civi::service('crypto.token')->isPlainText($rotated_encrypted), 'Secret was not encrypted');
+
+        self::assertNotEquals($original_encrypted, $rotated_encrypted, 'Secret not rotated');
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     */
     public function testGetNonExistentReturnsNull()
     {
         self::assertNull(CRM_RcBase_Setting::get('non_existent_setting'));

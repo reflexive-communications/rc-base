@@ -34,6 +34,37 @@ class CRM_RcBase_Setting
     }
 
     /**
+     * Save secret setting in encrypted format
+     *
+     * @param string $name Setting name
+     * @param string $plain_text Secret value
+     *
+     * @return void
+     * @throws \CRM_Core_Exception
+     */
+    public static function saveSecret(string $name, string $plain_text): void
+    {
+        $encrypted = Civi::service('crypto.token')->encrypt($plain_text, 'CRED');
+        self::save($name, $encrypted);
+    }
+
+    /**
+     * Rotate secret value
+     *
+     * @param string $name Setting name
+     *
+     * @return void
+     * @throws \CRM_Core_Exception
+     */
+    public static function rotateSecret(string $name): void
+    {
+        $rekeyed = Civi::service('crypto.token')->rekey(self::get($name), 'CRED');
+        if (!is_null($rekeyed)) {
+            self::save($name, $rekeyed);
+        }
+    }
+
+    /**
      * Get setting value from DB
      *
      * @param string $name Setting name
@@ -48,7 +79,14 @@ class CRM_RcBase_Setting
             throw new CRM_Core_Exception('Missing setting name');
         }
 
-        return Civi::settings()->get($name);
+        $value = Civi::settings()->get($name);
+
+        // Decrypt if needed
+        if (is_string($value) && !Civi::service('crypto.token')->isPlainText($value)) {
+            return Civi::service('crypto.token')->decrypt($value, ['plain', 'CRED']);
+        }
+
+        return $value;
     }
 
     /**
@@ -60,7 +98,7 @@ class CRM_RcBase_Setting
      * @throws \CRM_Core_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
      */
-    public static function remove(string $name)
+    public static function remove(string $name): void
     {
         if (empty($name)) {
             throw new CRM_Core_Exception('Missing setting name');
