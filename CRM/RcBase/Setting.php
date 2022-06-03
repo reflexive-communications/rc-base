@@ -106,7 +106,7 @@ class CRM_RcBase_Setting
 
         // Search setting
         $exists = false;
-        $settings = Setting::get()->execute();
+        $settings = Setting::get(false)->execute();
         foreach ($settings as $setting) {
             if ($setting['name'] == $name) {
                 $exists = true;
