@@ -1,13 +1,16 @@
 <?php
 
+namespace Civi\Api4\Action\Setting;
+
 use Civi\Api4\Setting;
+use CRM_RcBase_HeadlessTestCase;
 
 /**
  * Test Get/Set SMTP Config API
  *
  * @group headless
  */
-class CRM_RcBase_Api4_SmtpConfigTest extends CRM_RcBase_HeadlessTestCase
+class SmtpConfigTest extends CRM_RcBase_HeadlessTestCase
 {
     public const DEFAULT_SMTP_CONFIG
         = [
@@ -57,7 +60,7 @@ class CRM_RcBase_Api4_SmtpConfigTest extends CRM_RcBase_HeadlessTestCase
         $smtp_configs = Setting::getSmtpConfig()->execute();
 
         self::assertCount(1, $smtp_configs, 'Failed to get configs');
-        foreach (Civi\Api4\Action\Setting\GetSmtpConfig::CONFIGS_MAP as $name => $civi_name) {
+        foreach (GetSmtpConfig::CONFIGS_MAP as $name => $civi_name) {
             self::assertArrayHasKey($name, $smtp_configs[0], "Missing config: ${name}");
             self::assertEquals(self::DEFAULT_SMTP_CONFIG[$civi_name], $smtp_configs[0][$name]);
         }
@@ -68,7 +71,7 @@ class CRM_RcBase_Api4_SmtpConfigTest extends CRM_RcBase_HeadlessTestCase
      */
     public function testGetOneConfig()
     {
-        foreach (Civi\Api4\Action\Setting\GetSmtpConfig::CONFIGS_MAP as $name => $civi_name) {
+        foreach (GetSmtpConfig::CONFIGS_MAP as $name => $civi_name) {
             $smtp_configs = Setting::getSmtpConfig()
                 ->setConfig($name)
                 ->execute();
