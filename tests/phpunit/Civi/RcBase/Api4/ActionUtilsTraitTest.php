@@ -22,6 +22,7 @@ class ActionUtilsTraitTest extends CRM_RcBase_HeadlessTestCase
         $error = $this->error($message);
 
         self::assertIsArray($error, 'Not an array returned');
+        self::assertCount(2, $error, 'Wrong number of fields');
         self::assertArrayHasKey('is_error', $error, 'is_error key missing');
         self::assertArrayHasKey('error_message', $error, 'error_message key missing');
         self::assertSame(true, $error['is_error'], 'Wrong is_error returned');
