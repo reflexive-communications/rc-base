@@ -6,6 +6,7 @@ use Civi;
 use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 use Civi\Api4\Setting;
+use Civi\RcBase\Api4\ActionUtilsTrait;
 use Throwable;
 
 /**
@@ -16,6 +17,8 @@ use Throwable;
  */
 class GetSmtpConfig extends AbstractAction
 {
+    use ActionUtilsTrait;
+
     /**
      * Map configs to Civi config names
      */
@@ -95,20 +98,5 @@ class GetSmtpConfig extends AbstractAction
     protected function validateParams(): bool
     {
         return $this->config === '' || array_key_exists($this->config, self::CONFIGS_MAP);
-    }
-
-    /**
-     * Format error message
-     *
-     * @param string $message Error message
-     *
-     * @return array
-     */
-    protected function error(string $message): array
-    {
-        return [
-            'is_error' => true,
-            'error_message' => $message,
-        ];
     }
 }

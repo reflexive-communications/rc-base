@@ -7,6 +7,7 @@ use Civi;
 use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 use Civi\Api4\Setting;
+use Civi\RcBase\Api4\ActionUtilsTrait;
 use Throwable;
 
 /**
@@ -17,6 +18,8 @@ use Throwable;
  */
 class SetSmtpConfig extends AbstractAction
 {
+    use ActionUtilsTrait;
+
     /**
      * SMTP server URL
      *
@@ -132,20 +135,5 @@ class SetSmtpConfig extends AbstractAction
         }
 
         $result[] = $merged;
-    }
-
-    /**
-     * Format error message
-     *
-     * @param string $message Error message
-     *
-     * @return array
-     */
-    protected function error(string $message): array
-    {
-        return [
-            'is_error' => true,
-            'error_message' => $message,
-        ];
     }
 }
