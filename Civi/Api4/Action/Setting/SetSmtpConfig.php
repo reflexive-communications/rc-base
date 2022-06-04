@@ -4,9 +4,9 @@ namespace Civi\Api4\Action\Setting;
 
 use API_Exception;
 use Civi;
-use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 use Civi\Api4\Setting;
+use Civi\RcBase\Api4\BaseAction;
 use Throwable;
 
 /**
@@ -15,7 +15,7 @@ use Throwable;
  * Wrapper for Setting.set +v mailing_backend={config_json}. It is designed for easier use on the CLI.
  * Also encrypts the SMTP password.
  */
-class SetSmtpConfig extends AbstractAction
+class SetSmtpConfig extends BaseAction
 {
     /**
      * SMTP server URL
@@ -132,20 +132,5 @@ class SetSmtpConfig extends AbstractAction
         }
 
         $result[] = $merged;
-    }
-
-    /**
-     * Format error message
-     *
-     * @param string $message Error message
-     *
-     * @return array
-     */
-    protected function error(string $message): array
-    {
-        return [
-            'is_error' => true,
-            'error_message' => $message,
-        ];
     }
 }

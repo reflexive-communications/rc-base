@@ -3,9 +3,9 @@
 namespace Civi\Api4\Action\Setting;
 
 use Civi;
-use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 use Civi\Api4\Setting;
+use Civi\RcBase\Api4\BaseAction;
 use Throwable;
 
 /**
@@ -14,7 +14,7 @@ use Throwable;
  * Wrapper for Settings.Get +s mailing_backend, more convenient to use on the CLI,
  * also decrypts encrypted SMTP password.
  */
-class GetSmtpConfig extends AbstractAction
+class GetSmtpConfig extends BaseAction
 {
     /**
      * Map configs to Civi config names
@@ -95,20 +95,5 @@ class GetSmtpConfig extends AbstractAction
     protected function validateParams(): bool
     {
         return $this->config === '' || array_key_exists($this->config, self::CONFIGS_MAP);
-    }
-
-    /**
-     * Format error message
-     *
-     * @param string $message Error message
-     *
-     * @return array
-     */
-    protected function error(string $message): array
-    {
-        return [
-            'is_error' => true,
-            'error_message' => $message,
-        ];
     }
 }
