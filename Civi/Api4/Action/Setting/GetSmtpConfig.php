@@ -3,9 +3,10 @@
 namespace Civi\Api4\Action\Setting;
 
 use Civi;
+use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 use Civi\Api4\Setting;
-use Civi\RcBase\Api4\BaseAction;
+use Civi\RcBase\Api4\ActionUtilsTrait;
 use Throwable;
 
 /**
@@ -14,8 +15,10 @@ use Throwable;
  * Wrapper for Settings.Get +s mailing_backend, more convenient to use on the CLI,
  * also decrypts encrypted SMTP password.
  */
-class GetSmtpConfig extends BaseAction
+class GetSmtpConfig extends AbstractAction
 {
+    use ActionUtilsTrait;
+
     /**
      * Map configs to Civi config names
      */

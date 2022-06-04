@@ -4,9 +4,10 @@ namespace Civi\Api4\Action\Setting;
 
 use API_Exception;
 use Civi;
+use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 use Civi\Api4\Setting;
-use Civi\RcBase\Api4\BaseAction;
+use Civi\RcBase\Api4\ActionUtilsTrait;
 use Throwable;
 
 /**
@@ -15,8 +16,10 @@ use Throwable;
  * Wrapper for Setting.set +v mailing_backend={config_json}. It is designed for easier use on the CLI.
  * Also encrypts the SMTP password.
  */
-class SetSmtpConfig extends BaseAction
+class SetSmtpConfig extends AbstractAction
 {
+    use ActionUtilsTrait;
+
     /**
      * SMTP server URL
      *
