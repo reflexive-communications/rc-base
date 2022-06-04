@@ -89,10 +89,6 @@ class SmtpConfigTest extends CRM_RcBase_HeadlessTestCase
         $smtp_configs = Setting::getSmtpConfig()
             ->setConfig('invalid_config')
             ->execute();
-        self::assertCount(1, $smtp_configs, 'Failed to get configs');
-        self::assertArrayHasKey('is_error', $smtp_configs[0], 'Missing is_error');
-        self::assertArrayHasKey('error_message', $smtp_configs[0], 'Missing error_message');
-        self::assertEquals(true, $smtp_configs[0]['is_error']);
         self::assertEquals('Not allowed config: invalid_config', $smtp_configs[0]['error_message']);
     }
 
