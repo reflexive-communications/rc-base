@@ -2,12 +2,10 @@
 
 namespace Civi\RcBase\Api4;
 
-use Civi\Api4\Generic\AbstractAction;
-
 /**
- * Base Action class with helper methods for API actions
+ * Helper methods for API actions
  */
-abstract class BaseAction extends AbstractAction
+trait ActionUtilsTrait
 {
     /**
      * Format error message
