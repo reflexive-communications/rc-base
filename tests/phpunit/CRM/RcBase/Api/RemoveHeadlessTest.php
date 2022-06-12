@@ -48,4 +48,76 @@ class CRM_RcBase_Api_RemoveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         self::expectExceptionMessage('Invalid ID');
         CRM_RcBase_Api_Remove::removeContactFromGroup($contact_id, -1);
     }
+
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public function testEmptyGroup()
+    {
+        // Create groups, contacts
+        $group_a = ['title' => 'Group A',];
+        $group_b = ['title' => 'Group B',];
+        $group_id_a = CRM_RcBase_Test_Utils::cvApi4Create('Group', $group_a);
+        $group_id_b = CRM_RcBase_Test_Utils::cvApi4Create('Group', $group_b);
+        $contact_id_a = $this->individualCreate();
+        $contact_id_b = $this->individualCreate();
+        $contact_id_c = $this->individualCreate();
+        $contact_id_d = $this->individualCreate();
+
+        // Add contacts to group A with different status
+        GroupContact::create()
+            ->addValue('group_id', $group_id_a)
+            ->addValue('contact_id', $contact_id_a)
+            ->addValue('status', 'Added')
+            ->execute();
+        GroupContact::create()
+            ->addValue('group_id', $group_id_a)
+            ->addValue('contact_id', $contact_id_b)
+            ->addValue('status', 'Removed')
+            ->execute();
+        GroupContact::create()
+            ->addValue('group_id', $group_id_a)
+            ->addValue('contact_id', $contact_id_c)
+            ->addValue('status', 'Pending')
+            ->execute();
+
+        // Add contacts to group B with different status
+        GroupContact::create()
+            ->addValue('group_id', $group_id_b)
+            ->addValue('contact_id', $contact_id_a)
+            ->addValue('status', 'Added')
+            ->execute();
+        GroupContact::create()
+            ->addValue('group_id', $group_id_b)
+            ->addValue('contact_id', $contact_id_b)
+            ->addValue('status', 'Removed')
+            ->execute();
+        GroupContact::create()
+            ->addValue('group_id', $group_id_b)
+            ->addValue('contact_id', $contact_id_c)
+            ->addValue('status', 'Pending')
+            ->execute();
+
+        CRM_RcBase_Api_Remove::emptyGroup($group_id_a);
+
+        // Check group A
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_REMOVED, CRM_RcBase_Api_Get::groupContactStatus($contact_id_a, $group_id_a), 'Failed to empty group (added)');
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_REMOVED, CRM_RcBase_Api_Get::groupContactStatus($contact_id_b, $group_id_a), 'Failed to empty group (removed)');
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_REMOVED, CRM_RcBase_Api_Get::groupContactStatus($contact_id_c, $group_id_a), 'Failed to empty group (pending)');
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_NONE, CRM_RcBase_Api_Get::groupContactStatus($contact_id_d, $group_id_a), 'Failed to empty group (no history)');
+
+        // Check group B
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_ADDED, CRM_RcBase_Api_Get::groupContactStatus($contact_id_a, $group_id_b), 'Failed to empty group (added)');
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_REMOVED, CRM_RcBase_Api_Get::groupContactStatus($contact_id_b, $group_id_b), 'Failed to empty group (removed)');
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_PENDING, CRM_RcBase_Api_Get::groupContactStatus($contact_id_c, $group_id_b), 'Failed to empty group (pending)');
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_NONE, CRM_RcBase_Api_Get::groupContactStatus($contact_id_d, $group_id_b), 'Failed to empty group (no history)');
+
+        // Invalid ID
+        self::expectException(API_Exception::class);
+        self::expectExceptionMessage('Invalid ID');
+        CRM_RcBase_Api_Remove::emptyGroup(-1);
+    }
 }

@@ -53,4 +53,27 @@ class CRM_RcBase_Api_Remove
                 throw new API_Exception(sprintf('Invalid status returned: %s', $status));
         }
     }
+
+    /**
+     * Remove all contacts from a group
+     *
+     * @param int $group_id Group ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return void
+     *
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public static function emptyGroup(int $group_id, bool $check_permissions = false): void
+    {
+        if ($group_id < 1) {
+            throw new API_Exception('Invalid ID.');
+        }
+
+        GroupContact::update($check_permissions)
+            ->addValue('status', 'Removed')
+            ->addWhere('group_id', '=', $group_id)
+            ->execute();
+    }
 }
