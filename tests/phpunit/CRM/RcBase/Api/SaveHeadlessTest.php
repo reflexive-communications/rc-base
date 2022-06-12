@@ -1,5 +1,7 @@
 <?php
 
+use Civi\Api4\GroupContact;
+
 /**
  * Test API Save class
  *
@@ -141,5 +143,51 @@ class CRM_RcBase_Api_SaveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         );
         self::assertCount(1, $contact_data, 'Wrong number of contacts returned');
         self::assertSame([$sub_type_a['name'], $sub_type_b['name']], $contact_data[0]['contact_sub_type'], 'Wrong subtypes returned');
+    }
+
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public function testAddContactToGroup()
+    {
+        // Create group, contact
+        $group_data = ['title' => 'Group contact test group',];
+        $group_id = CRM_RcBase_Test_Utils::cvApi4Create('Group', $group_data);
+        $contact_id = $this->individualCreate();
+
+        // Add contact to group
+        $group_contact_id_original = CRM_RcBase_Api_Save::addContactToGroup($contact_id, $group_id);
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_ADDED, CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id), 'Failed to add contact (new)');
+
+        // Add again
+        $group_contact_id = CRM_RcBase_Api_Save::addContactToGroup($contact_id, $group_id);
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_ADDED, CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id), 'Failed to add contact (added)');
+        self::assertSame($group_contact_id_original, $group_contact_id, 'Group contact ID has changed (added)');
+
+        // Set to pending then add
+        GroupContact::update()
+            ->addValue('status', 'Pending')
+            ->addWhere('id', '=', $group_contact_id_original)
+            ->execute();
+        $group_contact_id = CRM_RcBase_Api_Save::addContactToGroup($contact_id, $group_id);
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_ADDED, CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id), 'Failed to add contact (pending)');
+        self::assertSame($group_contact_id_original, $group_contact_id, 'Group contact ID has changed (pending)');
+
+        // Remove contact then add
+        GroupContact::update()
+            ->addValue('status', 'Removed')
+            ->addWhere('id', '=', $group_contact_id_original)
+            ->execute();
+        $group_contact_id = CRM_RcBase_Api_Save::addContactToGroup($contact_id, $group_id);
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_ADDED, CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id), 'Failed to add contact (removed)');
+        self::assertSame($group_contact_id_original, $group_contact_id, 'Group contact ID has changed (removed)');
+
+        // Non-existent group
+        self::expectException(CRM_Core_Exception::class);
+        self::expectExceptionMessage('DB Error: constraint violation');
+        CRM_RcBase_Api_Save::addContactToGroup($contact_id, $group_id + 1);
     }
 }

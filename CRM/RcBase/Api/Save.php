@@ -1,5 +1,7 @@
 <?php
 
+use Civi\Api4\GroupContact;
+
 /**
  * Common Save Actions
  *
@@ -55,5 +57,58 @@ class CRM_RcBase_Api_Save
     {
         $current_sub_types = CRM_RcBase_Api_Get::contactSubType($contact_id, $check_permissions);
         return CRM_RcBase_Api_Update::contact($contact_id, ['contact_sub_type' => array_merge($current_sub_types, $subtypes),], $check_permissions);
+    }
+
+    /**
+     * Add contact to group
+     *
+     * @param int $contact_id Contact ID
+     * @param int $group_id Group ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int Group contact ID
+     *
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public static function addContactToGroup(int $contact_id, int $group_id, bool $check_permissions = false): int
+    {
+        $status = CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id, $check_permissions);
+
+        switch ($status) {
+            case CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_NONE:
+                $values = [
+                    'group_id' => $group_id,
+                    'contact_id' => $contact_id,
+                    'status' => 'Added',
+                ];
+                $group_contact_id = CRM_RcBase_Api_Create::entity('GroupContact', $values, $check_permissions);
+                break;
+            case CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_REMOVED:
+            case CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_PENDING:
+                $result = GroupContact::get($check_permissions)
+                    ->addSelect('id')
+                    ->addWhere('group_id', '=', $group_id)
+                    ->addWhere('contact_id', '=', $contact_id)
+                    ->setLimit(1)
+                    ->execute();
+                $group_contact_id = CRM_RcBase_Api_Get::parseResultsFirst($result, 'id');
+                CRM_RcBase_Api_Update::entity('GroupContact', $group_contact_id, ['status' => 'Added',], $check_permissions);
+                break;
+            case CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_ADDED:
+                $result = GroupContact::get($check_permissions)
+                    ->addSelect('id')
+                    ->addWhere('group_id', '=', $group_id)
+                    ->addWhere('contact_id', '=', $contact_id)
+                    ->setLimit(1)
+                    ->execute();
+                $group_contact_id = CRM_RcBase_Api_Get::parseResultsFirst($result, 'id');
+                break;
+            default:
+                throw new API_Exception(sprintf('Invalid status returned: %s', $status));
+        }
+
+        return $group_contact_id;
     }
 }
