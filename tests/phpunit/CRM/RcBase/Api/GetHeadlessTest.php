@@ -620,7 +620,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
      * @throws UnauthorizedException|API_Exception
      * @throws CRM_Core_Exception
      */
-    public function testGetGroupIdByName()
+    public function testGroupIdByName()
     {
         // Create group
         $group_data = [
@@ -641,7 +641,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
      * @throws UnauthorizedException|API_Exception
      * @throws CRM_Core_Exception
      */
-    public function testGetGroupIdByTitle()
+    public function testGroupIdByTitle()
     {
         // Create group
         $group_data = [
@@ -661,7 +661,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
      * @throws UnauthorizedException|API_Exception
      * @throws CRM_Core_Exception
      */
-    public function testGetTagIdByName()
+    public function testTagIdByName()
     {
         // Create tag
         $tag_data = [
