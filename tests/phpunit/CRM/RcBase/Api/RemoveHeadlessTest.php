@@ -23,16 +23,16 @@ class CRM_RcBase_Api_RemoveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $contact_id = $this->individualCreate();
 
         // Remove not added contact
-        CRM_RcBase_Api_Remove::removeContactFromGroup($contact_id, $group_id);
+        self::assertSame(0, CRM_RcBase_Api_Remove::removeContactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (not added)');
         self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_NONE, CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id), 'Failed to remove contact (not added)');
 
         // Add to group then remove
         $group_contact_id = CRM_RcBase_Api_Save::addContactToGroup($contact_id, $group_id);
-        CRM_RcBase_Api_Remove::removeContactFromGroup($contact_id, $group_id);
+        self::assertSame(1, CRM_RcBase_Api_Remove::removeContactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (added)');
         self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_REMOVED, CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id), 'Failed to remove contact (added)');
 
         // Remove removed
-        CRM_RcBase_Api_Remove::removeContactFromGroup($contact_id, $group_id);
+        self::assertSame(0, CRM_RcBase_Api_Remove::removeContactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (removed)');
         self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_REMOVED, CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id), 'Failed to remove contact (removed)');
 
         // Change to pending then remove
@@ -40,7 +40,7 @@ class CRM_RcBase_Api_RemoveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
             ->addValue('status', 'Pending')
             ->addWhere('id', '=', $group_contact_id)
             ->execute();
-        CRM_RcBase_Api_Remove::removeContactFromGroup($contact_id, $group_id);
+        self::assertSame(1, CRM_RcBase_Api_Remove::removeContactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (pending)');
         self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_REMOVED, CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id), 'Failed to remove contact (pending)');
 
         // Invalid ID
