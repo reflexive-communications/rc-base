@@ -8,6 +8,7 @@ use Civi\Api4\Email;
 use Civi\Api4\EntityTag;
 use Civi\Api4\Generic\Result;
 use Civi\Api4\Group;
+use Civi\Api4\GroupContact;
 use Civi\Api4\LocationType;
 use Civi\Api4\Phone;
 use Civi\Api4\Relationship;
@@ -40,6 +41,26 @@ class CRM_RcBase_Api_Get
     public const ACTIVITY_RECORD_TYPE_TARGET = 3;
 
     /**
+     * Status represents contact was never in given group
+     */
+    public const GROUP_CONTACT_STATUS_NONE = 1;
+
+    /**
+     * Status represents contact is in given group
+     */
+    public const GROUP_CONTACT_STATUS_ADDED = 2;
+
+    /**
+     * Status represents contact was removed from given group
+     */
+    public const GROUP_CONTACT_STATUS_REMOVED = 3;
+
+    /**
+     * Status represents contact is pending in given group
+     */
+    public const GROUP_CONTACT_STATUS_PENDING = 4;
+
+    /**
      * Parse result set, return first row
      *
      * @param Result $results Api4 Result set
@@ -47,7 +68,7 @@ class CRM_RcBase_Api_Get
      *
      * @return mixed|null
      */
-    protected static function parseResultsFirst(Result $results, string $field = '')
+    public static function parseResultsFirst(Result $results, string $field = '')
     {
         // Get first result row
         $result = $results->first();
@@ -532,5 +553,45 @@ class CRM_RcBase_Api_Get
             ->execute();
 
         return self::parseResultsFirst($results, 'contact_sub_type') ?? [];
+    }
+
+    /**
+     * Get group membership status for a contact
+     *
+     * @param int $contact_id Contact ID
+     * @param int $group_id Group ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int Status code
+     *
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public static function groupContactStatus(int $contact_id, int $group_id, bool $check_permissions = false): int
+    {
+        if ($contact_id < 1 || $group_id < 1) {
+            throw new API_Exception('Invalid ID.');
+        }
+
+        $result = GroupContact::get($check_permissions)
+            ->addSelect('status')
+            ->addWhere('contact_id', '=', $contact_id)
+            ->addWhere('group_id', '=', $group_id)
+            ->setLimit(1)
+            ->execute();
+        $status = self::parseResultsFirst($result, 'status');
+
+        switch ($status) {
+            case 'Added':
+                return self::GROUP_CONTACT_STATUS_ADDED;
+            case 'Removed':
+                return self::GROUP_CONTACT_STATUS_REMOVED;
+            case 'Pending':
+                return self::GROUP_CONTACT_STATUS_PENDING;
+            case null:
+                return self::GROUP_CONTACT_STATUS_NONE;
+            default:
+                throw new API_Exception(sprintf('Invalid status returned: %s', $status));
+        }
     }
 }

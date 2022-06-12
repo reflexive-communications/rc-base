@@ -1,6 +1,7 @@
 <?php
 
 use Civi\API\Exception\UnauthorizedException;
+use Civi\Api4\GroupContact;
 
 /**
  * Test API Get class
@@ -26,19 +27,19 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
             'email' => 'ceasar@senate.rome',
             'location_type_id' => 1,
         ];
-        $email_id_a = CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_a);
+        CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_a);
         $email_b = [
             'contact_id' => $contact_id_a,
             'email' => 'ceasar@home.rome',
             'location_type_id' => 2,
         ];
-        $email_id_b = CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_b);
+        CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_b);
         $email_c = [
             'contact_id' => $contact_id_b,
             'email' => 'antonius@senate.rome',
             'location_type_id' => 1,
         ];
-        $email_id_c = CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_c);
+        CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_c);
 
         // Check valid email
         self::assertSame(
@@ -620,7 +621,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
      * @throws UnauthorizedException|API_Exception
      * @throws CRM_Core_Exception
      */
-    public function testGetGroupIdByName()
+    public function testGroupIdByName()
     {
         // Create group
         $group_data = [
@@ -641,7 +642,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
      * @throws UnauthorizedException|API_Exception
      * @throws CRM_Core_Exception
      */
-    public function testGetGroupIdByTitle()
+    public function testGroupIdByTitle()
     {
         // Create group
         $group_data = [
@@ -661,7 +662,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
      * @throws UnauthorizedException|API_Exception
      * @throws CRM_Core_Exception
      */
-    public function testGetTagIdByName()
+    public function testTagIdByName()
     {
         // Create tag
         $tag_data = [
@@ -721,5 +722,75 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         self::expectException(CRM_Core_Exception::class);
         self::expectExceptionMessage('Invalid ID');
         CRM_RcBase_Api_Get::contactSubType(-1);
+    }
+
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public function testGroupContactStatus()
+    {
+        // Create group, contact
+        $group_data = ['title' => 'Group contact test group',];
+        $group_id = CRM_RcBase_Test_Utils::cvApi4Create('Group', $group_data);
+        $contact_id = $this->individualCreate();
+
+        // Check new contact
+        $result = CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id);
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_NONE, $result, 'Wrong value returned for new contact');
+
+        // Check non-existent group
+        $result = CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id + 1);
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_NONE, $result, 'Wrong value returned for non-existent group');
+
+        // Add contact to group
+        $group_contact_id = CRM_RcBase_Test_Utils::cvApi4Create('GroupContact', ['group_id' => $group_id, 'contact_id' => $contact_id,]);
+        $result = CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id);
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_ADDED, $result, 'Wrong value returned for added contact');
+
+        // Set to pending
+        GroupContact::update()
+            ->addValue('status', 'Pending')
+            ->addWhere('id', '=', $group_contact_id)
+            ->execute();
+        $result = CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id);
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_PENDING, $result, 'Wrong value returned for pending contact');
+
+        // Remove contact
+        GroupContact::update()
+            ->addValue('status', 'Removed')
+            ->addWhere('id', '=', $group_contact_id)
+            ->execute();
+        $result = CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id);
+        self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_REMOVED, $result, 'Wrong value returned for removed contact');
+
+        // Check invalid ID
+        self::expectException(API_Exception::class);
+        self::expectExceptionMessage('Invalid ID');
+        CRM_RcBase_Api_Get::groupContactStatus(-1, -1);
+    }
+
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public function testInvalidGroupContactStatusThrowsException()
+    {
+        // Create group, contact
+        $group_data = [
+            'title' => 'Group contact invalid status test group',
+        ];
+        $group_id = CRM_RcBase_Test_Utils::cvApi4Create('Group', $group_data);
+        $contact_id = $this->individualCreate();
+
+        // Add contact to group with invalid status
+        CRM_RcBase_Test_Utils::cvApi4Create('GroupContact', ['group_id' => $group_id, 'contact_id' => $contact_id, 'status' => 'invalid',]);
+        self::expectException(API_Exception::class);
+        self::expectExceptionMessage('Invalid status returned');
+        CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id);
     }
 }
