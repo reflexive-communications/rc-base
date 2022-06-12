@@ -26,19 +26,19 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
             'email' => 'ceasar@senate.rome',
             'location_type_id' => 1,
         ];
-        $email_id_a = CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_a);
+        CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_a);
         $email_b = [
             'contact_id' => $contact_id_a,
             'email' => 'ceasar@home.rome',
             'location_type_id' => 2,
         ];
-        $email_id_b = CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_b);
+        CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_b);
         $email_c = [
             'contact_id' => $contact_id_b,
             'email' => 'antonius@senate.rome',
             'location_type_id' => 1,
         ];
-        $email_id_c = CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_c);
+        CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_c);
 
         // Check valid email
         self::assertSame(
