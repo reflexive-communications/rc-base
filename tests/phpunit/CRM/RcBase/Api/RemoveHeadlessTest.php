@@ -101,7 +101,8 @@ class CRM_RcBase_Api_RemoveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
             ->addValue('status', 'Pending')
             ->execute();
 
-        CRM_RcBase_Api_Remove::emptyGroup($group_id_a);
+        $contacts = CRM_RcBase_Api_Remove::emptyGroup($group_id_a);
+        self::assertSame(2, $contacts, 'Wrong number of removed contacts');
 
         // Check group A
         self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_REMOVED, CRM_RcBase_Api_Get::groupContactStatus($contact_id_a, $group_id_a), 'Failed to empty group (added)');

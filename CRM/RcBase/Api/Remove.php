@@ -60,20 +60,23 @@ class CRM_RcBase_Api_Remove
      * @param int $group_id Group ID
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
-     * @return void
+     * @return int Number of removed contacts
      *
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
      */
-    public static function emptyGroup(int $group_id, bool $check_permissions = false): void
+    public static function emptyGroup(int $group_id, bool $check_permissions = false): int
     {
         if ($group_id < 1) {
             throw new API_Exception('Invalid ID.');
         }
 
-        GroupContact::update($check_permissions)
+        $contacts = GroupContact::update($check_permissions)
             ->addValue('status', 'Removed')
             ->addWhere('group_id', '=', $group_id)
+            ->addClause('OR', ['status', '=', 'Pending'], ['status', '=', 'Added'])
             ->execute();
+
+        return count($contacts);
     }
 }
