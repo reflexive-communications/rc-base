@@ -782,7 +782,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     {
         // Create group, contact
         $group_data = [
-            'title' => 'Group contact test group',
+            'title' => 'Group contact invalid status test group',
         ];
         $group_id = CRM_RcBase_Test_Utils::cvApi4Create('Group', $group_data);
         $contact_id = $this->individualCreate();
