@@ -164,7 +164,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testCreateEmailWithNonExistentContactThrowsException()
     {
         // Get non-existent contact ID
-        $contact_id = CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_contact');
+        $contact_id = \Civi\RcBase\Utils\DB::getNextAutoIncrementValue('civicrm_contact');
 
         // Create email
         $email = [
@@ -498,7 +498,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $contact_id = $this->individualCreate();
 
         // Get non-existent tag ID
-        $tag_id = CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_tag');
+        $tag_id = \Civi\RcBase\Utils\DB::getNextAutoIncrementValue('civicrm_tag');
 
         // Check non-existent tag ID
         self::expectException(CRM_Core_Exception::class);
