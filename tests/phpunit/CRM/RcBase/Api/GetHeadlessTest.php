@@ -815,7 +815,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         self::assertSame($activity_type_id, CRM_RcBase_Api_Get::activityTypeIDByName($activity_data['name']), 'Wrong activity type ID returned');
 
         // Check invalid
-        self::assertNull(CRM_RcBase_Api_Get::activityTypeIDByName('non-existent-activity-type'), 'Wrong activity type ID returned on non-existent activity typ');
+        self::assertNull(CRM_RcBase_Api_Get::activityTypeIDByName('non-existent-activity-type'), 'Wrong activity type ID returned on non-existent activity type');
         self::assertNull(CRM_RcBase_Api_Get::activityTypeIDByName(''), 'Wrong activity type ID returned on empty activity type name');
     }
 }
