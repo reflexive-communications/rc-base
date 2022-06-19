@@ -672,7 +672,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         ];
         $tag_id = CRM_RcBase_Test_Utils::cvApi4Create('Tag', $tag_data);
 
-        // Check valid group
+        // Check valid tag
         self::assertSame($tag_id, CRM_RcBase_Api_Get::tagIDByName($tag_data['name']), 'Bad tag ID returned');
 
         // Check invalid
@@ -792,5 +792,30 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         self::expectException(API_Exception::class);
         self::expectExceptionMessage('Invalid status returned');
         CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id);
+    }
+
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public function testActivityTypeIdByName()
+    {
+        // Create activity
+        $activity_data = [
+            'option_group_id.name' => 'activity_type',
+            'label' => 'test_activity',
+            'name' => 'test_activity',
+        ];
+        $option_value_id = CRM_RcBase_Test_Utils::cvApi4Create('OptionValue', $activity_data);
+        $activity_type = CRM_RcBase_Test_Utils::cvApi4Get('OptionValue', ['value'], ["id={$option_value_id}"]);
+        $activity_type_id = (int)$activity_type[0]['value'];
+
+        self::assertSame($activity_type_id, CRM_RcBase_Api_Get::activityTypeIDByName($activity_data['name']), 'Wrong activity type ID returned');
+
+        // Check invalid
+        self::assertNull(CRM_RcBase_Api_Get::activityTypeIDByName('non-existent-activity-type'), 'Wrong activity type ID returned on non-existent activity typ');
+        self::assertNull(CRM_RcBase_Api_Get::activityTypeIDByName(''), 'Wrong activity type ID returned on empty activity type name');
     }
 }
