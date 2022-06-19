@@ -622,4 +622,32 @@ class CRM_RcBase_Api_Get
 
         return self::parseResultsFirst($results, 'value');
     }
+
+    /**
+     * Get value of an option
+     *
+     * @param string $option_group Name of option group
+     * @param string $option_name Name of option
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return string|null Value of option
+     *
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public static function optionValue(string $option_group, string $option_name, bool $check_permissions = false): ?string
+    {
+        if (empty($option_group) || empty($option_name)) {
+            return null;
+        }
+
+        $results = OptionValue::get($check_permissions)
+            ->addSelect('value')
+            ->addWhere('option_group_id:name', '=', $option_group)
+            ->addWhere('name', '=', $option_name)
+            ->setLimit(1)
+            ->execute();
+
+        return self::parseResultsFirst($results, 'value');
+    }
 }
