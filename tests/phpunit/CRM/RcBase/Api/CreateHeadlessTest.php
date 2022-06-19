@@ -607,4 +607,48 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         self::assertCount(count($all_activity_types_old) + 1, $all_activity_types_new, 'No new activity type created');
         self::assertSame($activity_type_id, CRM_RcBase_Api_Get::activityTypeIDByName($activity_type['name']), 'Wrong ID returned');
     }
+
+    /**
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public function testOptionValueNoValue()
+    {
+        // Number of activity types already in DB
+        $all_activity_types_old = CRM_RcBase_Test_Utils::cvApi4Get('OptionValue', ['id'], ['option_group_id:name="activity_type"']);
+
+        // Create activity type
+        $activity_type = [
+            'name' => 'new_activity_type',
+            'label' => 'new_activity_type',
+        ];
+        $activity_type_id = CRM_RcBase_Api_Create::optionValue('activity_type', $activity_type);
+        self::assertSame($activity_type_id, CRM_RcBase_Api_Get::optionValue('activity_type', $activity_type['name']), 'Wrong ID returned');
+
+        $all_activity_types_new = CRM_RcBase_Test_Utils::cvApi4Get('OptionValue', ['id'], ['option_group_id:name="activity_type"']);
+        self::assertCount(count($all_activity_types_old) + 1, $all_activity_types_new, 'No new activity type created');
+    }
+
+    /**
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public function testOptionValueWithValue()
+    {
+        // Number of contribution status already in DB
+        $all_contribution_status_old = CRM_RcBase_Test_Utils::cvApi4Get('OptionValue', ['id'], ['option_group_id:name="contribution_status"']);
+
+        // Create contribution status
+        $contribution_status = [
+            'label' => 'new_status',
+            'name' => 'new_status',
+            'value' => 'new_state',
+        ];
+        self::assertSame($contribution_status['value'], CRM_RcBase_Api_Create::optionValue('contribution_status', $contribution_status), 'Wrong value returned');
+
+        $all_contribution_status_new = CRM_RcBase_Test_Utils::cvApi4Get('OptionValue', ['id'], ['option_group_id:name="contribution_status"']);
+        self::assertCount(count($all_contribution_status_old) + 1, $all_contribution_status_new, 'No new activity type created');
+    }
 }
