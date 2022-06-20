@@ -4,6 +4,10 @@ use Civi\Test;
 
 /**
  * Contains helper functions for unit-testing
+ *
+ * @package  rc-base
+ * @author   Sandor Semsey <sandor@es-progress.hu>
+ * @license  AGPL-3.0
  */
 class CRM_RcBase_Test_Utils
 {
