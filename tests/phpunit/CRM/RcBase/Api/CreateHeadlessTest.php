@@ -605,6 +605,11 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
 
         $all_activity_types_new = CRM_RcBase_Test_Utils::cvApi4Get('OptionValue', ['id'], ['option_group_id:name="activity_type"']);
         self::assertCount(count($all_activity_types_old) + 1, $all_activity_types_new, 'No new activity type created');
+
+        // Empty option group
+        self::expectException(API_Exception::class);
+        self::expectExceptionMessage('Missing option group');
+        CRM_RcBase_Api_Create::optionValue('');
     }
 
     /**

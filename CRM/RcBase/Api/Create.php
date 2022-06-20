@@ -253,7 +253,7 @@ class CRM_RcBase_Api_Create
      * @param array $values Option data
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
-     * @return string|null  Value of option
+     * @return string|null Value of option
      *
      * @throws \API_Exception
      * @throws \CRM_Core_Exception
@@ -261,6 +261,10 @@ class CRM_RcBase_Api_Create
      */
     public static function optionValue(string $option_group, array $values = [], bool $check_permissions = false): ?string
     {
+        if (empty($option_group)) {
+            throw new API_Exception('Missing option group');
+        }
+
         $values['option_group_id.name'] = $option_group;
         $option_value_id = self::entity('OptionValue', $values, $check_permissions);
         $result = OptionValue::get($check_permissions)
