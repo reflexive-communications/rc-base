@@ -597,33 +597,6 @@ class CRM_RcBase_Api_Get
     }
 
     /**
-     * Get activity type ID from activity name
-     *
-     * @param string $name Activity name
-     * @param bool $check_permissions Should we check permissions (ACLs)?
-     *
-     * @return int|null Activity type ID if found, null if not found
-     *
-     * @throws \API_Exception
-     * @throws \Civi\API\Exception\UnauthorizedException
-     */
-    public static function activityTypeIDByName(string $name, bool $check_permissions = false): ?int
-    {
-        if (empty($name)) {
-            return null;
-        }
-
-        $results = OptionValue::get($check_permissions)
-            ->addSelect('value')
-            ->addWhere('option_group_id:name', '=', 'activity_type')
-            ->addWhere('name', '=', $name)
-            ->setLimit(1)
-            ->execute();
-
-        return self::parseResultsFirst($results, 'value');
-    }
-
-    /**
      * Get value of an option
      *
      * @param string $option_group Name of option group

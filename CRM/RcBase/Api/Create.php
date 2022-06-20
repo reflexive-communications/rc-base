@@ -247,30 +247,6 @@ class CRM_RcBase_Api_Create
     }
 
     /**
-     * Create activity type
-     *
-     * @param array $values Activity type data
-     * @param bool $check_permissions Should we check permissions (ACLs)?
-     *
-     * @return int Activity type ID
-     *
-     * @throws \API_Exception
-     * @throws \CRM_Core_Exception
-     * @throws \Civi\API\Exception\UnauthorizedException
-     */
-    public static function activityType(array $values = [], bool $check_permissions = false): int
-    {
-        $values['option_group_id.name'] = 'activity_type';
-        $option_value_id = self::entity('OptionValue', $values, $check_permissions);
-        $result = OptionValue::get($check_permissions)
-            ->addSelect('value')
-            ->addWhere('id', '=', $option_value_id)
-            ->execute();
-
-        return CRM_RcBase_Api_Get::parseResultsFirst($result, 'value');
-    }
-
-    /**
      * Add option
      *
      * @param string $option_group Name of option group
