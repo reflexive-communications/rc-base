@@ -10,6 +10,7 @@ use Civi\Api4\Generic\Result;
 use Civi\Api4\Group;
 use Civi\Api4\GroupContact;
 use Civi\Api4\LocationType;
+use Civi\Api4\OptionValue;
 use Civi\Api4\Phone;
 use Civi\Api4\Relationship;
 use Civi\Api4\Tag;
@@ -593,5 +594,33 @@ class CRM_RcBase_Api_Get
             default:
                 throw new API_Exception(sprintf('Invalid status returned: %s', $status));
         }
+    }
+
+    /**
+     * Get value of an option
+     *
+     * @param string $option_group Name of option group
+     * @param string $option_name Name of option
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return string|null Value of option
+     *
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public static function optionValue(string $option_group, string $option_name, bool $check_permissions = false): ?string
+    {
+        if (empty($option_group) || empty($option_name)) {
+            return null;
+        }
+
+        $results = OptionValue::get($check_permissions)
+            ->addSelect('value')
+            ->addWhere('option_group_id:name', '=', $option_group)
+            ->addWhere('name', '=', $option_name)
+            ->setLimit(1)
+            ->execute();
+
+        return self::parseResultsFirst($results, 'value');
     }
 }

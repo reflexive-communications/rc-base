@@ -15,6 +15,10 @@ use Throwable;
  *
  * Wrapper for Setting.set +v mailing_backend={config_json}. It is designed for easier use on the CLI.
  * Also encrypts the SMTP password.
+ *
+ * @package  rc-base
+ * @author   Sandor Semsey <sandor@es-progress.hu>
+ * @license  AGPL-3.0
  */
 class SetSmtpConfig extends AbstractAction
 {

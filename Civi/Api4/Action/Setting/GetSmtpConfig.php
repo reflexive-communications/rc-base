@@ -14,6 +14,10 @@ use Throwable;
  *
  * Wrapper for Settings.Get +s mailing_backend, more convenient to use on the CLI,
  * also decrypts encrypted SMTP password.
+ *
+ * @package  rc-base
+ * @author   Sandor Semsey <sandor@es-progress.hu>
+ * @license  AGPL-3.0
  */
 class GetSmtpConfig extends AbstractAction
 {

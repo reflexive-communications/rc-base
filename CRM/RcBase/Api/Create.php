@@ -1,5 +1,7 @@
 <?php
 
+use Civi\Api4\OptionValue;
+
 /**
  * Common Create Actions
  *
@@ -242,5 +244,34 @@ class CRM_RcBase_Api_Create
     public static function tag(array $values = [], bool $check_permissions = false): int
     {
         return self::entity('Tag', $values, $check_permissions);
+    }
+
+    /**
+     * Add option
+     *
+     * @param string $option_group Name of option group
+     * @param array $values Option data
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return string|null Value of option
+     *
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public static function optionValue(string $option_group, array $values = [], bool $check_permissions = false): ?string
+    {
+        if (empty($option_group)) {
+            throw new API_Exception('Missing option group');
+        }
+
+        $values['option_group_id.name'] = $option_group;
+        $option_value_id = self::entity('OptionValue', $values, $check_permissions);
+        $result = OptionValue::get($check_permissions)
+            ->addSelect('value')
+            ->addWhere('id', '=', $option_value_id)
+            ->execute();
+
+        return CRM_RcBase_Api_Get::parseResultsFirst($result, 'value');
     }
 }

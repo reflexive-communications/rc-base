@@ -164,7 +164,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testCreateEmailWithNonExistentContactThrowsException()
     {
         // Get non-existent contact ID
-        $contact_id = CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_contact');
+        $contact_id = \Civi\RcBase\Utils\DB::getNextAutoIncrementValue('civicrm_contact');
 
         // Create email
         $email = [
@@ -498,7 +498,7 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $contact_id = $this->individualCreate();
 
         // Get non-existent tag ID
-        $tag_id = CRM_RcBase_Test_Utils::getNextAutoIncrementValue('civicrm_tag');
+        $tag_id = \Civi\RcBase\Utils\DB::getNextAutoIncrementValue('civicrm_tag');
 
         // Check non-existent tag ID
         self::expectException(CRM_Core_Exception::class);
@@ -583,5 +583,54 @@ class CRM_RcBase_Api_CreateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         // Check valid data
         unset($data[0]['id']);
         self::assertSame($data[0], $tag, 'Bad tag data returned');
+    }
+
+    /**
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public function testOptionValueNoValue()
+    {
+        // Number of activity types already in DB
+        $all_activity_types_old = CRM_RcBase_Test_Utils::cvApi4Get('OptionValue', ['id'], ['option_group_id:name="activity_type"']);
+
+        // Create activity type
+        $activity_type = [
+            'name' => 'new_activity_type',
+            'label' => 'new_activity_type',
+        ];
+        $activity_type_id = CRM_RcBase_Api_Create::optionValue('activity_type', $activity_type);
+        self::assertSame($activity_type_id, CRM_RcBase_Api_Get::optionValue('activity_type', $activity_type['name']), 'Wrong ID returned');
+
+        $all_activity_types_new = CRM_RcBase_Test_Utils::cvApi4Get('OptionValue', ['id'], ['option_group_id:name="activity_type"']);
+        self::assertCount(count($all_activity_types_old) + 1, $all_activity_types_new, 'No new activity type created');
+
+        // Empty option group
+        self::expectException(API_Exception::class);
+        self::expectExceptionMessage('Missing option group');
+        CRM_RcBase_Api_Create::optionValue('');
+    }
+
+    /**
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public function testOptionValueWithValue()
+    {
+        // Number of contribution status already in DB
+        $all_contribution_status_old = CRM_RcBase_Test_Utils::cvApi4Get('OptionValue', ['id'], ['option_group_id:name="contribution_status"']);
+
+        // Create contribution status
+        $contribution_status = [
+            'label' => 'new_status',
+            'name' => 'new_status',
+            'value' => 'new_state',
+        ];
+        self::assertSame($contribution_status['value'], CRM_RcBase_Api_Create::optionValue('contribution_status', $contribution_status), 'Wrong value returned');
+
+        $all_contribution_status_new = CRM_RcBase_Test_Utils::cvApi4Get('OptionValue', ['id'], ['option_group_id:name="contribution_status"']);
+        self::assertCount(count($all_contribution_status_old) + 1, $all_contribution_status_new, 'No new activity type created');
     }
 }

@@ -4,6 +4,10 @@ use Civi\Test;
 
 /**
  * Contains helper functions for unit-testing
+ *
+ * @package  rc-base
+ * @author   Sandor Semsey <sandor@es-progress.hu>
+ * @license  AGPL-3.0
  */
 class CRM_RcBase_Test_Utils
 {
@@ -15,6 +19,7 @@ class CRM_RcBase_Test_Utils
      * @return array Query results indexed by column name
      *
      * @throws \CRM_Core_Exception
+     * @deprecated
      */
     public static function rawSqlQuery(string $query): array
     {
@@ -35,6 +40,7 @@ class CRM_RcBase_Test_Utils
      * @return int Next auto-increment value
      *
      * @throws \CRM_Core_Exception
+     * @deprecated
      */
     public static function getNextAutoIncrementValue(string $table_name): int
     {

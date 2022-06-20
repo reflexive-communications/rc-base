@@ -4,6 +4,10 @@ namespace Civi\RcBase\Api4;
 
 /**
  * Helper methods for API actions
+ *
+ * @package  rc-base
+ * @author   Sandor Semsey <sandor@es-progress.hu>
+ * @license  AGPL-3.0
  */
 trait ActionUtilsTrait
 {
