@@ -17,6 +17,10 @@ class UI
      */
     public static function menuExists(array $menu, string $path): bool
     {
+        if (empty($menu) || empty($path)) {
+            return false;
+        }
+
         $path = explode('/', $path);
         $first = array_shift($path);
 
@@ -24,7 +28,7 @@ class UI
             // First path part found
             if ($entry['attributes']['name'] == $first) {
                 // This is the last part or recurse into remained parts
-                if (empty($path) || self::menuExists($entry['child'], implode('/', $path))) {
+                if (empty($path) || self::menuExists($entry['child'] ?? [], implode('/', $path))) {
                     return true;
                 }
             }
