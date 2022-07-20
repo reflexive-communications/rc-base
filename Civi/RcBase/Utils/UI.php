@@ -24,7 +24,7 @@ class UI
         $path = explode('/', $path);
         $first = array_shift($path);
 
-        foreach ($menu as $key => &$entry) {
+        foreach ($menu as $entry) {
             // First path part found
             if ($entry['attributes']['name'] == $first) {
                 // This is the last part or recurse into remained parts
