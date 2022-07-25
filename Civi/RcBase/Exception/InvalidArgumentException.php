@@ -10,9 +10,9 @@ use CRM_Core_Exception;
 class InvalidArgumentException extends CRM_Core_Exception
 {
     /**
-     * Error code for "invalid argument"
+     * Machine-readable error message for "invalid argument"
      */
-    public const ERROR_CODE_INVALID = 50;
+    public const ERROR_CODE = 'invalid_argument';
 
     /**
      * @param string $message
@@ -20,6 +20,6 @@ class InvalidArgumentException extends CRM_Core_Exception
     public function __construct(string $message = '')
     {
         $error_msg = empty($message) ? 'Invalid' : "Invalid {$message}";
-        parent::__construct($error_msg, self::ERROR_CODE_INVALID);
+        parent::__construct($error_msg, self::ERROR_CODE);
     }
 }

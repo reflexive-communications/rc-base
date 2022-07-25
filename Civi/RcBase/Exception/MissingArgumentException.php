@@ -10,9 +10,9 @@ use CRM_Core_Exception;
 class MissingArgumentException extends CRM_Core_Exception
 {
     /**
-     * Error code for "missing argument"
+     * Machine-readable error message for "missing argument"
      */
-    public const ERROR_CODE_MISSING = 50;
+    public const ERROR_CODE = 'missing_argument';
 
     /**
      * @param string $message
@@ -20,6 +20,6 @@ class MissingArgumentException extends CRM_Core_Exception
     public function __construct(string $message = '')
     {
         $error_msg = empty($message) ? 'Missing' : "Missing {$message}";
-        parent::__construct($error_msg, self::ERROR_CODE_MISSING);
+        parent::__construct($error_msg, self::ERROR_CODE);
     }
 }
