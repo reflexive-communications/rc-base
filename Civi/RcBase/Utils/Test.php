@@ -20,7 +20,7 @@ class Test
     public static function createLoggedInUser(): int
     {
         $contact_id = CRM_RcBase_Api_Create::contact([
-            'first' => 'logged_in',
+            'first_name' => 'logged_in',
             'last_name' => 'user',
             'contact_type' => 'Individual',
         ]);
