@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @deprecated
+ * @deprecated Use CRM_RcBase_Setting instead
  */
 abstract class CRM_RcBase_Config
 {

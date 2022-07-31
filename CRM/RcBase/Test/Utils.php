@@ -40,7 +40,7 @@ class CRM_RcBase_Test_Utils
      * @return int Next auto-increment value
      *
      * @throws \CRM_Core_Exception
-     * @deprecated
+     * @deprecated Use \Civi\RcBase\Utils\DB::getNextAutoIncrementValue instead
      */
     public static function getNextAutoIncrementValue(string $table_name): int
     {
