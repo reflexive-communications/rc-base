@@ -36,4 +36,18 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
         $exception = new MissingArgumentException($msg);
         self::assertSame("Missing {$msg}", $exception->getMessage(), 'Wrong message returned');
     }
+
+    /**
+     * @return void
+     */
+    public function testNotFoundException()
+    {
+        $exception = new NotFoundException();
+        self::assertSame('Not found', $exception->getMessage(), 'Wrong message returned for empty message');
+        self::assertSame(NotFoundException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
+
+        $msg = 'msg_id';
+        $exception = new NotFoundException($msg);
+        self::assertSame("Not found {$msg}", $exception->getMessage(), 'Wrong message returned');
+    }
 }
