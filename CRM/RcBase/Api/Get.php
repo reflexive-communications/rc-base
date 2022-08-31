@@ -17,7 +17,6 @@ use Civi\Api4\Tag;
 
 /**
  * Common Get Actions
- *
  * Wrapper around APIv4
  *
  * @package  rc-base
@@ -94,7 +93,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int|null Contact ID if found, null if not found
-     *
      * @throws API_Exception
      * @throws UnauthorizedException
      */
@@ -122,7 +120,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int|null Contact ID if found, null if not found
-     *
      * @throws API_Exception
      * @throws UnauthorizedException
      */
@@ -150,7 +147,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array|null Contact data on success, null on fail
-     *
      * @throws API_Exception
      * @throws CRM_Core_Exception
      * @throws UnauthorizedException
@@ -178,7 +174,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int|null Email ID if found, null if not found
-     *
      * @throws API_Exception
      * @throws UnauthorizedException
      * @throws CRM_Core_Exception
@@ -207,7 +202,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int|null Phone ID if found, null if not found
-     *
      * @throws API_Exception
      * @throws UnauthorizedException
      * @throws CRM_Core_Exception
@@ -236,7 +230,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int|null Address ID if found, null if not found
-     *
      * @throws API_Exception
      * @throws UnauthorizedException
      * @throws CRM_Core_Exception
@@ -266,7 +259,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int|null Relationship ID if found, null if not found
-     *
      * @throws API_Exception
      * @throws UnauthorizedException
      * @throws CRM_Core_Exception
@@ -298,7 +290,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int|null Location type ID if found, null if not found
-     *
      * @throws API_Exception
      * @throws UnauthorizedException
      */
@@ -322,7 +313,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Array of Activity IDs
-     *
      * @throws API_Exception
      * @throws UnauthorizedException
      * @throws CRM_Core_Exception
@@ -366,7 +356,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int|null EntityTag ID if found, null if not found
-     *
      * @throws API_Exception
      * @throws CRM_Core_Exception
      * @throws UnauthorizedException
@@ -395,7 +384,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int|null Parent Tag ID if found, null if not found
-     *
      * @throws API_Exception
      * @throws CRM_Core_Exception
      */
@@ -423,7 +411,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return mixed Value of setting if found, null if not found
-     *
      * @throws \API_Exception
      * @throws \CRM_Core_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
@@ -460,7 +447,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int|null Group ID if found, null if not found
-     *
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
      */
@@ -486,7 +472,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int|null Group ID if found, null if not found
-     *
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
      */
@@ -512,7 +497,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int|null Tag ID if found, null if not found
-     *
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
      */
@@ -538,7 +522,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array List of sub-types
-     *
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
      * @throws \CRM_Core_Exception
@@ -566,7 +549,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Status code
-     *
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
      */
@@ -606,7 +588,6 @@ class CRM_RcBase_Api_Get
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return string|null Value of option
-     *
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
      */

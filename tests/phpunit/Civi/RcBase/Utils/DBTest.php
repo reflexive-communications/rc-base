@@ -12,7 +12,6 @@ use CRM_RcBase_HeadlessTestCase;
  */
 class DBTest extends CRM_RcBase_HeadlessTestCase
 {
-
     /**
      * @return void
      * @throws \API_Exception
