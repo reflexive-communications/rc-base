@@ -20,6 +20,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         // Create contacts
         $contact_id_a = $this->individualCreate();
         $contact_id_b = $this->individualCreate();
+        $contact_id_c = $this->individualCreate(['is_deleted' => true,]);
 
         // Create emails
         $email_a = [
@@ -40,6 +41,12 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
             'location_type_id' => 1,
         ];
         CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_c);
+        $email_d = [
+            'contact_id' => $contact_id_c,
+            'email' => 'tiberius@senate.rome',
+            'location_type_id' => 1,
+        ];
+        CRM_RcBase_Test_Utils::cvApi4Create('Email', $email_d);
 
         // Check valid email
         self::assertSame(
@@ -61,6 +68,9 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         // Check empty email
         self::assertNull(CRM_RcBase_Api_Get::contactIDFromEmail(''), 'Not null returned on empty email');
 
+        // Check deleted contact
+        self::assertNull(CRM_RcBase_Api_Get::contactIDFromEmail($email_d['email']), 'Not null returned on deleted contact');
+
         // Check non-existent email
         self::assertNull(
             CRM_RcBase_Api_Get::contactIDFromEmail('nonexistent@rome.com'),
@@ -77,9 +87,11 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         // Create contacts
         $external_id_a = self::getNextExternalID();
         $external_id_b = self::getNextExternalID();
+        $external_id_c = self::getNextExternalID();
 
         $contact_id_a = $this->individualCreate(['external_identifier' => $external_id_a]);
         $contact_id_b = $this->individualCreate(['external_identifier' => $external_id_b]);
+        $contact_id_c = $this->individualCreate(['external_identifier' => $external_id_c, 'is_deleted' => true,]);
 
         // Check valid id
         self::assertSame(
@@ -95,6 +107,9 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
 
         // Check empty id
         self::assertNull(CRM_RcBase_Api_Get::contactIDFromExternalID(''), 'Not null returned on empty email');
+
+        // Check deleted contact
+        self::assertNull(CRM_RcBase_Api_Get::contactIDFromExternalID($external_id_c), 'Not null returned on deleted contact');
 
         // Check non-existent id
         self::assertNull(

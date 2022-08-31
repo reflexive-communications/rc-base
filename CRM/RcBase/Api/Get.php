@@ -108,6 +108,7 @@ class CRM_RcBase_Api_Get
         $results = Email::get($check_permissions)
             ->addSelect('contact_id')
             ->addWhere('email', '=', $email)
+            ->addWhere('contact_id.is_deleted', '=', false)
             ->setLimit(1)
             ->execute();
 
@@ -135,6 +136,7 @@ class CRM_RcBase_Api_Get
         $results = Contact::get($check_permissions)
             ->addSelect('id')
             ->addWhere('external_identifier', '=', $external_id)
+            ->addWhere('is_deleted', '=', false)
             ->setLimit(1)
             ->execute();
 
