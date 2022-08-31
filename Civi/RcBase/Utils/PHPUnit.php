@@ -8,7 +8,7 @@ use CRM_RcBase_Api_Create;
 /**
  * Utilities for unit-testing
  */
-class Test
+class PHPUnit
 {
     /**
      * Simulate a logged in user

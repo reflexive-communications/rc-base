@@ -10,7 +10,7 @@ use CRM_RcBase_HeadlessTestCase;
 /**
  * @group headless
  */
-class TestTest extends CRM_RcBase_HeadlessTestCase
+class PHPUnitTest extends CRM_RcBase_HeadlessTestCase
 {
     /**
      * @return void
@@ -19,7 +19,7 @@ class TestTest extends CRM_RcBase_HeadlessTestCase
      */
     public function testCreateLoggedInUser()
     {
-        $contact_id = Test::createLoggedInUser();
+        $contact_id = PHPUnit::createLoggedInUser();
 
         $session = CRM_Core_Session::singleton();
         self::assertSame($contact_id, CRM_Core_Session::getLoggedInContactID(), 'Contact ID not set in session');
@@ -39,7 +39,7 @@ class TestTest extends CRM_RcBase_HeadlessTestCase
             'api_key' => 'some_api_key',
             'last_name' => 'Other-test',
         ];
-        $contact_id = Test::createIndividual($counter, $values);
+        $contact_id = PHPUnit::createIndividual($counter, $values);
 
         $contact = CRM_RcBase_Api_Get::contactData($contact_id);
         self::assertSame($values['api_key'], $contact['api_key'], 'Wrong api_key returned');
@@ -53,14 +53,14 @@ class TestTest extends CRM_RcBase_HeadlessTestCase
      * @throws \CRM_Core_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
      */
-    public function createIndividualWithEmail()
+    public function testCreateIndividualWithEmail()
     {
         $counter = 42;
         $values = [
             'signature_text' => 'Regards, testing',
             'invalid_param' => 'invalid value',
         ];
-        $contact_id = Test::createIndividualWithEmail($counter, $values);
+        $contact_id = PHPUnit::createIndividualWithEmail($counter, [], $values);
 
         self::assertSame($contact_id, CRM_RcBase_Api_Get::contactIDFromEmail("user_{$counter}@test.com"), 'Failed to create contact with email');
 
