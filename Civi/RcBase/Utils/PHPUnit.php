@@ -11,7 +11,7 @@ use CRM_RcBase_Api_Create;
 class PHPUnit
 {
     /**
-     * Simulate a logged in user
+     * Simulate a logged in system user
      *
      * @return int Contact ID
      * @throws \CRM_Core_Exception
@@ -27,14 +27,14 @@ class PHPUnit
             $contact_id,
             [
                 'email' => 'loggedinuser@testing.com',
-                'is_primary' => 1,
+                'is_primary' => true,
             ],
         );
 
         // Create UF match, uf_id is the ID of the user in the CMS
-        // Now it is 42, it don't have to be a real user ID
+        // Use ID #1, simulate system user
         CRM_RcBase_Api_Create::entity('UFMatch', [
-            'uf_id' => 42,
+            'uf_id' => 1,
             'contact_id' => $contact_id,
         ]);
 
