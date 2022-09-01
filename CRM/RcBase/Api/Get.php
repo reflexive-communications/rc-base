@@ -14,6 +14,7 @@ use Civi\Api4\OptionValue;
 use Civi\Api4\Phone;
 use Civi\Api4\Relationship;
 use Civi\Api4\Tag;
+use Civi\Api4\UFMatch;
 
 /**
  * Common Get Actions
@@ -605,5 +606,25 @@ class CRM_RcBase_Api_Get
             ->execute();
 
         return self::parseResultsFirst($results, 'value');
+    }
+
+    /**
+     * Get contact ID of system user
+     *
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null Contact ID
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public static function systemUserContactID(bool $check_permissions = false): ?int
+    {
+        $results = UFMatch::get($check_permissions)
+            ->addSelect('contact_id')
+            ->addWhere('uf_id', '=', 1)
+            ->setLimit(1)
+            ->execute();
+
+        return self::parseResultsFirst($results, 'contact_id');
     }
 }
