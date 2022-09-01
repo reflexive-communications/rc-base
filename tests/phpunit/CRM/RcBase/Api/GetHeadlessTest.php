@@ -2,6 +2,7 @@
 
 use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\GroupContact;
+use Civi\RcBase\Utils\PHPUnit;
 
 /**
  * Test API Get class
@@ -832,5 +833,16 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         // Check invalid
         self::assertNull(CRM_RcBase_Api_Get::optionValue('activity_type', 'non-existent-activity-type'), 'Wrong option value returned on non-existent option');
         self::assertNull(CRM_RcBase_Api_Get::optionValue('activity_type', ''), 'Wrong option value returned on empty option name');
+    }
+
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public function testGetSystemUser()
+    {
+        self::assertSame(PHPUnit::createLoggedInUser(), CRM_RcBase_Api_Get::systemUserContactID(), 'Wrong contact ID returned');
     }
 }
