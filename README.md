@@ -12,7 +12,7 @@ The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
 New CMS permissions:
 
-- **access custom API**: this can be used for an unprivileged CMS user to access custom API endpoints
+-   **access custom API**: this can be used for an unprivileged CMS user to access custom API endpoints
 
 ### New API
 
@@ -20,16 +20,16 @@ New CMS permissions:
 
 Below is a summary, for more details check the API Explorer.
 
-- `Setting::getSmtpConfig`, APIv4
-    - Returns current SMTP config nicely formatted. If SMTP password is encrypted, decrypted text is provided.
-    - You can select which config to return (or all)
-- `Setting::setSmtpConfig`, APIv4
-    - Allows for more convenient setting of SMTP configs mainly on the CLI (terminal)
-    - If encryption is enabled, it will encrypt plain-text passwords
-    - Idempotent: checks first and changes config only if it's needed, and report back if no change was done
-- `Extension::haspendingupgrade`, APIv3
-    - Thin wrapper for `CRM_Extension_Upgrades::hasPending()`
-    - Returns `1` if there are pending DB upgrades for extensions, `0` otherwise
+-   `Setting::getSmtpConfig`, APIv4
+    -   Returns current SMTP config nicely formatted. If SMTP password is encrypted, decrypted text is provided.
+    -   You can select which config to return (or all)
+-   `Setting::setSmtpConfig`, APIv4
+    -   Allows for more convenient setting of SMTP configs mainly on the CLI (terminal)
+    -   If encryption is enabled, it will encrypt plain-text passwords
+    -   Idempotent: checks first and changes config only if it's needed, and report back if no change was done
+-   `Extension::haspendingupgrade`, APIv3
+    -   Thin wrapper for `CRM_Extension_Upgrades::hasPending()`
+    -   Returns `1` if there are pending DB upgrades for extensions, `0` otherwise
 
 #### API wrappers
 
@@ -45,14 +45,15 @@ A Base class (`CRM_RcBase_Config`) that wraps `Civi::Settings()` for easier use.
 the [Developer Notes](DEVELOPER.md).
 
 ### Settings
+
 Helper class (`CRM_RcBase_Setting`) for managing settings, basically a thin wrapper for `Civi::Settings()`.
 You can encrypt sensitive data (only strings) with `CRM_RcBase_Setting::saveSecret()`.
 When retrieving saved setting with `CRM_RcBase_Setting::get()` setting values are automatically decrypted if it was encrypted.
 
 ## Requirements
 
-* PHP v7.4+
-* CiviCRM (5.43 might work below - not tested)
+-   PHP v7.4+
+-   CiviCRM (5.43 might work below - not tested)
 
 ## Installation
 

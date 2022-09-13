@@ -1,6 +1,6 @@
 # Developer Notes
 
-## Config aka. CRM\_RcBase\_Config
+## Config aka. CRM_RcBase_Config
 
 This abstract class provides an interface for the db methods (civi config). The create, load, update, get, remove
 methods are implemented in this class. If you want to use this Config, you have to extend this class and implement the
