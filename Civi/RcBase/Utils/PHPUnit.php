@@ -77,9 +77,7 @@ class PHPUnit
         $default = [
             'contact_type' => 'Individual',
             'first_name' => "user_{$counter}",
-            'middle_name' => 'middle',
-            'last_name' => 'Test',
-            'external_identifier' => $counter,
+            'external_identifier' => "ext_{$counter}",
         ];
 
         return CRM_RcBase_Api_Create::contact(array_merge($default, $extra));
