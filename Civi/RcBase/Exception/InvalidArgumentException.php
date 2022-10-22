@@ -15,11 +15,18 @@ class InvalidArgumentException extends CRM_Core_Exception
     public const ERROR_CODE = 'invalid_argument';
 
     /**
-     * @param string $message
+     * @param string $argument Invalid argument name
+     * @param string $details (Optional) Details
      */
-    public function __construct(string $message = '')
+    public function __construct(string $argument, string $details = '')
     {
-        $error_msg = empty($message) ? 'Invalid' : "Invalid {$message}";
-        parent::__construct($error_msg, self::ERROR_CODE);
+        $error_msg = "Invalid {$argument}";
+        if (!empty($details)) {
+            $error_msg .= " Details: {$details}";
+        }
+
+        parent::__construct($error_msg, self::ERROR_CODE, [
+            'argument' => $argument,
+        ]);
     }
 }
