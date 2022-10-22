@@ -15,11 +15,11 @@ class NotFoundException extends CRM_Core_Exception
     public const ERROR_CODE = 'not_found';
 
     /**
-     * @param string $message
+     * @param string $details (Optional) details
      */
-    public function __construct(string $message = '')
+    public function __construct(string $details = '')
     {
-        $error_msg = empty($message) ? 'Not found' : "Not found {$message}";
+        $error_msg = empty($details) ? 'Not found' : "Not found {$details}";
         parent::__construct($error_msg, self::ERROR_CODE);
     }
 }
