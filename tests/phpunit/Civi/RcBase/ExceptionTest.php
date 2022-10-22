@@ -50,4 +50,18 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
         $exception = new NotFoundException($msg);
         self::assertSame("Not found {$msg}", $exception->getMessage(), 'Wrong message returned');
     }
+
+    /**
+     * @return void
+     */
+    public function testCorruptedDataException()
+    {
+        $exception = new CorruptedDataException();
+        self::assertSame('Corrupted data', $exception->getMessage(), 'Wrong message returned for empty message');
+        self::assertSame(CorruptedDataException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
+
+        $msg = 'missing contact ID';
+        $exception = new CorruptedDataException($msg);
+        self::assertSame("Corrupted data found: {$msg}", $exception->getMessage(), 'Wrong message returned');
+    }
 }
