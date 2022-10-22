@@ -21,7 +21,7 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
 
         $msg = 'must be positive';
         $exception = new InvalidArgumentException($argument, $msg);
-        self::assertSame("Invalid {$argument} Details: {$msg}", $exception->getMessage(), 'Wrong message returned');
+        self::assertSame("Invalid {$argument}: {$msg}", $exception->getMessage(), 'Wrong message returned');
 
         $expected_data = [
             'argument' => $argument,
@@ -42,7 +42,7 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
 
         $msg = 'not possible to determine';
         $exception = new MissingArgumentException($argument, $msg);
-        self::assertSame("Missing {$argument} Details: {$msg}", $exception->getMessage(), 'Wrong message returned');
+        self::assertSame("Missing {$argument}: {$msg}", $exception->getMessage(), 'Wrong message returned');
 
         $expected_data = [
             'argument' => $argument,
@@ -62,7 +62,7 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
 
         $msg = 'msg_id';
         $exception = new NotFoundException($msg);
-        self::assertSame("Not found {$msg}", $exception->getMessage(), 'Wrong message returned');
+        self::assertSame("Not found: {$msg}", $exception->getMessage(), 'Wrong message returned');
     }
 
     /**
@@ -71,7 +71,7 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
     public function testCorruptedDataException()
     {
         $exception = new CorruptedDataException();
-        self::assertSame('Corrupted data', $exception->getMessage(), 'Wrong message returned for empty message');
+        self::assertSame('Corrupted data found', $exception->getMessage(), 'Wrong message returned for empty message');
         self::assertSame(CorruptedDataException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
 
         $msg = 'missing contact ID';

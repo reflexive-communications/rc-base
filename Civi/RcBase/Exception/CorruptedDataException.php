@@ -19,7 +19,11 @@ class CorruptedDataException extends CRM_Core_Exception
      */
     public function __construct(string $details = '')
     {
-        $error_msg = empty($details) ? 'Corrupted data' : "Corrupted data found: {$details}";
+        $error_msg = 'Corrupted data found';
+        if (!empty($details)) {
+            $error_msg .= ": {$details}";
+        }
+
         parent::__construct($error_msg, self::ERROR_CODE);
     }
 }

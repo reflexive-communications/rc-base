@@ -22,7 +22,7 @@ class InvalidArgumentException extends CRM_Core_Exception
     {
         $error_msg = "Invalid {$argument}";
         if (!empty($details)) {
-            $error_msg .= " Details: {$details}";
+            $error_msg .= ": {$details}";
         }
 
         parent::__construct($error_msg, self::ERROR_CODE, [
