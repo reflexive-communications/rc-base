@@ -7,9 +7,27 @@ use CRM_RcBase_Api_Create;
 
 /**
  * Utilities for unit-testing
+ * Please don't use in production code!
  */
 class PHPUnit
 {
+    /**
+     * Static counter
+     *
+     * @var int
+     */
+    public static int $counter = 1;
+
+    /**
+     * Supply a monotonic incremented counter
+     *
+     * @return int
+     */
+    public static function nextCounter(): int
+    {
+        return self::$counter++;
+    }
+
     /**
      * Simulate a logged in system user
      *
@@ -59,9 +77,7 @@ class PHPUnit
         $default = [
             'contact_type' => 'Individual',
             'first_name' => "user_{$counter}",
-            'middle_name' => 'middle',
-            'last_name' => 'Test',
-            'external_identifier' => $counter,
+            'external_identifier' => "ext_{$counter}",
         ];
 
         return CRM_RcBase_Api_Create::contact(array_merge($default, $extra));

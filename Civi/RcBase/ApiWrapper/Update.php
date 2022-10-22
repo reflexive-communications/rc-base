@@ -1,16 +1,21 @@
 <?php
 
+namespace Civi\RcBase\ApiWrapper;
+
+use Civi\RcBase\Exception\APIException;
+use Civi\RcBase\Exception\InvalidArgumentException;
+use Civi\RcBase\Exception\MissingArgumentException;
+use Throwable;
+
 /**
  * Common Update Actions
- *
  * Wrapper around APIv4
  *
- * @deprecated use \Civi\RcBase\ApiWrapper\Update instead
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class CRM_RcBase_Api_Update
+class Update
 {
     /**
      * Update generic entity
@@ -21,17 +26,17 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated entity data
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
-    public static function entity(
-        string $entity,
-        int $entity_id,
-        array $values = [],
-        bool $check_permissions = false
-    ): array {
+    public static function entity(string $entity, int $entity_id, array $values = [], bool $check_permissions = false): array
+    {
         if ($entity_id < 1) {
-            throw new CRM_Core_Exception('Invalid ID.');
+            throw new InvalidArgumentException('entity ID', 'ID must be positive');
+        }
+        if (empty($values)) {
+            throw new MissingArgumentException('values', 'must contain at least one parameter');
         }
 
         try {
@@ -48,10 +53,14 @@ class CRM_RcBase_Api_Update
                 ]
             );
         } catch (Throwable $ex) {
-            throw new CRM_Core_Exception(sprintf('Failed to update %s, reason: %s', $entity, $ex->getMessage()));
+            throw new APIException($entity, 'update', $ex->getMessage());
         }
 
-        return $results->first();
+        if (count($results) < 1) {
+            throw new APIException($entity, 'update', 'Failed to update entity');
+        }
+
+        return $results->first() ?? [];
     }
 
     /**
@@ -62,8 +71,9 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Contact data
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public static function contact(int $contact_id, array $values = [], bool $check_permissions = false): array
     {
@@ -78,8 +88,9 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Email data
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public static function email(int $email_id, array $values = [], bool $check_permissions = false): array
     {
@@ -94,8 +105,9 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Phone data
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public static function phone(int $phone_id, array $values = [], bool $check_permissions = false): array
     {
@@ -110,8 +122,9 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Address data
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public static function address(int $address_id, array $values = [], bool $check_permissions = false): array
     {
@@ -126,14 +139,12 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Relationship data
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
-    public static function relationship(
-        int $relationship_id,
-        array $values = [],
-        bool $check_permissions = false
-    ): array {
+    public static function relationship(int $relationship_id, array $values = [], bool $check_permissions = false): array
+    {
         return self::entity('Relationship', $relationship_id, $values, $check_permissions);
     }
 
@@ -145,8 +156,9 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Activity data
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public static function activity(int $activity_id, array $values = [], bool $check_permissions = false): array
     {
@@ -161,8 +173,9 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Group data
-     *
-     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public static function group(int $group_id, array $values = [], bool $check_permissions = false): array
     {
@@ -177,8 +190,9 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Tag data
-     *
-     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public static function tag(int $tag_id, array $values = [], bool $check_permissions = false): array
     {

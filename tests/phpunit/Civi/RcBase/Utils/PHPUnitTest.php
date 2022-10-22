@@ -14,6 +14,15 @@ class PHPUnitTest extends CRM_RcBase_HeadlessTestCase
 {
     /**
      * @return void
+     */
+    public function testCounter()
+    {
+        $counter = PHPUnit::nextCounter();
+        self::assertSame($counter + 1, PHPUnit::nextCounter(), 'Counter not incremented');
+    }
+
+    /**
+     * @return void
      * @throws \CRM_Core_Exception
      * @throws \CiviCRM_API3_Exception
      */

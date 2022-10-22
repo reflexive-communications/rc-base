@@ -1,29 +1,33 @@
 <?php
 
+namespace Civi\RcBase\ApiWrapper;
+
 use Civi\Api4\OptionValue;
+use Civi\RcBase\Exception\APIException;
+use Civi\RcBase\Exception\InvalidArgumentException;
+use Civi\RcBase\Exception\MissingArgumentException;
+use CRM_RcBase_Api_Get;
+use Throwable;
 
 /**
  * Common Create Actions
- *
  * Wrapper around APIv4
  *
- * @deprecated use \Civi\RcBase\ApiWrapper\Create instead
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class CRM_RcBase_Api_Create
+class Create
 {
     /**
-     * Add new generic entity
+     * Add new entity
      *
      * @param string $entity Name of entity
      * @param array $values Entity data
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int ID of created entity
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
      */
     public static function entity(string $entity, array $values = [], bool $check_permissions = false): int
     {
@@ -37,11 +41,19 @@ class CRM_RcBase_Api_Create
                 ]
             );
         } catch (Throwable $ex) {
-            throw new CRM_Core_Exception(sprintf('Failed to create %s, reason: %s', $entity, $ex->getMessage()));
+            throw new APIException($entity, 'create', $ex->getMessage());
         }
 
-        // No exception --> create was successful and we have an ID
-        return (int)$results->first()['id'];
+        if (count($results) < 1) {
+            throw new APIException($entity, 'create', 'Failed to create entity');
+        }
+
+        $id = ($results->first()['id']) ?? 0;
+        if ($id < 1) {
+            throw new APIException($entity, 'create', 'Not a valid ID returned');
+        }
+
+        return (int)$id;
     }
 
     /**
@@ -51,8 +63,7 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Contact ID
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
      */
     public static function contact(array $values = [], bool $check_permissions = false): int
     {
@@ -67,13 +78,13 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Email ID
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
     public static function email(int $contact_id, array $values = [], bool $check_permissions = false): int
     {
         if ($contact_id < 1) {
-            throw new CRM_Core_Exception('Invalid ID.');
+            throw new InvalidArgumentException('contact ID', 'ID must be positive');
         }
 
         $values['contact_id'] = $contact_id;
@@ -89,13 +100,13 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Phone ID
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
     public static function phone(int $contact_id, array $values = [], bool $check_permissions = false): int
     {
         if ($contact_id < 1) {
-            throw new CRM_Core_Exception('Invalid ID.');
+            throw new InvalidArgumentException('contact ID', 'ID must be positive');
         }
 
         $values['contact_id'] = $contact_id;
@@ -111,13 +122,13 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Address ID
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
     public static function address(int $contact_id, array $values = [], bool $check_permissions = false): int
     {
         if ($contact_id < 1) {
-            throw new CRM_Core_Exception('Invalid ID.');
+            throw new InvalidArgumentException('contact ID', 'ID must be positive');
         }
 
         $values['contact_id'] = $contact_id;
@@ -133,13 +144,13 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Relationship ID
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
     public static function relationship(int $contact_id, array $values = [], bool $check_permissions = false): int
     {
         if ($contact_id < 1) {
-            throw new CRM_Core_Exception('Invalid ID.');
+            throw new InvalidArgumentException('contact ID', 'ID must be positive');
         }
 
         $values['contact_id_a'] = $contact_id;
@@ -155,13 +166,13 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Contribution ID
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
     public static function contribution(int $contact_id, array $values = [], bool $check_permissions = false): int
     {
         if ($contact_id < 1) {
-            throw new CRM_Core_Exception('Invalid ID.');
+            throw new InvalidArgumentException('contact ID', 'ID must be positive');
         }
 
         $values['contact_id'] = $contact_id;
@@ -177,13 +188,13 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Activity ID
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
     public static function activity(int $contact_id, array $values = [], bool $check_permissions = false): int
     {
         if ($contact_id < 1) {
-            throw new CRM_Core_Exception('Invalid ID.');
+            throw new InvalidArgumentException('contact ID', 'ID must be positive');
         }
 
         $values['target_contact_id'] = $contact_id;
@@ -199,13 +210,16 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int EntityTag ID
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
     public static function tagContact(int $contact_id, int $tag_id, bool $check_permissions = false): int
     {
-        if ($contact_id < 1 || $tag_id < 1) {
-            throw new CRM_Core_Exception('Invalid ID.');
+        if ($contact_id < 1) {
+            throw new InvalidArgumentException('contact ID', 'ID must be positive');
+        }
+        if ($tag_id < 1) {
+            throw new InvalidArgumentException('tag ID', 'ID must be positive');
         }
 
         $values = [
@@ -224,8 +238,7 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Group ID
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
      */
     public static function group(array $values = [], bool $check_permissions = false): int
     {
@@ -239,8 +252,7 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Tag ID
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
      */
     public static function tag(array $values = [], bool $check_permissions = false): int
     {
@@ -255,15 +267,15 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return string|null Value of option
-     *
      * @throws \API_Exception
-     * @throws \CRM_Core_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public static function optionValue(string $option_group, array $values = [], bool $check_permissions = false): ?string
     {
         if (empty($option_group)) {
-            throw new API_Exception('Missing option group');
+            throw new MissingArgumentException('option group name');
         }
 
         $values['option_group_id.name'] = $option_group;
