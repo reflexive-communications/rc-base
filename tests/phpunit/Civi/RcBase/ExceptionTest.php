@@ -101,4 +101,18 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
         ];
         self::assertSame($expected_data, $exception->getErrorData(), 'Wrong error data returned');
     }
+
+    /**
+     * @return void
+     */
+    public function testRunTimeException()
+    {
+        $exception = new RunTimeException();
+        self::assertSame('Run-time error', $exception->getMessage(), 'Wrong message returned for empty message');
+        self::assertSame(RunTimeException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
+
+        $msg = 'stack overflow';
+        $exception = new RunTimeException($msg);
+        self::assertSame("Run-time error: {$msg}", $exception->getMessage(), 'Wrong message returned');
+    }
 }
