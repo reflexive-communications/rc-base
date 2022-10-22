@@ -7,6 +7,7 @@ use Civi\Api4\OptionValue;
  *
  * Wrapper around APIv4
  *
+ * @deprecated use \Civi\RcBase\ApiWrapper\Create instead
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0

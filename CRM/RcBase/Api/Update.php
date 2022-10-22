@@ -5,6 +5,7 @@
  *
  * Wrapper around APIv4
  *
+ * @deprecated use \Civi\RcBase\ApiWrapper\Update instead
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
