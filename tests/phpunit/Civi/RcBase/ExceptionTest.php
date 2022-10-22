@@ -64,4 +64,27 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
         $exception = new CorruptedDataException($msg);
         self::assertSame("Corrupted data found: {$msg}", $exception->getMessage(), 'Wrong message returned');
     }
+
+    /**
+     * @return void
+     */
+    public function testApiException()
+    {
+        $entity = 'Contact';
+        $action = 'update';
+        $exception = new APIException($entity, $action);
+        self::assertSame("Failed to execute API: {$entity}.{$action}", $exception->getMessage(), 'Wrong message returned for empty message');
+        self::assertSame(APIException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
+
+        $msg = 'missing contact ID';
+        $exception = new APIException($entity, $action, $msg);
+        self::assertSame("Failed to execute API: {$entity}.{$action} Reason: {$msg}", $exception->getMessage(), 'Wrong message returned');
+
+        $expected_data = [
+            'entity' => $entity,
+            'action' => $action,
+            'error_code' => APIException::ERROR_CODE,
+        ];
+        self::assertSame($expected_data, $exception->getErrorData(), 'Wrong error data returned');
+    }
 }
