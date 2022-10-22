@@ -14,13 +14,20 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
      */
     public function testInvalidArgumentException()
     {
-        $exception = new InvalidArgumentException();
-        self::assertSame('Invalid', $exception->getMessage(), 'Wrong message returned for empty message');
+        $argument = 'contact ID';
+        $exception = new InvalidArgumentException($argument);
+        self::assertSame("Invalid {$argument}", $exception->getMessage(), 'Wrong message returned for empty message');
         self::assertSame(InvalidArgumentException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
 
-        $msg = 'msg_id';
-        $exception = new InvalidArgumentException($msg);
-        self::assertSame("Invalid {$msg}", $exception->getMessage(), 'Wrong message returned');
+        $msg = 'must be positive';
+        $exception = new InvalidArgumentException($argument, $msg);
+        self::assertSame("Invalid {$argument}: {$msg}", $exception->getMessage(), 'Wrong message returned');
+
+        $expected_data = [
+            'argument' => $argument,
+            'error_code' => InvalidArgumentException::ERROR_CODE,
+        ];
+        self::assertSame($expected_data, $exception->getErrorData(), 'Wrong error data returned');
     }
 
     /**
@@ -28,13 +35,20 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
      */
     public function testMissingArgumentException()
     {
-        $exception = new MissingArgumentException();
-        self::assertSame('Missing', $exception->getMessage(), 'Wrong message returned for empty message');
+        $argument = 'contact ID';
+        $exception = new MissingArgumentException($argument);
+        self::assertSame("Missing {$argument}", $exception->getMessage(), 'Wrong message returned for empty message');
         self::assertSame(MissingArgumentException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
 
-        $msg = 'msg_id';
-        $exception = new MissingArgumentException($msg);
-        self::assertSame("Missing {$msg}", $exception->getMessage(), 'Wrong message returned');
+        $msg = 'not possible to determine';
+        $exception = new MissingArgumentException($argument, $msg);
+        self::assertSame("Missing {$argument}: {$msg}", $exception->getMessage(), 'Wrong message returned');
+
+        $expected_data = [
+            'argument' => $argument,
+            'error_code' => MissingArgumentException::ERROR_CODE,
+        ];
+        self::assertSame($expected_data, $exception->getErrorData(), 'Wrong error data returned');
     }
 
     /**
@@ -48,6 +62,57 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
 
         $msg = 'msg_id';
         $exception = new NotFoundException($msg);
-        self::assertSame("Not found {$msg}", $exception->getMessage(), 'Wrong message returned');
+        self::assertSame("Not found: {$msg}", $exception->getMessage(), 'Wrong message returned');
+    }
+
+    /**
+     * @return void
+     */
+    public function testCorruptedDataException()
+    {
+        $exception = new CorruptedDataException();
+        self::assertSame('Corrupted data found', $exception->getMessage(), 'Wrong message returned for empty message');
+        self::assertSame(CorruptedDataException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
+
+        $msg = 'missing contact ID';
+        $exception = new CorruptedDataException($msg);
+        self::assertSame("Corrupted data found: {$msg}", $exception->getMessage(), 'Wrong message returned');
+    }
+
+    /**
+     * @return void
+     */
+    public function testApiException()
+    {
+        $entity = 'Contact';
+        $action = 'update';
+        $exception = new APIException($entity, $action);
+        self::assertSame("Failed to execute API: {$entity}.{$action}", $exception->getMessage(), 'Wrong message returned for empty message');
+        self::assertSame(APIException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
+
+        $msg = 'missing contact ID';
+        $exception = new APIException($entity, $action, $msg);
+        self::assertSame("Failed to execute API: {$entity}.{$action} Reason: {$msg}", $exception->getMessage(), 'Wrong message returned');
+
+        $expected_data = [
+            'entity' => $entity,
+            'action' => $action,
+            'error_code' => APIException::ERROR_CODE,
+        ];
+        self::assertSame($expected_data, $exception->getErrorData(), 'Wrong error data returned');
+    }
+
+    /**
+     * @return void
+     */
+    public function testRunTimeException()
+    {
+        $exception = new RunTimeException();
+        self::assertSame('Run-time error', $exception->getMessage(), 'Wrong message returned for empty message');
+        self::assertSame(RunTimeException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
+
+        $msg = 'stack overflow';
+        $exception = new RunTimeException($msg);
+        self::assertSame("Run-time error: {$msg}", $exception->getMessage(), 'Wrong message returned');
     }
 }

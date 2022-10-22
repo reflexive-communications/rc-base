@@ -5,21 +5,21 @@ namespace Civi\RcBase\Exception;
 use CRM_Core_Exception;
 
 /**
- * Exception when something was not found
+ * Exception for corrupted data
  */
-class NotFoundException extends CRM_Core_Exception
+class CorruptedDataException extends CRM_Core_Exception
 {
     /**
-     * Machine-readable error message for "not found"
+     * Machine-readable error message for "corrupted data"
      */
-    public const ERROR_CODE = 'not_found';
+    public const ERROR_CODE = 'data_corrupted';
 
     /**
-     * @param string $details (Optional) details
+     * @param string $details (Optional) Details
      */
     public function __construct(string $details = '')
     {
-        $error_msg = 'Not found';
+        $error_msg = 'Corrupted data found';
         if (!empty($details)) {
             $error_msg .= ": {$details}";
         }
