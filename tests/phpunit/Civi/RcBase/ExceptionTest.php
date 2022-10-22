@@ -28,13 +28,20 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
      */
     public function testMissingArgumentException()
     {
-        $exception = new MissingArgumentException();
-        self::assertSame('Missing', $exception->getMessage(), 'Wrong message returned for empty message');
+        $argument = 'contact ID';
+        $exception = new MissingArgumentException($argument);
+        self::assertSame("Missing {$argument}", $exception->getMessage(), 'Wrong message returned for empty message');
         self::assertSame(MissingArgumentException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
 
-        $msg = 'msg_id';
-        $exception = new MissingArgumentException($msg);
-        self::assertSame("Missing {$msg}", $exception->getMessage(), 'Wrong message returned');
+        $msg = 'not possible to determine';
+        $exception = new MissingArgumentException($argument, $msg);
+        self::assertSame("Missing {$argument} Details: {$msg}", $exception->getMessage(), 'Wrong message returned');
+
+        $expected_data = [
+            'argument' => $argument,
+            'error_code' => MissingArgumentException::ERROR_CODE,
+        ];
+        self::assertSame($expected_data, $exception->getErrorData(), 'Wrong error data returned');
     }
 
     /**
