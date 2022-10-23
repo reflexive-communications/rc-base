@@ -35,4 +35,16 @@ class Arrays
             return !empty($value);
         }, ARRAY_FILTER_USE_BOTH);
     }
+
+    /**
+     * Return last element of an array, leave array unchanged
+     *
+     * @param array $arr Array in question
+     *
+     * @return mixed|null
+     */
+    public static function last(array $arr)
+    {
+        return array_pop($arr);
+    }
 }

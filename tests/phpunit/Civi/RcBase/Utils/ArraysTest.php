@@ -61,4 +61,17 @@ class ArraysTest extends TestCase
         ];
         self::assertSame($expected, Arrays::filterValueEmpty($unfiltered), 'Wrong filtered array returned');
     }
+
+    /**
+     * @return void
+     */
+    public function testLast()
+    {
+        $array = [1, 2, 3, 'last element'];
+        $array_copy = array_merge($array);
+        self::assertSame('last element', Arrays::last($array), 'Wrong element returned');
+        self::assertSame($array_copy, $array, 'Array changed');
+
+        self::assertNull(Arrays::last([]), 'Not null returned on empty array');
+    }
 }
