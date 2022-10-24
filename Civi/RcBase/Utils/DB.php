@@ -15,6 +15,11 @@ use CRM_Core_Exception;
 class DB
 {
     /**
+     * MySQL timestamp format
+     */
+    public const TIMESTAMP_FORMAT = 'Y-m-d H:i:s';
+
+    /**
      * Minimum value for a MySQL timestamp field
      */
     public const TIMESTAMP_MIN_VALUE = '1970-01-01 00:00:01';
