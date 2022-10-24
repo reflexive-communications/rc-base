@@ -15,12 +15,16 @@ use CRM_Core_Exception;
 class DB
 {
     /**
+     * Minimum value for a MySQL timestamp field
+     */
+    public const TIMESTAMP_MIN_VALUE = '1970-01-01 00:00:01';
+
+    /**
      * Get next auto increment value for a table (effectively next id)
      *
      * @param string $table_name Table name
      *
      * @return int Auto increment value
-     *
      * @throws \CRM_Core_Exception
      */
     public static function getNextAutoIncrementValue(string $table_name): int
