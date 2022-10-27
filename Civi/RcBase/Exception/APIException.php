@@ -6,6 +6,10 @@ use CRM_Core_Exception;
 
 /**
  * Exception for API errors
+ *
+ * @package  rc-base
+ * @author   Sandor Semsey <sandor@es-progress.hu>
+ * @license  AGPL-3.0
  */
 class APIException extends CRM_Core_Exception
 {

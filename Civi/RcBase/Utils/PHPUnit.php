@@ -8,6 +8,10 @@ use CRM_RcBase_Api_Create;
 /**
  * Utilities for unit-testing
  * Please don't use in production code!
+ *
+ * @package  rc-base
+ * @author   Sandor Semsey <sandor@es-progress.hu>
+ * @license  AGPL-3.0
  */
 class PHPUnit
 {

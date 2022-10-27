@@ -7,6 +7,10 @@ use CRM_Core_Exception;
 /**
  * Exception for corrupted data
  *
+ * @package  rc-base
+ * @author   Sandor Semsey <sandor@es-progress.hu>
+ * @license  AGPL-3.0
+ *
  * @deprecated use \Civi\RcBase\Exception\DataBaseException instead
  */
 class CorruptedDataException extends CRM_Core_Exception

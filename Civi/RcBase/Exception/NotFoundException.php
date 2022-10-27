@@ -6,6 +6,10 @@ use CRM_Core_Exception;
 
 /**
  * Exception when something was not found
+ *
+ * @package  rc-base
+ * @author   Sandor Semsey <sandor@es-progress.hu>
+ * @license  AGPL-3.0
  */
 class NotFoundException extends CRM_Core_Exception
 {

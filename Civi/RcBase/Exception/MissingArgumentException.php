@@ -6,6 +6,10 @@ use CRM_Core_Exception;
 
 /**
  * Exception for missing arguments
+ *
+ * @package  rc-base
+ * @author   Sandor Semsey <sandor@es-progress.hu>
+ * @license  AGPL-3.0
  */
 class MissingArgumentException extends CRM_Core_Exception
 {
