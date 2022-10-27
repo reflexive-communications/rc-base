@@ -5,23 +5,21 @@ namespace Civi\RcBase\Exception;
 use CRM_Core_Exception;
 
 /**
- * Exception for corrupted data
- *
- * @deprecated use \Civi\RcBase\Exception\DataBaseException instead
+ * Exception for DataBase errors
  */
-class CorruptedDataException extends CRM_Core_Exception
+class DataBaseException extends CRM_Core_Exception
 {
     /**
-     * Machine-readable error message for "corrupted data"
+     * Machine-readable error message for "DB error"
      */
-    public const ERROR_CODE = 'data_corrupted';
+    public const ERROR_CODE = 'db_error';
 
     /**
      * @param string $details (Optional) Details
      */
     public function __construct(string $details = '')
     {
-        $error_msg = 'Corrupted data found';
+        $error_msg = 'DataBase error occurred';
         if (!empty($details)) {
             $error_msg .= ": {$details}";
         }
