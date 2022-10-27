@@ -19,7 +19,7 @@ class CRM_RcBase_Test_Utils
      * @return array Query results indexed by column name
      *
      * @throws \CRM_Core_Exception
-     * @deprecated
+     * @deprecated use \Civi\RcBase\Utils\DB::query()
      */
     public static function rawSqlQuery(string $query): array
     {
