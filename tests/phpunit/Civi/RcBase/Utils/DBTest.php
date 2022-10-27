@@ -54,4 +54,22 @@ class DBTest extends CRM_RcBase_HeadlessTestCase
         self::expectExceptionMessage('Failed to get next auto increment value for table');
         DB::getNextAutoIncrementValue('invalid_table');
     }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     */
+    public function testQuery()
+    {
+        $middle_name = 'db query middle name test';
+        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter(), [
+            'middle_name' => $middle_name,
+        ]);
+
+        $records = DB::query('SELECT id FROM civicrm_contact WHERE middle_name = %1', [1 => [$middle_name, 'String']]);
+        self::assertCount(1, $records, 'Failed to retrieve contact');
+        self::assertArrayHasKey('id', $records[0], 'ID field missing');
+        self::assertEquals($contact_id, $records[0]['id'], 'Wrong contact ID returned');
+    }
 }

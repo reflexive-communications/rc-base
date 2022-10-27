@@ -2,8 +2,10 @@
 
 namespace Civi\RcBase\Utils;
 
+use Civi\RcBase\Exception\DataBaseException;
 use CRM_Core_DAO;
 use CRM_Core_Exception;
+use Throwable;
 
 /**
  * Utilities for DataBase
@@ -50,5 +52,30 @@ class DB
         }
 
         return $auto_increment;
+    }
+
+    /**
+     * Execute SQL query, wrapper for CRM_Core_DAO::executeQuery
+     *
+     * @param string $sql SQL statement with optionally placeholders
+     *
+     *   'SELECT * FROM civicrm_contact WHERE id = %1'
+     *
+     * @param array $params Params to insert to placeholders
+     *
+     *   $params = [
+     *     1 => [$id, 'Integer']
+     *   ]
+     *
+     * @return array
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     */
+    public static function query(string $sql, array $params = []): array
+    {
+        try {
+            return CRM_Core_DAO::executeQuery($sql, $params)->fetchAll();
+        } catch (Throwable $ex) {
+            throw new DataBaseException($ex->getMessage());
+        }
     }
 }
