@@ -82,6 +82,20 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
     /**
      * @return void
      */
+    public function testDatabaseException()
+    {
+        $exception = new DataBaseException();
+        self::assertSame('DataBase error occurred', $exception->getMessage(), 'Wrong message returned for empty message');
+        self::assertSame(DataBaseException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
+
+        $msg = 'missing contact ID';
+        $exception = new DataBaseException($msg);
+        self::assertSame("DataBase error occurred: {$msg}", $exception->getMessage(), 'Wrong message returned');
+    }
+
+    /**
+     * @return void
+     */
     public function testApiException()
     {
         $entity = 'Contact';
