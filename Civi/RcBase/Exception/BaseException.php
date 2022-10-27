@@ -20,14 +20,30 @@ class BaseException extends CRM_Core_Exception
     protected array $errorData;
 
     /**
+     * Previous exception
+     *
+     * @var \Throwable|null
+     */
+    protected ?Throwable $previous;
+
+    /**
      * @param string $message
      * @param string $error_code
      * @param array $error_data
-     * @param \Throwable|null $previous_exception
+     * @param \Throwable|null $previous Previous exception
      */
-    public function __construct(string $message = '', string $error_code = '', array $error_data = [], ?Throwable $previous_exception = null)
+    public function __construct(string $message = '', string $error_code = '', array $error_data = [], ?Throwable $previous = null)
     {
         $this->errorData = $error_data + ['error_code' => $error_code];
-        parent::__construct($message, $error_code, $error_data, $previous_exception);
+        $this->previous = $previous;
+        parent::__construct($message, $error_code, $error_data, $previous);
+    }
+
+    /**
+     * @return \Throwable|null
+     */
+    public function getPreviousException(): ?Throwable
+    {
+        return $this->previous;
     }
 }
