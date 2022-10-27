@@ -6,6 +6,8 @@ use CRM_Core_Exception;
 
 /**
  * Exception for corrupted data
+ *
+ * @deprecated use \Civi\RcBase\Exception\DataBaseException instead
  */
 class CorruptedDataException extends CRM_Core_Exception
 {
