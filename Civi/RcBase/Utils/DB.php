@@ -3,8 +3,8 @@
 namespace Civi\RcBase\Utils;
 
 use Civi\RcBase\Exception\DataBaseException;
+use Civi\RcBase\Exception\MissingArgumentException;
 use CRM_Core_DAO;
-use CRM_Core_Exception;
 use Throwable;
 
 /**
@@ -32,23 +32,20 @@ class DB
      * @param string $table_name Table name
      *
      * @return int Auto increment value
-     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public static function getNextAutoIncrementValue(string $table_name): int
     {
         if (empty($table_name)) {
-            throw new CRM_Core_Exception('Missing table name');
+            throw new MissingArgumentException('table name');
         }
 
-        $dao = new CRM_Core_DAO();
-        $sql = CRM_Core_DAO::composeQuery('SHOW TABLE STATUS WHERE name=%1', [1 => [$table_name, 'String']]);
-        $dao->query($sql);
-
-        $row = $dao->getDatabaseResult()->fetchRow(DB_FETCHMODE_ASSOC);
-        $auto_increment = $row['Auto_increment'] ?? 0;
+        $result = self::query('SHOW TABLE STATUS WHERE name=%1', [1 => [$table_name, 'String']]);
+        $auto_increment = $result[0]['Auto_increment'] ?? 0;
 
         if ($auto_increment === 0) {
-            throw new CRM_Core_Exception(sprintf('Failed to get next auto increment value for table: %s', $table_name));
+            throw new DataBaseException("Failed to get next auto increment value for table: {$table_name}");
         }
 
         return $auto_increment;

@@ -4,7 +4,8 @@ namespace Civi\RcBase\Utils;
 
 use Civi\Api4\Activity;
 use Civi\Api4\Contact;
-use CRM_Core_Exception;
+use Civi\RcBase\Exception\DataBaseException;
+use Civi\RcBase\Exception\MissingArgumentException;
 use CRM_RcBase_HeadlessTestCase;
 
 /**
@@ -39,8 +40,8 @@ class DBTest extends CRM_RcBase_HeadlessTestCase
         self::assertSame($activity_id + 1, $next_id, 'Wrong auto increment value returned for: civicrm_activity');
 
         // Empty table
-        self::expectException(CRM_Core_Exception::class);
-        self::expectExceptionMessage('Missing table name');
+        self::expectException(MissingArgumentException::class);
+        self::expectExceptionMessage('table name');
         DB::getNextAutoIncrementValue('');
     }
 
@@ -50,7 +51,7 @@ class DBTest extends CRM_RcBase_HeadlessTestCase
      */
     public function testGetNextAutoIncrementValueInvalidTableThrowsException()
     {
-        self::expectException(CRM_Core_Exception::class);
+        self::expectException(DataBaseException::class);
         self::expectExceptionMessage('Failed to get next auto increment value for table');
         DB::getNextAutoIncrementValue('invalid_table');
     }
