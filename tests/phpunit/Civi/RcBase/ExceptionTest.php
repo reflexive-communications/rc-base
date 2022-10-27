@@ -2,6 +2,8 @@
 
 namespace Civi\RcBase\Exception;
 
+use CRM_Core_Error;
+use CRM_Core_Exception;
 use CRM_RcBase_HeadlessTestCase;
 
 /**
@@ -9,6 +11,41 @@ use CRM_RcBase_HeadlessTestCase;
  */
 class ExceptionTest extends CRM_RcBase_HeadlessTestCase
 {
+    /**
+     * @return void
+     */
+    public function testHandleException()
+    {
+        $extension = 'test-extension';
+        $previous_exception_msg = 'some previous test exception';
+        $reason = 'Duplicate email address';
+
+        try {
+            $prev = new CRM_Core_Exception($previous_exception_msg);
+            throw new APIException('Contact', 'create', $reason, $prev);
+        } catch (BaseException $ex) {
+            BaseException::handleException($extension, $ex);
+        }
+
+        // Read last 25 lines from log file
+        $file_log = CRM_Core_Error::createDebugLogger();
+        $fp = fopen($file_log->_filename, 'r');
+        $lines = [];
+        while (!feof($fp)) {
+            $lines[] = fgets($fp);
+            if (count($lines) > 25) {
+                array_shift($lines);
+            }
+        }
+        fclose($fp);
+
+        $log = implode('', $lines);
+        self::assertStringContainsString("[${extension}]", $log, 'Extension name not found in log');
+        self::assertStringContainsString($previous_exception_msg, $log, 'Previous exception not found in log');
+        self::assertStringContainsString($reason, $log, 'Reason not found in log');
+        self::assertStringContainsString(APIException::ERROR_CODE, $log, 'Error code not found in log');
+    }
+
     /**
      * @return void
      */

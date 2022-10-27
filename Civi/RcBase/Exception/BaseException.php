@@ -2,6 +2,7 @@
 
 namespace Civi\RcBase\Exception;
 
+use Civi;
 use CRM_Core_Exception;
 use Throwable;
 
@@ -45,5 +46,27 @@ class BaseException extends CRM_Core_Exception
     public function getPreviousException(): ?Throwable
     {
         return $this->previous;
+    }
+
+    /**
+     * Standard exception handler:
+     *   - write error message, previous exception (if any) and stack trace to log
+     *
+     * @param string $extension Extension name where exception is handled
+     * @param \Civi\RcBase\Exception\BaseException $ex Exception to handle
+     *
+     * @return void
+     */
+    public static function handleException(string $extension, BaseException $ex): void
+    {
+        $message = sprintf('[%s] %s', $extension, $ex->getMessage());
+        $error_data = $ex->getErrorData();
+        $previous = $ex->getPreviousException();
+
+        if (!is_null($previous)) {
+            $error_data['exception'] = $previous;
+        }
+
+        Civi::log()->error($message, $error_data);
     }
 }
