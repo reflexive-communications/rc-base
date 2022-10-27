@@ -2,8 +2,6 @@
 
 namespace Civi\RcBase\Exception;
 
-use CRM_Core_Exception;
-
 /**
  * Exception when something was not found
  *
@@ -11,7 +9,7 @@ use CRM_Core_Exception;
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class NotFoundException extends CRM_Core_Exception
+class NotFoundException extends BaseException
 {
     /**
      * Machine-readable error message for "not found"

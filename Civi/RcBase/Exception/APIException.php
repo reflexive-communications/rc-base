@@ -2,8 +2,6 @@
 
 namespace Civi\RcBase\Exception;
 
-use CRM_Core_Exception;
-
 /**
  * Exception for API errors
  *
@@ -11,7 +9,7 @@ use CRM_Core_Exception;
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class APIException extends CRM_Core_Exception
+class APIException extends BaseException
 {
     /**
      * Machine-readable error message for "API error"

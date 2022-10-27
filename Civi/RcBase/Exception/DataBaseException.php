@@ -2,8 +2,6 @@
 
 namespace Civi\RcBase\Exception;
 
-use CRM_Core_Exception;
-
 /**
  * Exception for DataBase errors
  *
@@ -11,7 +9,7 @@ use CRM_Core_Exception;
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class DataBaseException extends CRM_Core_Exception
+class DataBaseException extends BaseException
 {
     /**
      * Machine-readable error message for "DB error"

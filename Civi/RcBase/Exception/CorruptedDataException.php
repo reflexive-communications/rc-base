@@ -2,8 +2,6 @@
 
 namespace Civi\RcBase\Exception;
 
-use CRM_Core_Exception;
-
 /**
  * Exception for corrupted data
  *
@@ -13,7 +11,7 @@ use CRM_Core_Exception;
  *
  * @deprecated use \Civi\RcBase\Exception\DataBaseException instead
  */
-class CorruptedDataException extends CRM_Core_Exception
+class CorruptedDataException extends BaseException
 {
     /**
      * Machine-readable error message for "corrupted data"
