@@ -2,6 +2,8 @@
 
 namespace Civi\RcBase\Exception;
 
+use Throwable;
+
 /**
  * Exception when something was not found
  *
@@ -18,14 +20,15 @@ class NotFoundException extends BaseException
 
     /**
      * @param string $details (Optional) details
+     * @param \Throwable|null $prev_exception
      */
-    public function __construct(string $details = '')
+    public function __construct(string $details = '', ?Throwable $prev_exception = null)
     {
         $error_msg = 'Not found';
         if (!empty($details)) {
             $error_msg .= ": {$details}";
         }
 
-        parent::__construct($error_msg, self::ERROR_CODE);
+        parent::__construct($error_msg, self::ERROR_CODE, [], $prev_exception);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Civi\RcBase\Exception;
 
+use Throwable;
+
 /**
  * Exception for invalid arguments
  *
@@ -19,16 +21,15 @@ class InvalidArgumentException extends BaseException
     /**
      * @param string $argument Invalid argument name
      * @param string $details (Optional) Details
+     * @param \Throwable|null $prev_exception
      */
-    public function __construct(string $argument, string $details = '')
+    public function __construct(string $argument, string $details = '', ?Throwable $prev_exception = null)
     {
         $error_msg = "Invalid {$argument}";
         if (!empty($details)) {
             $error_msg .= ": {$details}";
         }
 
-        parent::__construct($error_msg, self::ERROR_CODE, [
-            'argument' => $argument,
-        ]);
+        parent::__construct($error_msg, self::ERROR_CODE, ['argument' => $argument,], $prev_exception);
     }
 }

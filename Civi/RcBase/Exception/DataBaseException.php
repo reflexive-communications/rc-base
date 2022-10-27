@@ -2,6 +2,8 @@
 
 namespace Civi\RcBase\Exception;
 
+use Throwable;
+
 /**
  * Exception for DataBase errors
  *
@@ -18,14 +20,15 @@ class DataBaseException extends BaseException
 
     /**
      * @param string $details (Optional) Details
+     * @param \Throwable|null $prev_exception
      */
-    public function __construct(string $details = '')
+    public function __construct(string $details = '', ?Throwable $prev_exception = null)
     {
         $error_msg = 'DataBase error occurred';
         if (!empty($details)) {
             $error_msg .= ": {$details}";
         }
 
-        parent::__construct($error_msg, self::ERROR_CODE);
+        parent::__construct($error_msg, self::ERROR_CODE, [], $prev_exception);
     }
 }
