@@ -4,6 +4,8 @@ namespace Civi\RcBase\Utils;
 
 use Civi\Api4\Activity;
 use Civi\Api4\Contact;
+use Civi\Api4\GroupContact;
+use Civi\RcBase\ApiWrapper\Create;
 use Civi\RcBase\Exception\DataBaseException;
 use Civi\RcBase\Exception\MissingArgumentException;
 use CRM_RcBase_HeadlessTestCase;
@@ -72,5 +74,48 @@ class DBTest extends CRM_RcBase_HeadlessTestCase
         self::assertCount(1, $records, 'Failed to retrieve contact');
         self::assertArrayHasKey('id', $records[0], 'ID field missing');
         self::assertEquals($contact_id, $records[0]['id'], 'Wrong contact ID returned');
+    }
+
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     */
+    public function testAddRemoveContactToGroup()
+    {
+        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $group_id = Create::group(['title' => 'test group',]);
+
+        $group_members = function () use ($contact_id, $group_id) {
+            $results = GroupContact::get()
+                ->addSelect('id', 'status')
+                ->addWhere('contact_id', '=', $contact_id)
+                ->addWhere('group_id', '=', $group_id)
+                ->execute();
+
+            return $results->getArrayCopy();
+        };
+
+        // Test adding (twice)
+        DB::addContactToGroup($contact_id, $group_id);
+        self::assertCount(1, $group_members(), 'Record missing');
+        self::assertSame('Added', $group_members()[0]['status'], 'Contact not added to group');
+        DB::addContactToGroup($contact_id, $group_id);
+        self::assertCount(1, $group_members(), 'Contact added twice to group');
+        self::assertSame('Added', $group_members()[0]['status'], 'Contact not added to group');
+        // Test removing (twice)
+        DB::removeContactFromGroup($contact_id, $group_id);
+        self::assertCount(1, $group_members(), 'Records missing');
+        self::assertSame('Removed', $group_members()[0]['status'], 'Contact not removed from group');
+        DB::removeContactFromGroup($contact_id, $group_id);
+        self::assertCount(1, $group_members(), 'Records missing');
+        self::assertSame('Removed', $group_members()[0]['status'], 'Contact not removed from group');
+        // Test re-adding
+        DB::addContactToGroup($contact_id, $group_id);
+        self::assertCount(1, $group_members(), 'Records missing');
+        self::assertSame('Added', $group_members()[0]['status'], 'Contact not re-added to group');
     }
 }

@@ -75,4 +75,72 @@ class DB
             throw new DataBaseException($ex->getMessage());
         }
     }
+
+    /**
+     * Add contact to group, check current status first so only add if not present
+     *
+     * @param int $contact_id
+     * @param int $group_id
+     *
+     * @return void
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     */
+    public static function addContactToGroup(int $contact_id, int $group_id): void
+    {
+        $sql = 'SELECT id, status
+                FROM civicrm_group_contact
+                WHERE contact_id = %1 AND group_id = %2
+                LIMIT 1';
+        $params = [
+            1 => [$contact_id, 'Integer'],
+            2 => [$group_id, 'Integer'],
+        ];
+        $record = self::query($sql, $params);
+
+        // Contact never been in group --> add
+        if (count($record) < 1) {
+            $sql = 'INSERT INTO civicrm_group_contact (contact_id, group_id, status) VALUES (%1, %2, "Added")';
+            self::query($sql, $params);
+
+            return;
+        }
+
+        // Contact already in group
+        if (($record[0]['status'] ?? '') == 'Added') {
+            return;
+        }
+
+        $sql = 'UPDATE civicrm_group_contact SET status = "Added" WHERE id = %1';
+        self::query($sql, [1 => [$record[0]['id'], 'Integer'],]);
+    }
+
+    /**
+     * Remove contact from group, check current status first so only remove if present
+     *
+     * @param int $contact_id
+     * @param int $group_id
+     *
+     * @return void
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     */
+    public static function removeContactFromGroup(int $contact_id, int $group_id): void
+    {
+        $sql = 'SELECT id, status
+                FROM civicrm_group_contact
+                WHERE contact_id = %1 AND group_id = %2
+                LIMIT 1';
+        $params = [
+            1 => [$contact_id, 'Integer'],
+            2 => [$group_id, 'Integer'],
+        ];
+        $record = self::query($sql, $params);
+
+        // Contact never been in group or removed already --> job done
+        if (count($record) < 1 || ($record[0]['status'] ?? '') == 'Removed') {
+            return;
+        }
+
+        $sql = 'UPDATE civicrm_group_contact SET status = "Removed" WHERE id = %1';
+        self::query($sql, [1 => [$record[0]['id'], 'Integer'],]);
+    }
 }
