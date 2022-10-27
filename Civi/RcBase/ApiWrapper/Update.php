@@ -53,7 +53,7 @@ class Update
                 ]
             );
         } catch (Throwable $ex) {
-            throw new APIException($entity, 'update', $ex->getMessage());
+            throw new APIException($entity, 'update', $ex->getMessage(), $ex);
         }
 
         if (count($results) < 1) {

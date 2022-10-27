@@ -72,7 +72,7 @@ class DB
         try {
             return CRM_Core_DAO::executeQuery($sql, $params)->fetchAll();
         } catch (Throwable $ex) {
-            throw new DataBaseException($ex->getMessage());
+            throw new DataBaseException($ex->getMessage(), $ex);
         }
     }
 

@@ -41,7 +41,7 @@ class Create
                 ]
             );
         } catch (Throwable $ex) {
-            throw new APIException($entity, 'create', $ex->getMessage());
+            throw new APIException($entity, 'create', $ex->getMessage(), $ex);
         }
 
         if (count($results) < 1) {

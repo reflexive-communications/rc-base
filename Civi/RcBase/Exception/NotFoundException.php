@@ -2,12 +2,16 @@
 
 namespace Civi\RcBase\Exception;
 
-use CRM_Core_Exception;
+use Throwable;
 
 /**
  * Exception when something was not found
+ *
+ * @package  rc-base
+ * @author   Sandor Semsey <sandor@es-progress.hu>
+ * @license  AGPL-3.0
  */
-class NotFoundException extends CRM_Core_Exception
+class NotFoundException extends BaseException
 {
     /**
      * Machine-readable error message for "not found"
@@ -16,14 +20,15 @@ class NotFoundException extends CRM_Core_Exception
 
     /**
      * @param string $details (Optional) details
+     * @param \Throwable|null $prev_exception
      */
-    public function __construct(string $details = '')
+    public function __construct(string $details = '', ?Throwable $prev_exception = null)
     {
         $error_msg = 'Not found';
         if (!empty($details)) {
             $error_msg .= ": {$details}";
         }
 
-        parent::__construct($error_msg, self::ERROR_CODE);
+        parent::__construct($error_msg, self::ERROR_CODE, [], $prev_exception);
     }
 }

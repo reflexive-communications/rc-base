@@ -2,6 +2,8 @@
 
 namespace Civi\RcBase\Exception;
 
+use CRM_Core_Error;
+use CRM_Core_Exception;
 use CRM_RcBase_HeadlessTestCase;
 
 /**
@@ -9,6 +11,41 @@ use CRM_RcBase_HeadlessTestCase;
  */
 class ExceptionTest extends CRM_RcBase_HeadlessTestCase
 {
+    /**
+     * @return void
+     */
+    public function testHandleException()
+    {
+        $extension = 'test-extension';
+        $previous_exception_msg = 'some previous test exception';
+        $reason = 'Duplicate email address';
+
+        try {
+            $prev = new CRM_Core_Exception($previous_exception_msg);
+            throw new APIException('Contact', 'create', $reason, $prev);
+        } catch (BaseException $ex) {
+            BaseException::handleException($extension, $ex);
+        }
+
+        // Read last 25 lines from log file
+        $file_log = CRM_Core_Error::createDebugLogger();
+        $fp = fopen($file_log->_filename, 'r');
+        $lines = [];
+        while (!feof($fp)) {
+            $lines[] = fgets($fp);
+            if (count($lines) > 25) {
+                array_shift($lines);
+            }
+        }
+        fclose($fp);
+
+        $log = implode('', $lines);
+        self::assertStringContainsString("[${extension}]", $log, 'Extension name not found in log');
+        self::assertStringContainsString($previous_exception_msg, $log, 'Previous exception not found in log');
+        self::assertStringContainsString($reason, $log, 'Reason not found in log');
+        self::assertStringContainsString(APIException::ERROR_CODE, $log, 'Error code not found in log');
+    }
+
     /**
      * @return void
      */
@@ -20,7 +57,8 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
         self::assertSame(InvalidArgumentException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
 
         $msg = 'must be positive';
-        $exception = new InvalidArgumentException($argument, $msg);
+        $prev = new CRM_Core_Exception('prev');
+        $exception = new InvalidArgumentException($argument, $msg, $prev);
         self::assertSame("Invalid {$argument}: {$msg}", $exception->getMessage(), 'Wrong message returned');
 
         $expected_data = [
@@ -28,6 +66,7 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
             'error_code' => InvalidArgumentException::ERROR_CODE,
         ];
         self::assertSame($expected_data, $exception->getErrorData(), 'Wrong error data returned');
+        self::assertSame($prev, $exception->getPreviousException(), 'Wrong previous exception returned');
     }
 
     /**
@@ -41,7 +80,8 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
         self::assertSame(MissingArgumentException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
 
         $msg = 'not possible to determine';
-        $exception = new MissingArgumentException($argument, $msg);
+        $prev = new CRM_Core_Exception('prev');
+        $exception = new MissingArgumentException($argument, $msg, $prev);
         self::assertSame("Missing {$argument}: {$msg}", $exception->getMessage(), 'Wrong message returned');
 
         $expected_data = [
@@ -49,6 +89,7 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
             'error_code' => MissingArgumentException::ERROR_CODE,
         ];
         self::assertSame($expected_data, $exception->getErrorData(), 'Wrong error data returned');
+        self::assertSame($prev, $exception->getPreviousException(), 'Wrong previous exception returned');
     }
 
     /**
@@ -61,8 +102,10 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
         self::assertSame(NotFoundException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
 
         $msg = 'msg_id';
-        $exception = new NotFoundException($msg);
+        $prev = new CRM_Core_Exception('prev');
+        $exception = new NotFoundException($msg, $prev);
         self::assertSame("Not found: {$msg}", $exception->getMessage(), 'Wrong message returned');
+        self::assertSame($prev, $exception->getPreviousException(), 'Wrong previous exception returned');
     }
 
     /**
@@ -75,8 +118,10 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
         self::assertSame(CorruptedDataException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
 
         $msg = 'missing contact ID';
-        $exception = new CorruptedDataException($msg);
+        $prev = new CRM_Core_Exception('prev');
+        $exception = new CorruptedDataException($msg, $prev);
         self::assertSame("Corrupted data found: {$msg}", $exception->getMessage(), 'Wrong message returned');
+        self::assertSame($prev, $exception->getPreviousException(), 'Wrong previous exception returned');
     }
 
     /**
@@ -89,8 +134,10 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
         self::assertSame(DataBaseException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
 
         $msg = 'missing contact ID';
-        $exception = new DataBaseException($msg);
+        $prev = new CRM_Core_Exception('prev');
+        $exception = new DataBaseException($msg, $prev);
         self::assertSame("DataBase error occurred: {$msg}", $exception->getMessage(), 'Wrong message returned');
+        self::assertSame($prev, $exception->getPreviousException(), 'Wrong previous exception returned');
     }
 
     /**
@@ -105,8 +152,10 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
         self::assertSame(APIException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
 
         $msg = 'missing contact ID';
-        $exception = new APIException($entity, $action, $msg);
+        $prev = new CRM_Core_Exception('prev');
+        $exception = new APIException($entity, $action, $msg, $prev);
         self::assertSame("Failed to execute API: {$entity}.{$action} Reason: {$msg}", $exception->getMessage(), 'Wrong message returned');
+        self::assertSame($prev, $exception->getPreviousException(), 'Wrong previous exception returned');
 
         $expected_data = [
             'entity' => $entity,
@@ -126,7 +175,9 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
         self::assertSame(RunTimeException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
 
         $msg = 'stack overflow';
-        $exception = new RunTimeException($msg);
+        $prev = new CRM_Core_Exception('prev');
+        $exception = new RunTimeException($msg, $prev);
         self::assertSame("Run-time error: {$msg}", $exception->getMessage(), 'Wrong message returned');
+        self::assertSame($prev, $exception->getPreviousException(), 'Wrong previous exception returned');
     }
 }
