@@ -4,10 +4,13 @@
     <name>RC Base</name>
     <description>This extension does nothing by itself, it contains tools, libraries and shared components</description>
     <license>AGPL-3.0</license>
-    <maintainer>
-        <author>Sandor Semsey</author>
-        <email>sandor@es-progress.hu</email>
-    </maintainer>
+    <authors>
+        <author>
+            <name>Sandor Semsey</name>
+            <email>sandor@es-progress.hu</email>
+            <role>Maintainer</role>
+        </author>
+    </authors>
     <urls>
         <url desc="Main Extension Page">https://github.com/reflexive-communications/rc-base</url>
         <url desc="Documentation">https://github.com/reflexive-communications/rc-base</url>
