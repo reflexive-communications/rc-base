@@ -4,6 +4,7 @@ use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\ActivityContact;
 use Civi\Api4\Address;
 use Civi\Api4\Contact;
+use Civi\Api4\Contribution;
 use Civi\Api4\Email;
 use Civi\Api4\EntityTag;
 use Civi\Api4\Generic\Result;
@@ -626,5 +627,30 @@ class CRM_RcBase_Api_Get
             ->execute();
 
         return self::parseResultsFirst($results, 'contact_id');
+    }
+
+    /**
+     * Get contribution ID from transaction ID
+     *
+     * @param string $transaction_id Transaction ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null Contribution ID if found, null if not found
+     * @throws API_Exception
+     * @throws UnauthorizedException
+     */
+    public static function contributionIDByTransactionID(string $transaction_id, bool $check_permissions = false): ?int
+    {
+        if (empty($transaction_id)) {
+            return null;
+        }
+
+        $results = Contribution::get($check_permissions)
+            ->addSelect('id')
+            ->addWhere('trxn_id', '=', $transaction_id)
+            ->setLimit(1)
+            ->execute();
+
+        return self::parseResultsFirst($results, 'id');
     }
 }
