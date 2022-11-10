@@ -14,7 +14,7 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
     /**
      * @return void
      */
-    public function testHandleException()
+    public function testLogException()
     {
         $extension = 'test-extension';
         $previous_exception_msg = 'some previous test exception';
@@ -24,7 +24,7 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
             $prev = new CRM_Core_Exception($previous_exception_msg);
             throw new APIException('Contact', 'create', $reason, $prev);
         } catch (BaseException $ex) {
-            BaseException::handleException($extension, $ex);
+            BaseException::logException($extension, $ex);
         }
 
         // Read last 25 lines from log file

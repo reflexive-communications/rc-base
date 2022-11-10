@@ -49,8 +49,7 @@ class BaseException extends CRM_Core_Exception
     }
 
     /**
-     * Standard exception handler:
-     *   - write error message, previous exception (if any) and stack trace to log
+     * Standard exception handler
      *
      * @param string $extension Extension name where exception is handled
      * @param \Civi\RcBase\Exception\BaseException $ex Exception to handle
@@ -59,9 +58,22 @@ class BaseException extends CRM_Core_Exception
      */
     public static function handleException(string $extension, BaseException $ex): void
     {
+        self::logException($extension, $ex);
+    }
+
+    /**
+     * Write error message, previous exception (if any) and stack trace to log
+     *
+     * @param string $extension Extension name where exception is thrown
+     * @param Throwable $ex Exception to log
+     *
+     * @return void
+     */
+    public static function logException(string $extension, Throwable $ex): void
+    {
         $message = sprintf('[%s] %s', $extension, $ex->getMessage());
-        $error_data = $ex->getErrorData();
-        $previous = $ex->getPreviousException();
+        $error_data = $ex instanceof CRM_Core_Exception ? $ex->getErrorData() : [];
+        $previous = $ex instanceof BaseException ? $ex->getPreviousException() : null;
 
         if (!is_null($previous)) {
             $error_data['exception'] = $previous;
