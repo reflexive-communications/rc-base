@@ -261,4 +261,25 @@ class UpdateTest extends CRM_RcBase_HeadlessTestCase
         $values['is_selectable'] = true;
         self::assertNotEmpty(Update::tag($id, $values), 'Empty data returned');
     }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testUpdateContribution()
+    {
+        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $values = [
+            'financial_type_id' => 1,
+            'total_amount' => 15,
+        ];
+        $id = Create::contribution($contact_id, $values);
+
+        // Change data & update
+        unset($values['financial_type_id']);
+        $values['total_amount'] = 55;
+        self::assertNotEmpty(Update::contribution($id, $values), 'Empty data returned');
+    }
 }

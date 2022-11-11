@@ -198,4 +198,19 @@ class Update
     {
         return self::entity('Tag', $tag_id, $values, $check_permissions);
     }
+
+    /**
+     * Update contribution
+     *
+     * @param int $contribution_id Contribution ID
+     * @param array $values Contribution data
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return array Updated Contribution data
+     * @throws \CRM_Core_Exception
+     */
+    public static function contribution(int $contribution_id, array $values = [], bool $check_permissions = false): array
+    {
+        return self::entity('Contribution', $contribution_id, $values, $check_permissions);
+    }
 }
