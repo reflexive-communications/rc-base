@@ -2,6 +2,7 @@
 
 use Civi\API\Exception\UnauthorizedException;
 use Civi\Api4\GroupContact;
+use Civi\RcBase\ApiWrapper\Create;
 use Civi\RcBase\Utils\PHPUnit;
 
 /**
@@ -844,5 +845,31 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testGetSystemUser()
     {
         self::assertSame(PHPUnit::createLoggedInUser(), CRM_RcBase_Api_Get::systemUserContactID(), 'Wrong contact ID returned');
+    }
+
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testContributionIdByTransactionId()
+    {
+        $transaction_id = 'test-trxn-01';
+        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+
+        // Check non-existent, empty
+        self::assertNull(CRM_RcBase_Api_Get::contributionIDByTransactionID($transaction_id), 'Not null returned on non-existent transaction ID');
+        self::assertNull(CRM_RcBase_Api_Get::contributionIDByTransactionID(''), 'Not null returned on empty transaction ID');
+
+        // Create contribution
+        $contribution_id = Create::contribution($contact_id, [
+            'trxn_id' => $transaction_id,
+            'financial_type_id' => 1,
+            'total_amount' => 5,
+        ]);
+        self::assertSame($contribution_id, CRM_RcBase_Api_Get::contributionIDByTransactionID($transaction_id), 'Wrong contribution ID returned');
     }
 }

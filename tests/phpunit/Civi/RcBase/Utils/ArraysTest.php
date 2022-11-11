@@ -37,6 +37,30 @@ class ArraysTest extends TestCase
     /**
      * @return void
      */
+    public function testFilterValueStartsWith()
+    {
+        $unfiltered = [
+            'key_1' => 'prefix_1',
+            'key_2' => 'not_prefix_2',
+            'key_3' => 'prefix_3',
+            'numerical index',
+            55,
+            true,
+            5 => 'prefix_5',
+        ];
+        $expected = [
+            'key_1' => 'prefix_1',
+            'key_3' => 'prefix_3',
+            5 => 'prefix_5',
+        ];
+        self::assertSame($unfiltered, Arrays::filterValueStartsWith($unfiltered, ''), 'Wrong filtered array returned for empty prefix');
+        self::assertSame([], Arrays::filterValueStartsWith($unfiltered, 'non-existent-prefix'), 'Wrong filtered array returned for non-existent prefix');
+        self::assertSame($expected, Arrays::filterValueStartsWith($unfiltered, 'prefix'), 'Wrong filtered array returned for real prefix');
+    }
+
+    /**
+     * @return void
+     */
     public function testFilterValueEmpty()
     {
         $unfiltered = [
