@@ -5,6 +5,7 @@ namespace Civi\RcBase\Utils;
 use Civi\RcBase\Exception\DataBaseException;
 use Civi\RcBase\Exception\MissingArgumentException;
 use CRM_Core_DAO;
+use CRM_Utils_Type;
 use Throwable;
 
 /**
@@ -142,5 +143,50 @@ class DB
 
         $sql = 'UPDATE civicrm_group_contact SET status = "Removed" WHERE id = %1';
         self::query($sql, [1 => [$record[0]['id'], 'Integer'],]);
+    }
+
+    /**
+     * Normalize results set of DAO object:
+     *   - cast strings to other scalar types (int, float, bool)
+     *   - un-serialize values to arrays
+     *
+     * @param \CRM_Core_DAO $dao
+     *
+     * @return array
+     * @throws \CRM_Core_Exception
+     */
+    public static function normalizeValues(CRM_Core_DAO $dao): array
+    {
+        $results = [];
+        $fields_meta = $dao->fields();
+
+        foreach ($dao->fetchAll() as $record) {
+            if (empty($record)) {
+                continue;
+            }
+
+            foreach ($record as $field => $value) {
+                switch ($fields_meta[$field]['type'] ?? 0) {
+                    case CRM_Utils_Type::T_INT:
+                        $record[$field] = (int)$value;
+                        break;
+                    case CRM_Utils_Type::T_FLOAT:
+                        $record[$field] = (float)$value;
+                        break;
+                    case CRM_Utils_Type::T_BOOLEAN:
+                        $record[$field] = (bool)$value;
+                        break;
+                    default:
+                        break;
+                }
+
+                if (isset($fields_meta[$field]['serialize'])) {
+                    $record[$field] = $dao::unSerializeField($value, $fields_meta[$field]['serialize']);
+                }
+            }
+            $results[] = $record;
+        }
+
+        return $results;
     }
 }

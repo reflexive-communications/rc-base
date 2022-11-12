@@ -8,6 +8,7 @@ use Civi\Api4\GroupContact;
 use Civi\RcBase\ApiWrapper\Create;
 use Civi\RcBase\Exception\DataBaseException;
 use Civi\RcBase\Exception\MissingArgumentException;
+use CRM_Contact_BAO_Contact;
 use CRM_RcBase_HeadlessTestCase;
 
 /**
@@ -117,5 +118,46 @@ class DBTest extends CRM_RcBase_HeadlessTestCase
         DB::addContactToGroup($contact_id, $group_id);
         self::assertCount(1, $group_members(), 'Records missing');
         self::assertSame('Added', $group_members()[0]['status'], 'Contact not re-added to group');
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public function testNormalizeValue()
+    {
+        $contact_type_a = 'typeA';
+        $contact_type_b = 'typeB';
+        Create::entity('ContactType', [
+            'name' => $contact_type_a,
+            'label' => $contact_type_a,
+            'parent_id:name' => 'Individual',
+        ]);
+        Create::entity('ContactType', [
+            'name' => $contact_type_b,
+            'label' => $contact_type_b,
+            'parent_id:name' => 'Individual',
+        ]);
+
+        $values = [
+            'contact_type' => 'Individual',
+            'contact_sub_type' => [$contact_type_a, $contact_type_b],
+            'nick_name' => 'Eazy-E',
+            'do_not_email' => true,
+            'gender_id' => 2,
+        ];
+        $contact_id = Create::contact($values);
+
+        $dao = new CRM_Contact_BAO_Contact();
+        $dao->id = $contact_id;
+        $dao->find();
+
+        $result = DB::normalizeValues($dao);
+        self::assertCount(1, $result, 'Contact not found');
+        self::assertSame($values['contact_sub_type'], $result[0]['contact_sub_type'], 'Wrong data returned');
+        self::assertSame($values['nick_name'], $result[0]['nick_name'], 'Wrong data returned');
+        self::assertSame($values['do_not_email'], $result[0]['do_not_email'], 'Wrong data returned');
+        self::assertSame($values['gender_id'], $result[0]['gender_id'], 'Wrong data returned');
     }
 }
