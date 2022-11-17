@@ -58,10 +58,20 @@ class Config
     public static function parseIniFile(string $filename, bool $process_sections = true, int $scanner_mode = INI_SCANNER_TYPED)
     {
         try {
-            return Base::sanitize(parse_ini_file($filename, $process_sections, $scanner_mode));
+            // Temporarily switch-off error handler to be able to catch all errors
+            set_error_handler(function (int $errno, string $message) {
+                throw new Exception($message);
+            });
+            $result = parse_ini_file($filename, $process_sections, $scanner_mode);
         } catch (Throwable $ex) {
+            // Exception is caught --> switch back to old one
+            restore_error_handler();
             throw new InvalidArgumentException('input', 'Failed to parse ini file: '.$ex->getMessage(), $ex);
         }
+        // No exception thrown --> switch back to old one
+        restore_error_handler();
+
+        return Base::sanitize($result);
     }
 
     /**
