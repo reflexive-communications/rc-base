@@ -13,7 +13,6 @@ use SimpleXMLElement;
  */
 class XMLTest extends CRM_RcBase_HeadlessTestCase
 {
-
     /**
      * @return void
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
@@ -218,7 +217,7 @@ XML;
 
         // Register Mock wrapper
         stream_wrapper_unregister('php');
-        stream_wrapper_register('php', 'CRM_RcBase_Test_MockPhpStream');
+        stream_wrapper_register('php', '\Civi\RcBase\IOProcessor\MockPHPStream');
 
         // Feed JSON to stream
         file_put_contents('php://input', $xml);
