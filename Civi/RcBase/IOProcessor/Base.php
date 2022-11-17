@@ -86,10 +86,6 @@ class Base
      */
     public static function sanitizeString($string): string
     {
-        if (!is_string($string)) {
-            return '';
-        }
-
         return CRM_Utils_String::purifyHTML(CRM_Utils_String::stripSpaces($string));
     }
 
