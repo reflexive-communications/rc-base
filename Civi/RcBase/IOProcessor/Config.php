@@ -52,4 +52,28 @@ class Config
             throw new InvalidArgumentException('input', 'Failed to parse ini file: '.$ex->getMessage(), $ex);
         }
     }
+
+    /**
+     * Create INI string from "dictionary" (associative array of name-value pairs aka hash)
+     *
+     * @param array $dictionary
+     *
+     * @return string
+     */
+    public static function iniStringFromDictionary(array $dictionary): string
+    {
+        $result = [];
+        foreach ($dictionary as $key => $value) {
+            if (is_array($value) || is_object($value)) {
+                continue;
+            } elseif (is_bool($value)) {
+                $value = $value ? 'true' : 'false';
+            } elseif (is_null($value)) {
+                $value = 'null';
+            }
+            $result[] = "${key}=${value}";
+        }
+
+        return implode("\n", $result);
+    }
 }

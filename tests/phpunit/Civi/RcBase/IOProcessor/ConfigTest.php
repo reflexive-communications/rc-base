@@ -202,4 +202,22 @@ class ConfigTest extends CRM_RcBase_HeadlessTestCase
         self::expectExceptionMessage('Failed to parse ini file');
         Config::parseIniFile($filename);
     }
+
+    /**
+     * @return void
+     */
+    public function testIniStringFromDictionary()
+    {
+        $dictionary = [
+            'ping' => 'pong',
+            'bool-true' => true,
+            'bool-false' => false,
+            'integer' => 5,
+            'null' => null,
+            1 => '6',
+            'array' => [1, 2],
+        ];
+        $ini_string = "ping=pong\nbool-true=true\nbool-false=false\ninteger=5\nnull=null\n1=6";
+        self::assertSame($ini_string, Config::iniStringFromDictionary($dictionary), 'Wrong INI string returned');
+    }
 }
