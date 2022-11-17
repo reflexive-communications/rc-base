@@ -83,7 +83,31 @@ class ArraysTest extends TestCase
             true,
             'some other string',
         ];
-        self::assertSame($expected, Arrays::filterValueEmpty($unfiltered), 'Wrong filtered array returned');
+        self::assertSame($expected, Arrays::filterValueNonEmpty($unfiltered), 'Wrong filtered array returned');
+    }
+
+    /**
+     * @return void
+     */
+    public function testFilterValueSame()
+    {
+        $unfiltered = [
+            'prefix_1' => 'some string',
+            1 => [1, 2],
+            'numerical index',
+            2 => 55,
+            3 => true,
+            'some other string',
+            'not_prefix_2' => '',
+            4 => [],
+            5 => false,
+            6 => null,
+        ];
+        self::assertSame([3 => true], Arrays::filterValueSame($unfiltered, true), 'Wrong filtered array returned');
+        self::assertSame([5 => false], Arrays::filterValueSame($unfiltered, false), 'Wrong filtered array returned');
+        self::assertSame([6 => null], Arrays::filterValueSame($unfiltered, null), 'Wrong filtered array returned');
+        self::assertSame(['prefix_1' => 'some string'], Arrays::filterValueSame($unfiltered, 'some string'), 'Wrong filtered array returned');
+        self::assertSame([2 => 55], Arrays::filterValueSame($unfiltered, 55), 'Wrong filtered array returned');
     }
 
     /**

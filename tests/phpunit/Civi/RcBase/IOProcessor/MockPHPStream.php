@@ -1,15 +1,15 @@
 <?php
 
+namespace Civi\RcBase\IOProcessor;
+
 /**
  * Class to mock php:// stream wrapper
- *
- * @deprecated use \Civi\RcBase\IOProcessor\MockPHPStream
  *
  * Usage:
  *
  * // Register Mock Wrapper
  * stream_wrapper_unregister("php");
- * stream_wrapper_register("php", "CRM_RcBase_Test_MockPhpStream");
+ * stream_wrapper_register("php", "\Civi\RcBase\IOProcessor\MockPhpStream");
  *
  * // Write & read data
  * file_put_contents("php://${stream}", "data");
@@ -18,7 +18,7 @@
  * // Restore original wrapper
  * stream_wrapper_restore("php");
  */
-class CRM_RcBase_Test_MockPhpStream
+class MockPHPStream
 {
     protected $index = 0;
 

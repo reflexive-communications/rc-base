@@ -1,23 +1,24 @@
 <?php
 
+namespace Civi\RcBase\IOProcessor;
+
 /**
  * URL encoded IO Processor
  *
- * @deprecated use \Civi\RcBase\IOProcessor\UrlEncodedForm instead
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class CRM_RcBase_Processor_UrlEncodedForm
+class UrlEncodedForm
 {
     /**
      * Parse GET request parameters
      *
      * @return array GET parameters parsed
      */
-    public static function parseGet()
+    public static function parseGet(): array
     {
-        return CRM_RcBase_Processor_Base::sanitize($_GET);
+        return Base::sanitize($_GET);
     }
 
     /**
@@ -25,9 +26,9 @@ class CRM_RcBase_Processor_UrlEncodedForm
      *
      * @return array Request POST parsed
      */
-    public static function parsePost()
+    public static function parsePost(): array
     {
-        return CRM_RcBase_Processor_Base::sanitize($_POST);
+        return Base::sanitize($_POST);
     }
 
     /**
@@ -35,8 +36,8 @@ class CRM_RcBase_Processor_UrlEncodedForm
      *
      * @return array Request parameters parsed
      */
-    public static function parseRequest()
+    public static function parseRequest(): array
     {
-        return CRM_RcBase_Processor_Base::sanitize($_REQUEST);
+        return Base::sanitize($_REQUEST);
     }
 }

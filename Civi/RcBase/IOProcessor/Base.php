@@ -1,14 +1,20 @@
 <?php
 
+namespace Civi\RcBase\IOProcessor;
+
+use Civi\RcBase\Exception\InvalidArgumentException;
+use Civi\RcBase\Exception\MissingArgumentException;
+use CRM_Utils_Rule;
+use CRM_Utils_String;
+
 /**
  * Base IO Processor
  *
- * @deprecated use \Civi\RcBase\IOProcessor\Base instead
+ * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
- * @package  rc-base
  */
-class CRM_RcBase_Processor_Base
+class Base
 {
     /**
      * Detect content-type
@@ -19,7 +25,7 @@ class CRM_RcBase_Processor_Base
     {
         // If content-type not set --> fallback to URL encoded
         if (empty($_SERVER['CONTENT_TYPE'])) {
-            return CRM_RcBase_Processor_UrlEncodedForm::class;
+            return UrlEncodedForm::class;
         }
 
         // Parse header
@@ -29,13 +35,13 @@ class CRM_RcBase_Processor_Base
         switch ($media_type) {
             case 'application/json':
             case 'application/javascript':
-                return CRM_RcBase_Processor_JSON::class;
+                return JSON::class;
             case 'text/xml':
             case 'application/xml':
-                return CRM_RcBase_Processor_XML::class;
+                return XML::class;
             case 'application/x-www-form-urlencoded':
             default:
-                return CRM_RcBase_Processor_UrlEncodedForm::class;
+                return UrlEncodedForm::class;
         }
     }
 
@@ -74,26 +80,17 @@ class CRM_RcBase_Processor_Base
     /**
      * Sanitize string
      *
-     * @param mixed $value Value to sanitize
+     * @param mixed $string Value to sanitize
      *
      * @return string Sanitized string
      */
-    public static function sanitizeString($value)
+    public static function sanitizeString($string): string
     {
-        // Strip whitespace
-        $value = CRM_Utils_String::stripSpaces($value);
-        // Remove quotes around
-        $value = preg_replace('/^"(.*)"$/', '$1', $value);
-        $value = preg_replace("/^'(.*)'$/", '$1', $value);
-        // Remove HTML tags
-        $value = preg_replace('/<.*>/U', '', $value);
-
-        return $value;
+        return CRM_Utils_String::purifyHTML(CRM_Utils_String::stripSpaces($string));
     }
 
     /**
      * Validate input
-     *
      * Throws exception if problem with input
      * No exception means input OK
      *
@@ -107,34 +104,28 @@ class CRM_RcBase_Processor_Base
      *  'bool':     boolean
      *  'date':     date
      *  'datetime': datetime
+     *  'datetimeIso': datetime ISO format 'Y-m-d\T
      * @param string $name Name of variable (for logging and reporting)
      * @param bool $required Is value required?
      *                       throws exception if value is empty
      * @param array $allowed_values Allowed values for this input
      *
      * @return void
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
-    public static function validateInput(
-        $value,
-        string $type,
-        string $name,
-        bool $required = true,
-        array $allowed_values = []
-    ): void {
-        // Check parameters
+    public static function validateInput($value, string $type, string $name, bool $required = true, array $allowed_values = []): void
+    {
         if (empty($type)) {
-            throw new CRM_Core_Exception('Variable type missing');
+            throw new MissingArgumentException('type');
         }
         if (empty($name)) {
-            throw new CRM_Core_Exception('Variable name missing');
+            throw new MissingArgumentException('name');
         }
 
-        // Empty value
         if ($value === '' || $value === [] || $value === null) {
             if ($required) {
-                throw new CRM_Core_Exception(sprintf('Missing parameter: %s', $name));
+                throw new InvalidArgumentException($name, 'Missing required parameter');
             }
 
             // Value empty and not required --> skip validation
@@ -167,20 +158,19 @@ class CRM_RcBase_Processor_Base
                 $valid = CRM_Utils_Rule::dateTime($value);
                 break;
             case 'datetimeIso':
-                $valid = (is_string($value)
-                    && (preg_match('/^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{1,6}(Z|(\+|-)\d\d:\d\d)$/', $value)));
+                $valid = (is_string($value) && (preg_match('/^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{1,6}(Z|(\+|-)\d\d:\d\d)$/', $value)));
                 break;
             default:
-                throw new CRM_Core_Exception(sprintf('Not supported type: %s', $type));
+                throw new InvalidArgumentException('type', 'Not supported type');
         }
 
         if (!$valid) {
-            throw new CRM_Core_Exception(sprintf('%s is not type of: %s (value: %s)', $name, $type, var_export($value, true)));
+            throw new InvalidArgumentException($name, sprintf('%s is not type of: %s (value: %s)', $name, $type, var_export($value, true)));
         }
 
         // Allowed values values set --> check
         if (!empty($allowed_values) && !in_array($value, $allowed_values)) {
-            throw new CRM_Core_Exception(sprintf('Not allowed value for: %s (value: %s)', $name, $value));
+            throw new InvalidArgumentException($name, 'Not allowed value for');
         }
     }
 }

@@ -1,14 +1,20 @@
 <?php
 
+namespace Civi\RcBase\IOProcessor;
+
+use Civi\RcBase\Exception\InvalidArgumentException;
+use Civi\RcBase\Exception\RunTimeException;
+use SimpleXMLElement;
+use Throwable;
+
 /**
  * XML IO Processor
  *
- * @deprecated use \Civi\RcBase\IOProcessor\XML instead
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class CRM_RcBase_Processor_XML
+class XML
 {
     /**
      * Parse XML string
@@ -17,8 +23,7 @@ class CRM_RcBase_Processor_XML
      * @param bool $return_array Return array or SimpleXMLElement
      *
      * @return mixed Parsed XML object
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
     public static function parse(string $xml_string, bool $return_array = true)
     {
@@ -41,9 +46,9 @@ class CRM_RcBase_Processor_XML
             $array = json_encode($xml_obj, JSON_UNESCAPED_UNICODE);
             $array = json_decode($array, true);
 
-            return CRM_RcBase_Processor_Base::sanitize($array);
+            return Base::sanitize($array);
         } catch (Throwable $ex) {
-            throw new CRM_Core_Exception('Invalid XML received');
+            throw new InvalidArgumentException('input', 'Invalid XML received: '.$ex->getMessage(), $ex);
         }
     }
 
@@ -60,8 +65,8 @@ class CRM_RcBase_Processor_XML
      * @param string $stream Name of XML stream
      *
      * @return mixed Parsed data
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\RunTimeException
      */
     public static function parseStream(string $stream)
     {
@@ -69,7 +74,7 @@ class CRM_RcBase_Processor_XML
             // Get contents from raw stream
             $raw = file_get_contents($stream);
         } catch (Throwable $ex) {
-            throw new CRM_Core_Exception('Failed to open stream');
+            throw new RunTimeException('Failed to open stream: '.$ex->getMessage(), $ex);
         }
 
         return self::parse($raw);
@@ -79,8 +84,8 @@ class CRM_RcBase_Processor_XML
      * Read XML from request body
      *
      * @return mixed Parsed XML
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\RunTimeException
      */
     public static function parsePost()
     {

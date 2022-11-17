@@ -1,14 +1,19 @@
 <?php
 
+namespace Civi\RcBase\IOProcessor;
+
+use Civi\RcBase\Exception\InvalidArgumentException;
+use Civi\RcBase\Exception\RunTimeException;
+use Throwable;
+
 /**
  * JSON IO Processor
  *
- * @deprecated use \Civi\RcBase\IOProcessor\JSON instead
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class CRM_RcBase_Processor_JSON
+class JSON
 {
     /**
      * Parse JSON string
@@ -16,8 +21,7 @@ class CRM_RcBase_Processor_JSON
      * @param string $json JSON to parse
      *
      * @return mixed Parsed JSON object
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
     public static function parse(string $json)
     {
@@ -26,10 +30,10 @@ class CRM_RcBase_Processor_JSON
 
         // Check if valid JSON
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new CRM_Core_Exception('Invalid JSON received: '.json_last_error_msg());
+            throw new InvalidArgumentException('input', 'Invalid JSON received: '.json_last_error_msg());
         }
 
-        return CRM_RcBase_Processor_Base::sanitize($decoded);
+        return Base::sanitize($decoded);
     }
 
     /**
@@ -45,8 +49,8 @@ class CRM_RcBase_Processor_JSON
      * @param string $stream Name of JSON stream
      *
      * @return mixed Parsed data
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\RunTimeException
      */
     public static function parseStream(string $stream)
     {
@@ -54,7 +58,7 @@ class CRM_RcBase_Processor_JSON
             // Get contents from raw stream
             $raw = file_get_contents($stream);
         } catch (Throwable $ex) {
-            throw new CRM_Core_Exception('Failed to open stream');
+            throw new RunTimeException('Failed to open stream: '.$ex->getMessage(), $ex);
         }
 
         return self::parse($raw);
@@ -64,8 +68,8 @@ class CRM_RcBase_Processor_JSON
      * Parse JSON from request body
      *
      * @return mixed Parsed JSON
-     *
-     * @throws CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\RunTimeException
      */
     public static function parsePost()
     {
@@ -77,7 +81,7 @@ class CRM_RcBase_Processor_JSON
      *
      * @param mixed $data Object to encode
      *
-     * @return mixed JSON
+     * @return false|int|string JSON
      */
     public static function encode($data)
     {
