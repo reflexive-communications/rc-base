@@ -47,8 +47,23 @@ class Arrays
      * @param array $arr Array to filter
      *
      * @return array Filtered array
+     * @deprecated use self::filterValueNonEmpty()
      */
     public static function filterValueEmpty(array $arr): array
+    {
+        return array_filter($arr, function ($value) {
+            return !empty($value);
+        });
+    }
+
+    /**
+     * Filter out elements where value is empty
+     *
+     * @param array $arr Array to filter
+     *
+     * @return array Filtered array
+     */
+    public static function filterValueNonEmpty(array $arr): array
     {
         return array_filter($arr, function ($value) {
             return !empty($value);

@@ -83,7 +83,7 @@ class ArraysTest extends TestCase
             true,
             'some other string',
         ];
-        self::assertSame($expected, Arrays::filterValueEmpty($unfiltered), 'Wrong filtered array returned');
+        self::assertSame($expected, Arrays::filterValueNonEmpty($unfiltered), 'Wrong filtered array returned');
     }
 
     /**
