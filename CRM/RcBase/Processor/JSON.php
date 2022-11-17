@@ -3,6 +3,7 @@
 /**
  * JSON IO Processor
  *
+ * @deprecated use \Civi\RcBase\IOProcessor\JSON instead
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0

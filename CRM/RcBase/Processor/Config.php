@@ -4,6 +4,7 @@
  * Config IO Processor
  * For ini type configuration files and strings
  *
+ * @deprecated use \Civi\RcBase\IOProcessor\Config instead
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
