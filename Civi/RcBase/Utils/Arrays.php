@@ -56,6 +56,21 @@ class Arrays
     }
 
     /**
+     * Filter out elements where value is not the same (===) as the specified
+     *
+     * @param array $arr Array to filter
+     * @param mixed $reference_value Value to compare
+     *
+     * @return array Filtered array
+     */
+    public static function filterValueSame(array $arr, $reference_value): array
+    {
+        return array_filter($arr, function ($array_value) use ($reference_value) {
+            return $array_value === $reference_value;
+        });
+    }
+
+    /**
      * Return last element of an array, leave array unchanged
      *
      * @param array $arr Array in question
