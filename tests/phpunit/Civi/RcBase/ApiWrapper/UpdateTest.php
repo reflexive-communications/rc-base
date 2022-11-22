@@ -99,7 +99,7 @@ class UpdateTest extends CRM_RcBase_HeadlessTestCase
      */
     public function testUpdateContactInvalidFieldValueTypeThrowsException()
     {
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
 
         self::expectException(APIException::class);
         self::expectExceptionMessage('DB Error: syntax error');
@@ -115,7 +115,7 @@ class UpdateTest extends CRM_RcBase_HeadlessTestCase
      */
     public function testUpdateEmail()
     {
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
         $values = [
             'email' => 'ceasar@senate.rome',
             'location_type_id' => 1,
@@ -137,7 +137,7 @@ class UpdateTest extends CRM_RcBase_HeadlessTestCase
      */
     public function testUpdatePhone()
     {
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
         $values = [
             'phone' => '+1234',
             'location_type_id' => 1,
@@ -158,7 +158,7 @@ class UpdateTest extends CRM_RcBase_HeadlessTestCase
      */
     public function testUpdateAddress()
     {
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
         $values = [
             'city' => 'Rome',
             'location_type_id' => 1,
@@ -179,9 +179,9 @@ class UpdateTest extends CRM_RcBase_HeadlessTestCase
      */
     public function testUpdateRelationship()
     {
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
-        $contact_id_other = PHPUnit::createIndividual(PHPUnit::nextCounter());
-        $contact_id_other_new = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
+        $contact_id_other = PHPUnit::createIndividual();
+        $contact_id_other_new = PHPUnit::createIndividual();
         $values = [
             'contact_id_b' => $contact_id_other,
             'relationship_type_id' => 1,
@@ -203,8 +203,8 @@ class UpdateTest extends CRM_RcBase_HeadlessTestCase
      */
     public function testUpdateActivity()
     {
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
-        $contact_id_source = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
+        $contact_id_source = PHPUnit::createIndividual();
         $values = [
             'source_contact_id' => $contact_id_source,
             'activity_type_id' => 1,
@@ -270,7 +270,7 @@ class UpdateTest extends CRM_RcBase_HeadlessTestCase
      */
     public function testUpdateContribution()
     {
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
         $values = [
             'financial_type_id' => 1,
             'total_amount' => 15,

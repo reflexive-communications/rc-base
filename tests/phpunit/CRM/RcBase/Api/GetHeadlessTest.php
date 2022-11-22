@@ -858,7 +858,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testContributionIdByTransactionId()
     {
         $transaction_id = 'test-trxn-01';
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
 
         // Check non-existent, empty
         self::assertNull(CRM_RcBase_Api_Get::contributionIDByTransactionID($transaction_id), 'Not null returned on non-existent transaction ID');
