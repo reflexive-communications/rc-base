@@ -33,11 +33,19 @@ Below is a summary, for more details check the API Explorer.
 
 #### API wrappers
 
-Generic PHP classes that wrap standard Civi APIv4.
+Generic PHP classes that wrap standard Civi APIv4. (`\Civi\RcBase\ApiWrapper`)
 
 ### Processor
 
-Generic PHP IO processors for JSON, URL-encoded, XML or INI files or streams.
+Generic PHP IO processors for JSON, URL-encoded, XML or INI files or streams. (`\Civi\RcBase\IOProcessor`)
+
+### Exceptions
+
+New specific exceptions and handlers. (`\Civi\RcBase\Exception`)
+
+### Utilities
+
+Helper methods for arrays, handling DataBase, UI management and for PHP unit testing. (`\Civi\RcBase\Utils`)
 
 ### Civi::Settings wrapper
 
@@ -53,7 +61,7 @@ When retrieving saved setting with `CRM_RcBase_Setting::get()` setting values ar
 ## Requirements
 
 -   PHP v7.4+
--   CiviCRM (5.43 might work below - not tested)
+-   CiviCRM (5.48)
 
 ## Installation
 
