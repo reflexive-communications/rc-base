@@ -121,7 +121,7 @@ class CreateTest extends CRM_RcBase_HeadlessTestCase
             'email' => 'ceasar@senate.rome',
             'location_type_id' => 1,
         ];
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
 
         self::assertNotNull(Create::email($contact_id, $values), 'Valid ID needs to be returned');
 
@@ -143,7 +143,7 @@ class CreateTest extends CRM_RcBase_HeadlessTestCase
             'phone' => '+12343243',
             'location_type_id' => 1,
         ];
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
 
         self::assertNotNull(Create::phone($contact_id, $values), 'Valid ID needs to be returned');
 
@@ -165,7 +165,7 @@ class CreateTest extends CRM_RcBase_HeadlessTestCase
             'city' => 'Rome',
             'location_type_id' => 1,
         ];
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
 
         self::assertNotNull(Create::address($contact_id, $values), 'Valid ID needs to be returned');
 
@@ -183,13 +183,13 @@ class CreateTest extends CRM_RcBase_HeadlessTestCase
      */
     public function testCreateRelationship()
     {
-        $contact_id_other = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id_other = PHPUnit::createIndividual();
         $values = [
             'contact_id_b' => $contact_id_other,
             'relationship_type_id' => 1,
             'description' => 'Test',
         ];
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
 
         self::assertNotNull(Create::relationship($contact_id, $values), 'Valid ID needs to be returned');
 
@@ -212,7 +212,7 @@ class CreateTest extends CRM_RcBase_HeadlessTestCase
             'total_amount' => 13.43,
             'trxn_id' => '12345',
         ];
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
 
         self::assertNotNull(Create::contribution($contact_id, $values), 'Valid ID needs to be returned');
 
@@ -235,7 +235,7 @@ class CreateTest extends CRM_RcBase_HeadlessTestCase
             'total_amount' => 13.43,
             'trxn_id' => 'duplicate',
         ];
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
 
         self::assertNotNull(Create::contribution($contact_id, $values), 'Valid ID needs to be returned');
 
@@ -253,13 +253,13 @@ class CreateTest extends CRM_RcBase_HeadlessTestCase
      */
     public function testCreateActivity()
     {
-        $contact_id_source = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id_source = PHPUnit::createIndividual();
         $values = [
             'source_contact_id' => $contact_id_source,
             'activity_type_id' => 1,
             'subject' => 'Tribute',
         ];
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
 
         self::assertNotNull(Create::activity($contact_id, $values), 'Valid ID needs to be returned');
 
@@ -281,7 +281,7 @@ class CreateTest extends CRM_RcBase_HeadlessTestCase
             'name' => 'Test tag',
         ];
         $tag_id = Create::entity('Tag', $values);
-        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter());
+        $contact_id = PHPUnit::createIndividual();
 
         self::assertNotNull(Create::tagContact($contact_id, $tag_id), 'Valid ID needs to be returned');
 
