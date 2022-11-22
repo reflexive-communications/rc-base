@@ -76,8 +76,12 @@ class PHPUnit
      * @return int Contact ID
      * @throws \CRM_Core_Exception
      */
-    public static function createIndividual(int $counter, array $extra = []): int
+    public static function createIndividual(int $counter = 0, array $extra = []): int
     {
+        if ($counter == 0) {
+            $counter = self::nextCounter();
+        }
+
         $default = [
             'contact_type' => 'Individual',
             'first_name' => "user_{$counter}",
@@ -97,8 +101,12 @@ class PHPUnit
      * @return int Contact ID
      * @throws \CRM_Core_Exception
      */
-    public static function createIndividualWithEmail(int $counter, array $extra_contact = [], array $extra_email = []): int
+    public static function createIndividualWithEmail(int $counter = 0, array $extra_contact = [], array $extra_email = []): int
     {
+        if ($counter == 0) {
+            $counter = self::nextCounter();
+        }
+
         $default = [
             'location_type_id' => 1,
             'email' => "user_{$counter}@test.com",
