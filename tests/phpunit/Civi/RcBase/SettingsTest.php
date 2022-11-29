@@ -130,6 +130,21 @@ class SettingsTest extends CRM_RcBase_HeadlessTestCase
 
     /**
      * @return void
+     */
+    public function testEncrypt()
+    {
+        $value = 'secret-api-key';
+
+        $encrypted = Settings::encrypt($value);
+        self::assertNotSame($value, $encrypted, 'Secret not encrypted');
+        self::assertFalse(Civi::service('crypto.token')->isPlainText($encrypted), 'Secret was not encrypted');
+
+        $decrypted = Settings::decrypt($encrypted);
+        self::assertSame($value, $decrypted, 'Secret not decrypted');
+    }
+
+    /**
+     * @return void
      * @throws \CRM_Core_Exception
      */
     public function testMissingNameThrowsExceptionOnSave()

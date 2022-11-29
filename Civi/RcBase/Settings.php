@@ -52,8 +52,7 @@ class Settings
      */
     public static function saveSecret(string $name, string $plain_text): void
     {
-        $encrypted = Civi::service('crypto.token')->encrypt($plain_text, 'CRED');
-        self::save($name, $encrypted);
+        self::save($name, self::encrypt($plain_text));
     }
 
     /**
@@ -91,7 +90,7 @@ class Settings
 
         // Decrypt if needed
         if (is_string($value) && !Civi::service('crypto.token')->isPlainText($value)) {
-            return Civi::service('crypto.token')->decrypt($value, ['plain', 'CRED']);
+            return self::decrypt($value);
         }
 
         return $value;
@@ -137,5 +136,29 @@ class Settings
         if (!is_null(Civi::settings()->get($name))) {
             throw new DataBaseException("Failed to delete setting: {$name}");
         }
+    }
+
+    /**
+     * Encrypt secret
+     *
+     * @param string $plain_text Plain text
+     *
+     * @return string Cipher text
+     */
+    public static function encrypt(string $plain_text): string
+    {
+        return Civi::service('crypto.token')->encrypt($plain_text, 'CRED');
+    }
+
+    /**
+     * Decrypt secret
+     *
+     * @param string $cipher_text Cipher text
+     *
+     * @return string Plain text
+     */
+    public static function decrypt(string $cipher_text): string
+    {
+        return Civi::service('crypto.token')->decrypt($cipher_text, ['plain', 'CRED']);
     }
 }
