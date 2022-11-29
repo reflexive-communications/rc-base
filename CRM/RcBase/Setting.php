@@ -5,6 +5,7 @@ use Civi\Api4\Setting;
 /**
  * Settings Wrapper
  *
+ * @deprecated use Civi\RcBase\Settings
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
