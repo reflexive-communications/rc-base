@@ -1,16 +1,21 @@
 <?php
 
+namespace Civi\RcBase;
+
+use Civi;
 use Civi\Api4\Setting;
+use Civi\RcBase\Exception\DataBaseException;
+use Civi\RcBase\Exception\MissingArgumentException;
+use CRM_Core_DAO_Setting;
 
 /**
  * Settings Wrapper
  *
- * @deprecated use Civi\RcBase\Settings
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
  */
-class CRM_RcBase_Setting
+class Settings
 {
     /**
      * Save setting in DB, create new entry if not exists
@@ -18,19 +23,20 @@ class CRM_RcBase_Setting
      * @param string $name Setting name
      * @param mixed $value Setting value
      *
-     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public static function save(string $name, $value): void
     {
         if (empty($name)) {
-            throw new CRM_Core_Exception('Missing setting name');
+            throw new MissingArgumentException('setting name');
         }
 
         Civi::settings()->set($name, $value);
 
         $saved = Civi::settings()->get($name);
         if ($saved !== $value) {
-            throw new CRM_Core_Exception(sprintf('Failed to save setting: %s', $name));
+            throw new DataBaseException("Failed to save setting: {$name}");
         }
     }
 
@@ -41,12 +47,12 @@ class CRM_RcBase_Setting
      * @param string $plain_text Secret value
      *
      * @return void
-     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public static function saveSecret(string $name, string $plain_text): void
     {
-        $encrypted = Civi::service('crypto.token')->encrypt($plain_text, 'CRED');
-        self::save($name, $encrypted);
+        self::save($name, self::encrypt($plain_text));
     }
 
     /**
@@ -55,7 +61,8 @@ class CRM_RcBase_Setting
      * @param string $name Setting name
      *
      * @return void
-     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public static function rotateSecret(string $name): void
     {
@@ -71,20 +78,19 @@ class CRM_RcBase_Setting
      * @param string $name Setting name
      *
      * @return mixed Setting value
-     *
-     * @throws CRM_Core_Exception.
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public static function get(string $name)
     {
         if (empty($name)) {
-            throw new CRM_Core_Exception('Missing setting name');
+            throw new MissingArgumentException('setting name');
         }
 
         $value = Civi::settings()->get($name);
 
         // Decrypt if needed
         if (is_string($value) && !Civi::service('crypto.token')->isPlainText($value)) {
-            return Civi::service('crypto.token')->decrypt($value, ['plain', 'CRED']);
+            return self::decrypt($value);
         }
 
         return $value;
@@ -96,13 +102,14 @@ class CRM_RcBase_Setting
      * @param string $name Setting name
      *
      * @throws \API_Exception
-     * @throws \CRM_Core_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public static function remove(string $name): void
     {
         if (empty($name)) {
-            throw new CRM_Core_Exception('Missing setting name');
+            throw new MissingArgumentException('setting name');
         }
 
         // Search setting
@@ -120,13 +127,38 @@ class CRM_RcBase_Setting
             return;
         }
 
+        // API not available --> use DAO
         $dao = new CRM_Core_DAO_Setting();
         $dao->name = $name;
         $dao->delete();
         Civi::service('settings_manager')->flush();
 
         if (!is_null(Civi::settings()->get($name))) {
-            throw new CRM_Core_Exception(sprintf('Failed to delete setting: %s', $name));
+            throw new DataBaseException("Failed to delete setting: {$name}");
         }
+    }
+
+    /**
+     * Encrypt secret
+     *
+     * @param string $plain_text Plain text
+     *
+     * @return string Cipher text
+     */
+    public static function encrypt(string $plain_text): string
+    {
+        return Civi::service('crypto.token')->encrypt($plain_text, 'CRED');
+    }
+
+    /**
+     * Decrypt secret
+     *
+     * @param string $cipher_text Cipher text
+     *
+     * @return string Plain text
+     */
+    public static function decrypt(string $cipher_text): string
+    {
+        return Civi::service('crypto.token')->decrypt($cipher_text, ['plain', 'CRED']);
     }
 }
