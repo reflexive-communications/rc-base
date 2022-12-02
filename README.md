@@ -58,6 +58,10 @@ Helper class (`CRM_RcBase_Setting`) for managing settings, basically a thin wrap
 You can encrypt sensitive data (only strings) with `CRM_RcBase_Setting::saveSecret()`.
 When retrieving saved setting with `CRM_RcBase_Setting::get()` setting values are automatically decrypted if it was encrypted.
 
+### Stylesheets
+
+Some `.css` file with general classes.
+
 ## Requirements
 
 -   PHP v7.4+
