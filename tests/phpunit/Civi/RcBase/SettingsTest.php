@@ -71,14 +71,21 @@ class SettingsTest extends CRM_RcBase_HeadlessTestCase
         $name = 'rotate-secret-key';
         $secret = 'original_pass';
         Settings::saveSecret($name, $secret);
-        $original_encrypted = Civi::settings()->get($name);
-        self::assertFalse(Civi::service('crypto.token')->isPlainText($original_encrypted), 'Secret was not encrypted');
+        $cipher_text_original = Civi::settings()->get($name);
+        self::assertFalse(Civi::service('crypto.token')->isPlainText($cipher_text_original), 'Secret was not encrypted');
 
+        // Add new encryption key & rotate secrets
+        Civi::service('crypto.registry')->addSymmetricKey([
+            'key' => '12345678901234567890123456789012',
+            'suite' => 'aes-cbc',
+            'tags' => ['CRED'],
+            'weight' => -1,
+        ]);
         Settings::rotateSecret($name);
-        $rotated_encrypted = Civi::settings()->get($name);
-        self::assertFalse(Civi::service('crypto.token')->isPlainText($rotated_encrypted), 'Secret was not encrypted');
 
-        self::assertNotEquals($original_encrypted, $rotated_encrypted, 'Secret not rotated');
+        $cipher_text_rotated = Civi::settings()->get($name);
+        self::assertFalse(Civi::service('crypto.token')->isPlainText($cipher_text_rotated), 'Secret was not encrypted');
+        self::assertNotEquals($cipher_text_original, $cipher_text_rotated, 'Secret not rotated');
     }
 
     /**
