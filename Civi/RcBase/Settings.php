@@ -66,9 +66,9 @@ class Settings
      */
     public static function rotateSecret(string $name): void
     {
-        $rekeyed = Civi::service('crypto.token')->rekey(self::get($name), 'CRED');
-        if (!is_null($rekeyed)) {
-            self::save($name, $rekeyed);
+        $rotated = self::reencrypt(Civi::settings()->get($name));
+        if (!is_null($rotated)) {
+            self::save($name, $rotated);
         }
     }
 
@@ -160,5 +160,17 @@ class Settings
     public static function decrypt(string $cipher_text): string
     {
         return Civi::service('crypto.token')->decrypt($cipher_text, ['plain', 'CRED']);
+    }
+
+    /**
+     * Re-encrypt cipher text
+     *
+     * @param string $cipher_text
+     *
+     * @return string|null
+     */
+    public static function reencrypt(string $cipher_text): ?string
+    {
+        return Civi::service('crypto.token')->rekey($cipher_text, 'CRED');
     }
 }
