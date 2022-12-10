@@ -180,4 +180,20 @@ class ExceptionTest extends CRM_RcBase_HeadlessTestCase
         self::assertSame("Run-time error: {$msg}", $exception->getMessage(), 'Wrong message returned');
         self::assertSame($prev, $exception->getPreviousException(), 'Wrong previous exception returned');
     }
+
+    /**
+     * @return void
+     */
+    public function testHttpException()
+    {
+        $exception = new HTTPException();
+        self::assertSame('HTTP error', $exception->getMessage(), 'Wrong message returned for empty message');
+        self::assertSame(HTTPException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
+
+        $msg = 'bad request [400]';
+        $prev = new CRM_Core_Exception('prev');
+        $exception = new HTTPException($msg, $prev);
+        self::assertSame("HTTP error: {$msg}", $exception->getMessage(), 'Wrong message returned');
+        self::assertSame($prev, $exception->getPreviousException(), 'Wrong previous exception returned');
+    }
 }
