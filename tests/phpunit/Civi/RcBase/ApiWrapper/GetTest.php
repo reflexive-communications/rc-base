@@ -104,17 +104,16 @@ class GetTest extends CRM_RcBase_HeadlessTestCase
     {
         $values = [
             'title' => 'User friendly title',
-            'name' => 'custom_group_machine_name',
-            'extends:name' => 'Contact',
+            'name' => 'group_machine_name',
         ];
-        $id = Create::entity('CustomGroup', $values);
+        $id = Create::entity('Group', $values);
 
-        $data = Get::entityByName('CustomGroup', $values['name']);
+        $data = Get::entityByName('Group', $values['name']);
         self::assertArrayHasKey('id', $data, 'id missing');
         self::assertArrayHasKey('title', $data, 'title missing');
         self::assertSame($id, $data['id'], 'Wrong id');
         self::assertSame($values['title'], $data['title'], 'Wrong title');
         // Check single field
-        self::assertSame($values['title'], Get::entityByID('CustomGroup', $id, 'title'), 'title not returned as string');
+        self::assertSame($values['title'], Get::entityByID('Group', $id, 'title'), 'title not returned as string');
     }
 }
