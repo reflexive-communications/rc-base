@@ -174,4 +174,44 @@ class Settings
         // In that case return old cipher text to avoid surprises downstream
         return is_null($rotated) ? $cipher_text : $rotated;
     }
+
+    /**
+     * Get value from cache
+     *
+     * @param string $key Cache entry key
+     * @param string $cache Which cache to query?
+     *
+     * @return mixed
+     */
+    public static function cacheGet(string $key, string $cache = 'short')
+    {
+        return Civi::cache($cache)->get($key);
+    }
+
+    /**
+     * Set value in cache
+     *
+     * @param string $key Cache entry key
+     * @param mixed $value Value to store
+     * @param string $cache Which cache to use?
+     *
+     * @return void
+     */
+    public static function cacheSet(string $key, $value, string $cache = 'short'): void
+    {
+        Civi::cache($cache)->set($key, $value);
+    }
+
+    /**
+     * Check entry is in cache
+     *
+     * @param string $key Cache entry key
+     * @param string $cache Which cache to query?
+     *
+     * @return bool
+     */
+    public static function cacheHas(string $key, string $cache = 'short'): bool
+    {
+        return Civi::cache($cache)->has($key);
+    }
 }

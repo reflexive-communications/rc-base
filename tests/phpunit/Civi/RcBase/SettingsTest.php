@@ -184,4 +184,38 @@ class SettingsTest extends CRM_RcBase_HeadlessTestCase
         self::expectExceptionMessage('setting name');
         Settings::remove('');
     }
+
+    /**
+     * @return void
+     */
+    public function testCache()
+    {
+        Civi::cache()->clear();
+
+        // Short-lived cache
+        $key = 'short-cache';
+        foreach (['some-string', true, null, ['key' => ['sub-array' => 'value']]] as $value) {
+            self::assertNull(Settings::cacheGet($key), 'Cached value not null');
+            self::assertFalse(Settings::cacheHas($key), 'Cache should not have key');
+            Settings::cacheSet($key, $value);
+            self::assertSame($value, Settings::cacheGet($key), 'Wrong cached value');
+            self::assertTrue(Settings::cacheHas($key), 'Cache should have key');
+
+            // Delete entry for next iteration
+            Civi::cache('short')->delete($key);
+        }
+
+        // Long-lived cache
+        $key = 'long-cache';
+        foreach (['some-string', true, null, ['key' => ['sub-array' => 'value']]] as $value) {
+            self::assertNull(Settings::cacheGet($key, 'long'), 'Cached value not null');
+            self::assertFalse(Settings::cacheHas($key, 'long'), 'Cache should not have key');
+            Settings::cacheSet($key, $value, 'long');
+            self::assertSame($value, Settings::cacheGet($key, 'long'), 'Wrong cached value');
+            self::assertTrue(Settings::cacheHas($key, 'long'), 'Cache should have key');
+
+            // Delete entry for next iteration
+            Civi::cache('long')->delete($key);
+        }
+    }
 }
