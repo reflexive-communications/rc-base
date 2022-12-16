@@ -74,4 +74,47 @@ class GetTest extends CRM_RcBase_HeadlessTestCase
         self::expectExceptionMessage('non_existent_field not found');
         Get::parseResultsFirst($results, 'non_existent_field');
     }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public function testGetEntityById()
+    {
+        $values = [
+            'name' => 'test_entity_tag',
+            'description' => 'This is a test tag',
+        ];
+        $id = Create::tag($values);
+
+        $data = Get::entityByID('Tag', $id);
+        self::assertArrayHasKey('name', $data, 'name missing');
+        self::assertArrayHasKey('description', $data, 'description missing');
+        self::assertSame($values['name'], $data['name'], 'Wrong name');
+        self::assertSame($values['description'], $data['description'], 'Wrong description');
+        // Check single field
+        self::assertSame($values['description'], Get::entityByID('Tag', $id, 'description'), 'description not returned as string');
+    }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public function testGetEntityByName()
+    {
+        $values = [
+            'title' => 'User friendly title',
+            'name' => 'custom_group_machine_name',
+            'extends:name' => 'Contact',
+        ];
+        $id = Create::entity('CustomGroup', $values);
+
+        $data = Get::entityByName('CustomGroup', $values['name']);
+        self::assertArrayHasKey('id', $data, 'id missing');
+        self::assertArrayHasKey('title', $data, 'title missing');
+        self::assertSame($id, $data['id'], 'Wrong id');
+        self::assertSame($values['title'], $data['title'], 'Wrong title');
+        // Check single field
+        self::assertSame($values['title'], Get::entityByID('CustomGroup', $id, 'title'), 'title not returned as string');
+    }
 }
