@@ -29,10 +29,49 @@ class GetTest extends CRM_RcBase_HeadlessTestCase
         self::assertSame($contact_id, $results[0]['id'], 'Wrong contact returned');
     }
 
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     */
     public function testGetEntityInvalidEntityThrowsException()
     {
         self::expectException(APIException::class);
         self::expectExceptionMessage('API (NonExistent, get) does not exist');
         Get::entity('NonExistent');
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public function testParseResultFirst()
+    {
+        $counter = PHPUnit::nextCounter();
+        PHPUnit::createIndividual($counter);
+
+        // Check existent record
+        $results = Get::entity('Contact', ['where' => [['external_identifier', '=', "ext_{$counter}"]]]);
+        self::assertGreaterThan(30, count(Get::parseResultsFirst($results)), 'Not all fields returned: For a contact entity at least 30 fields is expected');
+        self::assertSame("ext_{$counter}", Get::parseResultsFirst($results, 'external_identifier'), 'external_identifier not returned as string');
+
+        // Check non-existent record
+        $results = Get::entity('Contact', ['where' => [['external_identifier', '=', 'non-existent']]]);
+        self::assertNull(Get::parseResultsFirst($results), 'Not null returned on non-existent record');
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public function testParseResultFirstNonExistentFieldThrowsException()
+    {
+        PHPUnit::createIndividual();
+        $results = Get::entity('Contact');
+
+        self::expectException(APIException::class);
+        self::expectExceptionMessage('non_existent_field not found');
+        Get::parseResultsFirst($results, 'non_existent_field');
     }
 }

@@ -39,4 +39,33 @@ class Get
 
         return $results;
     }
+
+    /**
+     * Parse result set, return first row
+     *
+     * @param Result $results Api4 Result set
+     * @param string $field Field to return
+     *
+     * @return mixed|null
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public static function parseResultsFirst(Result $results, string $field = '')
+    {
+        if (count($results) < 1) {
+            return null;
+        }
+
+        $result = $results->first();
+
+        if (!empty($field)) {
+            if (!array_key_exists($field, $result)) {
+                throw new APIException($results->entity, $results->action, "{$field} not found");
+            }
+
+            return $result[$field];
+        }
+
+        // No field specified --> return all fields
+        return $result;
+    }
 }
