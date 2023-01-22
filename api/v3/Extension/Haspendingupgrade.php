@@ -7,7 +7,6 @@
  *
  * @return array
  *   API result descriptor
- * @deprecated No replacement, functionality implemented in core see \CRM_Upgrade_Form::enqueueExtUpgrades()
  * @see civicrm_api3_create_success
  */
 function civicrm_api3_extension_haspendingupgrade(array $params): array
