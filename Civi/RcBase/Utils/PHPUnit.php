@@ -2,6 +2,8 @@
 
 namespace Civi\RcBase\Utils;
 
+use Civi\Api4\UFMatch;
+use Civi\RcBase\ApiWrapper\Get;
 use CRM_Core_Session;
 use CRM_RcBase_Api_Create;
 
@@ -35,30 +37,45 @@ class PHPUnit
     /**
      * Simulate a logged in system user
      *
+     * @param int $uf_id UF ID for system contact (e.g. Drupal user ID)
+     *
      * @return int Contact ID
+     * @throws \API_Exception
      * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \Civi\RcBase\Exception\APIException
      */
-    public static function createLoggedInUser(): int
+    public static function createLoggedInUser(int $uf_id = 1): int
     {
-        $contact_id = CRM_RcBase_Api_Create::contact([
-            'first_name' => 'logged_in',
-            'last_name' => 'user',
-            'contact_type' => 'Individual',
-        ]);
-        CRM_RcBase_Api_Create::email(
-            $contact_id,
-            [
-                'email' => 'loggedinuser@testing.com',
-                'is_primary' => true,
-            ],
-        );
+        $results = UFMatch::get()
+            ->addSelect('contact_id')
+            ->addWhere('uf_id', '=', $uf_id)
+            ->setLimit(1)
+            ->execute();
+        $contact_id = Get::parseResultsFirst($results, 'contact_id');
 
-        // Create UF match, uf_id is the ID of the user in the CMS
-        // Use ID #1, simulate system user
-        CRM_RcBase_Api_Create::entity('UFMatch', [
-            'uf_id' => 1,
-            'contact_id' => $contact_id,
-        ]);
+        // User not exists --> create
+        if (is_null($contact_id)) {
+            $contact_id = CRM_RcBase_Api_Create::contact([
+                'first_name' => 'logged_in',
+                'last_name' => 'user',
+                'contact_type' => 'Individual',
+            ]);
+            CRM_RcBase_Api_Create::email(
+                $contact_id,
+                [
+                    'email' => "logged.in.user{$uf_id}@testing.com",
+                    'is_primary' => true,
+                ],
+            );
+
+            // Create UF match, uf_id is the ID of the user in the CMS
+            // Use ID #1, simulate system user
+            CRM_RcBase_Api_Create::entity('UFMatch', [
+                'uf_id' => $uf_id,
+                'contact_id' => $contact_id,
+            ]);
+        }
 
         // Set ID in session
         $session = CRM_Core_Session::singleton();
