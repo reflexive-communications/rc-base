@@ -155,4 +155,16 @@ class GetTest extends CRM_RcBase_HeadlessTestCase
         // Check non-existent email
         self::assertNull(Get::contactIDByEmail('nonexistent@rome.com'), 'Not null returned on non-existent email');
     }
+
+    /**
+     * @return void
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public function testGetSystemUser()
+    {
+        self::assertSame(PHPUnit::createLoggedInUser(), Get::systemUserContactID(), 'Wrong contact ID returned');
+    }
 }

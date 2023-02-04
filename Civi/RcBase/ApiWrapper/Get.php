@@ -142,4 +142,23 @@ class Get
 
         return self::parseResultsFirst(self::entity('Email', $params, $check_permissions), 'contact_id');
     }
+
+    /**
+     * Get contact ID of system user
+     *
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null Contact ID
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public static function systemUserContactID(bool $check_permissions = false): ?int
+    {
+        $params = [
+            'select' => ['contact_id'],
+            'where' => [['uf_id', '=', 1]],
+            'limit' => 1,
+        ];
+
+        return self::parseResultsFirst(self::entity('UFMatch', $params, $check_permissions), 'contact_id');
+    }
 }
