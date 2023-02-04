@@ -118,4 +118,28 @@ class Get
 
         return self::parseResultsFirst(self::entity($entity, $params, $check_permissions), $field);
     }
+
+    /**
+     * Get contact ID from email
+     *
+     * @param string $email Email address
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null Contact ID if found, null if not found
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public static function contactIDByEmail(string $email, bool $check_permissions = false): ?int
+    {
+        if (empty($email)) {
+            return null;
+        }
+
+        $params = [
+            'select' => ['contact_id'],
+            'where' => [['email', '=', $email]],
+            'limit' => 1,
+        ];
+
+        return self::parseResultsFirst(self::entity('Email', $params, $check_permissions), 'contact_id');
+    }
 }

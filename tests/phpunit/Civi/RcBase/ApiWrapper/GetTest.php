@@ -116,4 +116,43 @@ class GetTest extends CRM_RcBase_HeadlessTestCase
         // Check single field
         self::assertSame($values['title'], Get::entityByID('Group', $id, 'title'), 'title not returned as string');
     }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testGetContactIdByEmail()
+    {
+        // Create contacts
+        $contact_id_a = PHPUnit::createIndividual();
+        $contact_id_b = PHPUnit::createIndividual();
+
+        // Create emails
+        $email_a = [
+            'email' => 'ceasar@senate.rome',
+            'location_type_id' => 1,
+        ];
+        $email_b = [
+            'email' => 'ceasar@home.rome',
+            'location_type_id' => 2,
+        ];
+        $email_c = [
+            'email' => 'antonius@senate.rome',
+            'location_type_id' => 1,
+        ];
+        Create::email($contact_id_a, $email_a);
+        Create::email($contact_id_a, $email_b);
+        Create::email($contact_id_b, $email_c);
+
+        // Check valid email
+        self::assertSame($contact_id_a, Get::contactIDByEmail($email_a['email']), 'Wrong contact ID returned');
+        self::assertSame($contact_id_a, Get::contactIDByEmail($email_b['email']), 'Wrong contact ID returned');
+        self::assertSame($contact_id_b, Get::contactIDByEmail($email_c['email']), 'Wrong contact ID returned');
+        // Check empty email
+        self::assertNull(Get::contactIDByEmail(''), 'Not null returned on empty email');
+        // Check non-existent email
+        self::assertNull(Get::contactIDByEmail('nonexistent@rome.com'), 'Not null returned on non-existent email');
+    }
 }
