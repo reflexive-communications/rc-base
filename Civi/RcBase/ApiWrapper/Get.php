@@ -161,4 +161,23 @@ class Get
 
         return self::parseResultsFirst(self::entity('UFMatch', $params, $check_permissions), 'contact_id');
     }
+
+    /**
+     * Get ID of default Location type
+     *
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null Location type ID if found, null if not found
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public static function defaultLocationTypeID(bool $check_permissions = false): ?int
+    {
+        $params = [
+            'select' => ['id'],
+            'where' => [['is_default', '=', true]],
+            'limit' => 1,
+        ];
+
+        return self::parseResultsFirst(self::entity('LocationType', $params, $check_permissions), 'id');
+    }
 }

@@ -307,6 +307,7 @@ class CRM_RcBase_Api_Get
      * @return int|null Location type ID if found, null if not found
      * @throws API_Exception
      * @throws UnauthorizedException
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::defaultLocationTypeID()
      */
     public static function defaultLocationTypeID(bool $check_permissions = false): ?int
     {

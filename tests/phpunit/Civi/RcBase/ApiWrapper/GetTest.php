@@ -4,6 +4,7 @@ namespace Civi\RcBase\ApiWrapper;
 
 use Civi\RcBase\Exception\APIException;
 use Civi\RcBase\Utils\PHPUnit;
+use CRM_Core_BAO_LocationType;
 use CRM_RcBase_HeadlessTestCase;
 
 /**
@@ -166,5 +167,16 @@ class GetTest extends CRM_RcBase_HeadlessTestCase
     public function testGetSystemUser()
     {
         self::assertSame(PHPUnit::createLoggedInUser(), Get::systemUserContactID(), 'Wrong contact ID returned');
+    }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public function testGetDefaultLocationType()
+    {
+        $def_loc_type = (int)CRM_Core_BAO_LocationType::getDefault()->id;
+
+        self::assertSame($def_loc_type, Get::defaultLocationTypeID(), 'Wrong default location type ID returned');
     }
 }
