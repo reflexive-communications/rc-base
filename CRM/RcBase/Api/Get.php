@@ -44,21 +44,27 @@ class CRM_RcBase_Api_Get
 
     /**
      * Status represents contact was never in given group
+     *
+     * @deprecated
      */
     public const GROUP_CONTACT_STATUS_NONE = 1;
 
     /**
      * Status represents contact is in given group
+     *
+     * @deprecated
      */
     public const GROUP_CONTACT_STATUS_ADDED = 2;
 
     /**
      * Status represents contact was removed from given group
+     * @deprecated
      */
     public const GROUP_CONTACT_STATUS_REMOVED = 3;
 
     /**
      * Status represents contact is pending in given group
+     * @deprecated
      */
     public const GROUP_CONTACT_STATUS_PENDING = 4;
 
@@ -69,6 +75,7 @@ class CRM_RcBase_Api_Get
      * @param string $field Field to return
      *
      * @return mixed|null
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::parseResultsFirst()
      */
     public static function parseResultsFirst(Result $results, string $field = '')
     {
@@ -97,6 +104,7 @@ class CRM_RcBase_Api_Get
      * @return int|null Contact ID if found, null if not found
      * @throws API_Exception
      * @throws UnauthorizedException
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::contactIDByEmail()
      */
     public static function contactIDFromEmail(string $email, bool $check_permissions = false): ?int
     {
@@ -152,6 +160,7 @@ class CRM_RcBase_Api_Get
      * @throws API_Exception
      * @throws CRM_Core_Exception
      * @throws UnauthorizedException
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::entityByID()
      */
     public static function contactData(int $contact_id, bool $check_permissions = false): ?array
     {
@@ -179,6 +188,7 @@ class CRM_RcBase_Api_Get
      * @throws API_Exception
      * @throws UnauthorizedException
      * @throws CRM_Core_Exception
+     * @deprecated
      */
     public static function emailID(int $contact_id, int $loc_type_id, bool $check_permissions = false): ?int
     {
@@ -207,6 +217,7 @@ class CRM_RcBase_Api_Get
      * @throws API_Exception
      * @throws UnauthorizedException
      * @throws CRM_Core_Exception
+     * @deprecated
      */
     public static function phoneID(int $contact_id, int $loc_type_id, bool $check_permissions = false): ?int
     {
@@ -235,6 +246,7 @@ class CRM_RcBase_Api_Get
      * @throws API_Exception
      * @throws UnauthorizedException
      * @throws CRM_Core_Exception
+     * @deprecated
      */
     public static function addressID(int $contact_id, int $loc_type_id, bool $check_permissions = false): ?int
     {
@@ -264,6 +276,7 @@ class CRM_RcBase_Api_Get
      * @throws API_Exception
      * @throws UnauthorizedException
      * @throws CRM_Core_Exception
+     * @deprecated
      */
     public static function relationshipID(
         int $contact_id,
@@ -318,6 +331,7 @@ class CRM_RcBase_Api_Get
      * @throws API_Exception
      * @throws UnauthorizedException
      * @throws CRM_Core_Exception
+     * @deprecated
      */
     public static function allActivity(
         int $contact_id,
@@ -451,6 +465,7 @@ class CRM_RcBase_Api_Get
      * @return int|null Group ID if found, null if not found
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::entityByName()
      */
     public static function groupIDByName(string $name, bool $check_permissions = false): ?int
     {
@@ -476,6 +491,7 @@ class CRM_RcBase_Api_Get
      * @return int|null Group ID if found, null if not found
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @deprecated
      */
     public static function groupIDByTitle(string $title, bool $check_permissions = false): ?int
     {
@@ -501,6 +517,7 @@ class CRM_RcBase_Api_Get
      * @return int|null Tag ID if found, null if not found
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::entityByName()
      */
     public static function tagIDByName(string $name, bool $check_permissions = false): ?int
     {
@@ -617,6 +634,7 @@ class CRM_RcBase_Api_Get
      * @return int|null Contact ID
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::systemUserContactID()
      */
     public static function systemUserContactID(bool $check_permissions = false): ?int
     {

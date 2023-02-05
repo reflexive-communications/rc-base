@@ -10,8 +10,6 @@ use Civi\RcBase\Utils\PHPUnit;
 use CRM_RcBase_HeadlessTestCase;
 
 /**
- * Test API Create class
- *
  * @group headless
  */
 class CreateTest extends CRM_RcBase_HeadlessTestCase
