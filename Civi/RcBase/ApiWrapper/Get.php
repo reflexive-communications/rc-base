@@ -211,4 +211,29 @@ class Get
 
         return self::parseResultsFirst(self::entity('EntityTag', $params, $check_permissions), 'id');
     }
+
+    /**
+     * Get current sub-types of a contact
+     *
+     * @param int $contact_id Contact ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return array List of sub-types
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public static function contactSubType(int $contact_id, bool $check_permissions = false): array
+    {
+        if ($contact_id < 1) {
+            throw new InvalidArgumentException('ID');
+        }
+
+        $params = [
+            'select' => ['contact_sub_type'],
+            'where' => [['id', '=', $contact_id]],
+            'limit' => 1,
+        ];
+
+        return self::parseResultsFirst(self::entity('Contact', $params, $check_permissions), 'contact_sub_type') ?? [];
+    }
 }

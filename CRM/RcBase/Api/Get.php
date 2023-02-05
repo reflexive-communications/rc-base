@@ -546,6 +546,7 @@ class CRM_RcBase_Api_Get
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
      * @throws \CRM_Core_Exception
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::contactSubType()
      */
     public static function contactSubType(int $contact_id, bool $check_permissions = false): array
     {

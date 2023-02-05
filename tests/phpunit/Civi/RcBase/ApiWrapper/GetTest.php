@@ -208,4 +208,49 @@ class GetTest extends CRM_RcBase_HeadlessTestCase
         self::expectExceptionMessage('Invalid ID');
         Get::contactHasTag(-1, $tag_id);
     }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testContactSubType()
+    {
+        // Create subtypes
+        $sub_type_a = [
+            'name' => 'individual_sub_type_a',
+            'label' => 'Sub-Type A',
+            'parent_id.name' => 'Individual',
+        ];
+        $sub_type_b = [
+            'name' => 'individual_sub_type_b',
+            'label' => 'Sub-Type B',
+            'parent_id.name' => 'Individual',
+        ];
+        Create::entity('ContactType', $sub_type_a);
+        Create::entity('ContactType', $sub_type_b);
+
+        // Create contact - no subtype
+        $contact_id = PHPUnit::createIndividual();
+        $subtype = Get::contactSubType($contact_id);
+        self::assertCount(0, $subtype, 'Wrong number of subtypes');
+
+        // Create contact - sub-type A
+        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter(), ['contact_sub_type' => [$sub_type_a['name']]]);
+        $subtype = Get::contactSubType($contact_id);
+        self::assertCount(1, $subtype, 'Wrong number of subtypes');
+        self::assertSame([$sub_type_a['name']], $subtype, 'Wrong subtype returned');
+
+        // Create contact - sub-type A and B
+        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter(), ['contact_sub_type' => [$sub_type_a['name'], $sub_type_b['name']]]);
+        $subtype = Get::contactSubType($contact_id);
+        self::assertCount(2, $subtype, 'Wrong number of subtypes');
+        self::assertSame([$sub_type_a['name'], $sub_type_b['name']], $subtype, 'Wrong subtypes returned');
+
+        // Check invalid ID
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage('Invalid ID');
+        Get::contactSubType(-1);
+    }
 }
