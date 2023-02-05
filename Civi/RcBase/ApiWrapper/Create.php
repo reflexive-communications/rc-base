@@ -267,8 +267,6 @@ class Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return string|null Value of option
-     * @throws \API_Exception
-     * @throws \Civi\API\Exception\UnauthorizedException
      * @throws \Civi\RcBase\Exception\APIException
      * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
@@ -280,11 +278,7 @@ class Create
 
         $values['option_group_id.name'] = $option_group;
         $option_value_id = self::entity('OptionValue', $values, $check_permissions);
-        $result = OptionValue::get($check_permissions)
-            ->addSelect('value')
-            ->addWhere('id', '=', $option_value_id)
-            ->execute();
 
-        return CRM_RcBase_Api_Get::parseResultsFirst($result, 'value');
+        return Get::entityByID('OptionValue', $option_value_id, 'value');
     }
 }
