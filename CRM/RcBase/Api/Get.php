@@ -376,6 +376,7 @@ class CRM_RcBase_Api_Get
      * @throws API_Exception
      * @throws CRM_Core_Exception
      * @throws UnauthorizedException
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::contactHasTag()
      */
     public static function contactHasTag(int $contact_id, int $tag_id, bool $check_permissions = false): ?int
     {

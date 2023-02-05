@@ -4,6 +4,7 @@ namespace Civi\RcBase\ApiWrapper;
 
 use Civi\Api4\Generic\Result;
 use Civi\RcBase\Exception\APIException;
+use Civi\RcBase\Exception\InvalidArgumentException;
 use Throwable;
 
 /**
@@ -179,5 +180,35 @@ class Get
         ];
 
         return self::parseResultsFirst(self::entity('LocationType', $params, $check_permissions), 'id');
+    }
+
+    /**
+     * Check if tag is applied to a contact
+     *
+     * @param int $contact_id Contact ID
+     * @param int $tag_id Tag ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null EntityTag ID if found, null if not found
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public static function contactHasTag(int $contact_id, int $tag_id, bool $check_permissions = false): ?int
+    {
+        if ($contact_id < 1 || $tag_id < 1) {
+            throw new InvalidArgumentException('ID');
+        }
+
+        $params = [
+            'select' => ['id'],
+            'where' => [
+                ['entity_table', '=', 'civicrm_contact'],
+                ['entity_id', '=', $contact_id],
+                ['tag_id', '=', $tag_id],
+            ],
+            'limit' => 1,
+        ];
+
+        return self::parseResultsFirst(self::entity('EntityTag', $params, $check_permissions), 'id');
     }
 }

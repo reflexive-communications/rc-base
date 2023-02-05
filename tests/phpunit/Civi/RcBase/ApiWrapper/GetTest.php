@@ -3,6 +3,8 @@
 namespace Civi\RcBase\ApiWrapper;
 
 use Civi\RcBase\Exception\APIException;
+use Civi\RcBase\Exception\InvalidArgumentException;
+use Civi\RcBase\Utils\DB;
 use Civi\RcBase\Utils\PHPUnit;
 use CRM_Core_BAO_LocationType;
 use CRM_RcBase_HeadlessTestCase;
@@ -178,5 +180,32 @@ class GetTest extends CRM_RcBase_HeadlessTestCase
         $def_loc_type = (int)CRM_Core_BAO_LocationType::getDefault()->id;
 
         self::assertSame($def_loc_type, Get::defaultLocationTypeID(), 'Wrong default location type ID returned');
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
+     */
+    public function testContactHasTag()
+    {
+        // Create contact and tag
+        $contact_id_tagged = PHPUnit::createIndividual();
+        $contact_id_untagged = PHPUnit::createIndividual();
+        $tag_id = Create::tag(['name' => 'Test tag']);
+        $entity_tag_id = Create::tagContact($contact_id_tagged, $tag_id);
+
+        self::assertSame($entity_tag_id, Get::contactHasTag($contact_id_tagged, $tag_id), 'Wrong entity tag ID returned');
+        self::assertNull(Get::contactHasTag($contact_id_untagged, $tag_id), 'Not null returned on non-tagged contact');
+        self::assertNull(Get::contactHasTag($contact_id_tagged, DB::getNextAutoIncrementValue('civicrm_tag')), 'Not null returned on non-existent tag');
+        self::assertNull(Get::contactHasTag(DB::getNextAutoIncrementValue('civicrm_contact'), $tag_id), 'Not null returned on non-existent contact ID');
+
+        // Check invalid ID
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage('Invalid ID');
+        Get::contactHasTag(-1, $tag_id);
     }
 }
