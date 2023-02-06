@@ -4,12 +4,12 @@ use Civi\Api4\GroupContact;
 
 /**
  * Common Save Actions
- *
  * Wrapper around APIv4
  *
- * @package  rc-base
+ * @deprecated use \Civi\RcBase\ApiWrapper\Save
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
+ * @package  rc-base
  */
 class CRM_RcBase_Api_Save
 {
