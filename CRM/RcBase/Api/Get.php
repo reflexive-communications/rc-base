@@ -573,6 +573,7 @@ class CRM_RcBase_Api_Get
      * @return int Status code
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::groupContactStatus()
      */
     public static function groupContactStatus(int $contact_id, int $group_id, bool $check_permissions = false): int
     {

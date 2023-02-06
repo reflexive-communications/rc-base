@@ -253,4 +253,38 @@ class GetTest extends CRM_RcBase_HeadlessTestCase
         self::expectExceptionMessage('Invalid ID');
         Get::contactSubType(-1);
     }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
+     */
+    public function testGroupContactStatus()
+    {
+        // Create group, contact
+        $group_data = ['title' => 'Group contact test group'];
+        $group_id = Create::group($group_data);
+        $contact_id = PHPUnit::createIndividual();
+
+        // Check new contact
+        self::assertSame(Get::GROUP_CONTACT_STATUS_NONE, Get::groupContactStatus($contact_id, $group_id), 'Wrong value returned for new contact');
+        // Check non-existent group
+        self::assertSame(Get::GROUP_CONTACT_STATUS_NONE, Get::groupContactStatus($contact_id, $group_id + 1), 'Wrong value returned for non-existent group');
+        // Add contact to group
+        $group_contact_id = Create::entity('GroupContact', ['group_id' => $group_id, 'contact_id' => $contact_id]);
+        self::assertSame(Get::GROUP_CONTACT_STATUS_ADDED, Get::groupContactStatus($contact_id, $group_id), 'Wrong value returned for added contact');
+        // Set to pending
+        Update::entity('GroupContact', $group_contact_id, ['status' => 'Pending']);
+        self::assertSame(Get::GROUP_CONTACT_STATUS_PENDING, Get::groupContactStatus($contact_id, $group_id), 'Wrong value returned for pending contact');
+        // Remove contact
+        Update::entity('GroupContact', $group_contact_id, ['status' => 'Removed']);
+        self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id), 'Wrong value returned for removed contact');
+
+        // Check invalid ID
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage('Invalid ID');
+        Get::groupContactStatus(-1, -1);
+    }
 }

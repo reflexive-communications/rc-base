@@ -18,6 +18,26 @@ use Throwable;
 class Get
 {
     /**
+     * Status represents contact was never in given group
+     */
+    public const GROUP_CONTACT_STATUS_NONE = 1;
+
+    /**
+     * Status represents contact is in given group
+     */
+    public const GROUP_CONTACT_STATUS_ADDED = 2;
+
+    /**
+     * Status represents contact was removed from given group
+     */
+    public const GROUP_CONTACT_STATUS_REMOVED = 3;
+
+    /**
+     * Status represents contact is pending in given group
+     */
+    public const GROUP_CONTACT_STATUS_PENDING = 4;
+
+    /**
      * Retrieve entity
      *
      * @param string $entity Entity name
@@ -235,5 +255,47 @@ class Get
         ];
 
         return self::parseResultsFirst(self::entity('Contact', $params, $check_permissions), 'contact_sub_type') ?? [];
+    }
+
+    /**
+     * Get group membership status for a contact
+     *
+     * @param int $contact_id Contact ID
+     * @param int $group_id Group ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int Status code
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public static function groupContactStatus(int $contact_id, int $group_id, bool $check_permissions = false): int
+    {
+        if ($contact_id < 1 || $group_id < 1) {
+            throw new InvalidArgumentException('ID');
+        }
+
+        $params = [
+            'select' => ['status'],
+            'where' => [
+                ['contact_id', '=', $contact_id],
+                ['group_id', '=', $group_id],
+            ],
+            'limit' => 1,
+        ];
+
+        $status = self::parseResultsFirst(self::entity('GroupContact', $params, $check_permissions), 'status');
+
+        switch ($status) {
+            case 'Added':
+                return self::GROUP_CONTACT_STATUS_ADDED;
+            case 'Removed':
+                return self::GROUP_CONTACT_STATUS_REMOVED;
+            case 'Pending':
+                return self::GROUP_CONTACT_STATUS_PENDING;
+            case null:
+                return self::GROUP_CONTACT_STATUS_NONE;
+            default:
+                throw new APIException('GroupContact', 'get', "Invalid status returned: {$status}");
+        }
     }
 }
