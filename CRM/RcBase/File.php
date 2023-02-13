@@ -3,9 +3,10 @@
 /**
  * Utilities for handling files
  *
- * @package  rc-base
+ * @deprecated
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
+ * @package  rc-base
  */
 class CRM_RcBase_File
 {
