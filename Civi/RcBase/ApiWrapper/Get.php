@@ -4,6 +4,7 @@ namespace Civi\RcBase\ApiWrapper;
 
 use Civi\Api4\Generic\Result;
 use Civi\RcBase\Exception\APIException;
+use Civi\RcBase\Exception\InvalidArgumentException;
 use Throwable;
 
 /**
@@ -16,6 +17,26 @@ use Throwable;
  */
 class Get
 {
+    /**
+     * Status represents contact was never in given group
+     */
+    public const GROUP_CONTACT_STATUS_NONE = 1;
+
+    /**
+     * Status represents contact is in given group
+     */
+    public const GROUP_CONTACT_STATUS_ADDED = 2;
+
+    /**
+     * Status represents contact was removed from given group
+     */
+    public const GROUP_CONTACT_STATUS_REMOVED = 3;
+
+    /**
+     * Status represents contact is pending in given group
+     */
+    public const GROUP_CONTACT_STATUS_PENDING = 4;
+
     /**
      * Retrieve entity
      *
@@ -160,5 +181,121 @@ class Get
         ];
 
         return self::parseResultsFirst(self::entity('UFMatch', $params, $check_permissions), 'contact_id');
+    }
+
+    /**
+     * Get ID of default Location type
+     *
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null Location type ID if found, null if not found
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public static function defaultLocationTypeID(bool $check_permissions = false): ?int
+    {
+        $params = [
+            'select' => ['id'],
+            'where' => [['is_default', '=', true]],
+            'limit' => 1,
+        ];
+
+        return self::parseResultsFirst(self::entity('LocationType', $params, $check_permissions), 'id');
+    }
+
+    /**
+     * Check if tag is applied to a contact
+     *
+     * @param int $contact_id Contact ID
+     * @param int $tag_id Tag ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null EntityTag ID if found, null if not found
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public static function contactHasTag(int $contact_id, int $tag_id, bool $check_permissions = false): ?int
+    {
+        if ($contact_id < 1 || $tag_id < 1) {
+            throw new InvalidArgumentException('ID');
+        }
+
+        $params = [
+            'select' => ['id'],
+            'where' => [
+                ['entity_table', '=', 'civicrm_contact'],
+                ['entity_id', '=', $contact_id],
+                ['tag_id', '=', $tag_id],
+            ],
+            'limit' => 1,
+        ];
+
+        return self::parseResultsFirst(self::entity('EntityTag', $params, $check_permissions), 'id');
+    }
+
+    /**
+     * Get current sub-types of a contact
+     *
+     * @param int $contact_id Contact ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return array List of sub-types
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public static function contactSubType(int $contact_id, bool $check_permissions = false): array
+    {
+        if ($contact_id < 1) {
+            throw new InvalidArgumentException('ID');
+        }
+
+        $params = [
+            'select' => ['contact_sub_type'],
+            'where' => [['id', '=', $contact_id]],
+            'limit' => 1,
+        ];
+
+        return self::parseResultsFirst(self::entity('Contact', $params, $check_permissions), 'contact_sub_type') ?? [];
+    }
+
+    /**
+     * Get group membership status for a contact
+     *
+     * @param int $contact_id Contact ID
+     * @param int $group_id Group ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int Status code
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public static function groupContactStatus(int $contact_id, int $group_id, bool $check_permissions = false): int
+    {
+        if ($contact_id < 1 || $group_id < 1) {
+            throw new InvalidArgumentException('ID');
+        }
+
+        $params = [
+            'select' => ['status'],
+            'where' => [
+                ['contact_id', '=', $contact_id],
+                ['group_id', '=', $group_id],
+            ],
+            'limit' => 1,
+        ];
+
+        $status = self::parseResultsFirst(self::entity('GroupContact', $params, $check_permissions), 'status');
+
+        switch ($status) {
+            case 'Added':
+                return self::GROUP_CONTACT_STATUS_ADDED;
+            case 'Removed':
+                return self::GROUP_CONTACT_STATUS_REMOVED;
+            case 'Pending':
+                return self::GROUP_CONTACT_STATUS_PENDING;
+            case null:
+                return self::GROUP_CONTACT_STATUS_NONE;
+            default:
+                throw new APIException('GroupContact', 'get', "Invalid status returned: {$status}");
+        }
     }
 }

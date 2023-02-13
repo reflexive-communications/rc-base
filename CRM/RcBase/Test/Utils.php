@@ -5,9 +5,10 @@ use Civi\Test;
 /**
  * Contains helper functions for unit-testing
  *
- * @package  rc-base
+ * @deprecated
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
+ * @package  rc-base
  */
 class CRM_RcBase_Test_Utils
 {
@@ -72,8 +73,8 @@ class CRM_RcBase_Test_Utils
      *   ]
      *
      * @return array Results
-     *
      * @throws \CRM_Core_Exception
+     * @deprecated Use \Civi\RcBase\ApiWrapper\Get
      */
     public static function cvApi4Get(string $entity, array $select = [], array $where = []): array
     {
@@ -127,8 +128,8 @@ class CRM_RcBase_Test_Utils
      * @param array $params Params of entity
      *
      * @return int Created entity ID
-     *
      * @throws \CRM_Core_Exception
+     * @deprecated Use \Civi\RcBase\ApiWrapper\Create
      */
     public static function cvApi4Create(string $entity, array $params = []): int
     {

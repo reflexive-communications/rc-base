@@ -3,7 +3,10 @@
 namespace Civi\RcBase\ApiWrapper;
 
 use Civi\RcBase\Exception\APIException;
+use Civi\RcBase\Exception\InvalidArgumentException;
+use Civi\RcBase\Utils\DB;
 use Civi\RcBase\Utils\PHPUnit;
+use CRM_Core_BAO_LocationType;
 use CRM_RcBase_HeadlessTestCase;
 
 /**
@@ -166,5 +169,122 @@ class GetTest extends CRM_RcBase_HeadlessTestCase
     public function testGetSystemUser()
     {
         self::assertSame(PHPUnit::createLoggedInUser(), Get::systemUserContactID(), 'Wrong contact ID returned');
+    }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public function testGetDefaultLocationType()
+    {
+        $def_loc_type = (int)CRM_Core_BAO_LocationType::getDefault()->id;
+
+        self::assertSame($def_loc_type, Get::defaultLocationTypeID(), 'Wrong default location type ID returned');
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
+     */
+    public function testContactHasTag()
+    {
+        // Create contact and tag
+        $contact_id_tagged = PHPUnit::createIndividual();
+        $contact_id_untagged = PHPUnit::createIndividual();
+        $tag_id = Create::tag(['name' => 'Test tag']);
+        $entity_tag_id = Create::tagContact($contact_id_tagged, $tag_id);
+
+        self::assertSame($entity_tag_id, Get::contactHasTag($contact_id_tagged, $tag_id), 'Wrong entity tag ID returned');
+        self::assertNull(Get::contactHasTag($contact_id_untagged, $tag_id), 'Not null returned on non-tagged contact');
+        self::assertNull(Get::contactHasTag($contact_id_tagged, DB::getNextAutoIncrementValue('civicrm_tag')), 'Not null returned on non-existent tag');
+        self::assertNull(Get::contactHasTag(DB::getNextAutoIncrementValue('civicrm_contact'), $tag_id), 'Not null returned on non-existent contact ID');
+
+        // Check invalid ID
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage('Invalid ID');
+        Get::contactHasTag(-1, $tag_id);
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testContactSubType()
+    {
+        // Create subtypes
+        $sub_type_a = [
+            'name' => 'individual_sub_type_a',
+            'label' => 'Sub-Type A',
+            'parent_id.name' => 'Individual',
+        ];
+        $sub_type_b = [
+            'name' => 'individual_sub_type_b',
+            'label' => 'Sub-Type B',
+            'parent_id.name' => 'Individual',
+        ];
+        Create::entity('ContactType', $sub_type_a);
+        Create::entity('ContactType', $sub_type_b);
+
+        // Create contact - no subtype
+        $contact_id = PHPUnit::createIndividual();
+        $subtype = Get::contactSubType($contact_id);
+        self::assertCount(0, $subtype, 'Wrong number of subtypes');
+
+        // Create contact - sub-type A
+        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter(), ['contact_sub_type' => [$sub_type_a['name']]]);
+        $subtype = Get::contactSubType($contact_id);
+        self::assertCount(1, $subtype, 'Wrong number of subtypes');
+        self::assertSame([$sub_type_a['name']], $subtype, 'Wrong subtype returned');
+
+        // Create contact - sub-type A and B
+        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter(), ['contact_sub_type' => [$sub_type_a['name'], $sub_type_b['name']]]);
+        $subtype = Get::contactSubType($contact_id);
+        self::assertCount(2, $subtype, 'Wrong number of subtypes');
+        self::assertSame([$sub_type_a['name'], $sub_type_b['name']], $subtype, 'Wrong subtypes returned');
+
+        // Check invalid ID
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage('Invalid ID');
+        Get::contactSubType(-1);
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
+     */
+    public function testGroupContactStatus()
+    {
+        // Create group, contact
+        $group_data = ['title' => 'Group contact test group'];
+        $group_id = Create::group($group_data);
+        $contact_id = PHPUnit::createIndividual();
+
+        // Check new contact
+        self::assertSame(Get::GROUP_CONTACT_STATUS_NONE, Get::groupContactStatus($contact_id, $group_id), 'Wrong value returned for new contact');
+        // Check non-existent group
+        self::assertSame(Get::GROUP_CONTACT_STATUS_NONE, Get::groupContactStatus($contact_id, $group_id + 1), 'Wrong value returned for non-existent group');
+        // Add contact to group
+        $group_contact_id = Create::entity('GroupContact', ['group_id' => $group_id, 'contact_id' => $contact_id]);
+        self::assertSame(Get::GROUP_CONTACT_STATUS_ADDED, Get::groupContactStatus($contact_id, $group_id), 'Wrong value returned for added contact');
+        // Set to pending
+        Update::entity('GroupContact', $group_contact_id, ['status' => 'Pending']);
+        self::assertSame(Get::GROUP_CONTACT_STATUS_PENDING, Get::groupContactStatus($contact_id, $group_id), 'Wrong value returned for pending contact');
+        // Remove contact
+        Update::entity('GroupContact', $group_contact_id, ['status' => 'Removed']);
+        self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id), 'Wrong value returned for removed contact');
+
+        // Check invalid ID
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage('Invalid ID');
+        Get::groupContactStatus(-1, -1);
     }
 }

@@ -11,8 +11,6 @@ use CRM_RcBase_Api_Get;
 use CRM_RcBase_HeadlessTestCase;
 
 /**
- * Test API Update class
- *
  * @group headless
  */
 class UpdateTest extends CRM_RcBase_HeadlessTestCase
