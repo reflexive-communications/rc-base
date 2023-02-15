@@ -211,6 +211,31 @@ class GetTest extends CRM_RcBase_HeadlessTestCase
 
     /**
      * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
+     */
+    public function testParentTag()
+    {
+        // Create tags
+        $parent_tag_id = Create::tag(['name' => 'Parent tag']);
+        $child_tag_id = Create::tag(['name' => 'Child tag', 'parent_id' => $parent_tag_id]);
+
+        // Check tags
+        self::assertSame($parent_tag_id, Get::parentTagId($child_tag_id), 'Wrong parent tag ID returned for child');
+        self::assertNull(Get::parentTagId($parent_tag_id), 'Not null returned for parent');
+        // Check non-existent tag
+        self::assertNull(Get::parentTagId(DB::getNextAutoIncrementValue('civicrm_tag')), 'Not null returned for non-existent tag');
+
+        // Check invalid ID
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage('Invalid ID');
+        Get::parentTagId(-1);
+    }
+
+    /**
+     * @return void
      * @throws \CRM_Core_Exception
      * @throws \Civi\RcBase\Exception\APIException
      * @throws \Civi\RcBase\Exception\InvalidArgumentException

@@ -408,6 +408,7 @@ class CRM_RcBase_Api_Get
      * @return int|null Parent Tag ID if found, null if not found
      * @throws API_Exception
      * @throws CRM_Core_Exception
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::parentTagId()
      */
     public static function parentTagId(int $tag_id, bool $check_permissions = false): ?int
     {

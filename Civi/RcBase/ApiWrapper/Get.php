@@ -248,6 +248,31 @@ class Get
     }
 
     /**
+     * Get ID of the parent of a tag
+     *
+     * @param int $tag_id Tag ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null Parent Tag ID if found, null if not found
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public static function parentTagId(int $tag_id, bool $check_permissions = false): ?int
+    {
+        if ($tag_id < 1) {
+            throw new InvalidArgumentException('ID');
+        }
+
+        $params = [
+            'select' => ['parent_id'],
+            'where' => [['id', '=', $tag_id]],
+            'limit' => 1,
+        ];
+
+        return self::parseResultsFirst(self::entity('Tag', $params, $check_permissions), 'parent_id');
+    }
+
+    /**
      * Get current sub-types of a contact
      *
      * @param int $contact_id Contact ID
