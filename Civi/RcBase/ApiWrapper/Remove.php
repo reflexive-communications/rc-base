@@ -1,17 +1,20 @@
 <?php
 
+namespace Civi\RcBase\ApiWrapper;
+
 use Civi\Api4\GroupContact;
+use Civi\RcBase\Exception\APIException;
+use Civi\RcBase\Exception\InvalidArgumentException;
 
 /**
  * Common Remove Actions
  * Wrapper around APIv4
  *
- * @deprecated use \Civi\RcBase\ApiWrapper::Remove
+ * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
- * @package  rc-base
  */
-class CRM_RcBase_Api_Remove
+class Remove
 {
     /**
      * Remove contact from group
@@ -21,36 +24,38 @@ class CRM_RcBase_Api_Remove
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Number of affected contacts (1 if contact was in group before, 0 if wasn't)
-     *
-     * @throws \API_Exception
-     * @throws \CRM_Core_Exception
-     * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public static function removeContactFromGroup(int $contact_id, int $group_id, bool $check_permissions = false): int
     {
         if ($contact_id < 1 || $group_id < 1) {
-            throw new API_Exception('Invalid ID.');
+            throw new InvalidArgumentException('ID');
         }
 
-        $status = CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id, $check_permissions);
+        $status = Get::groupContactStatus($contact_id, $group_id, $check_permissions);
 
         switch ($status) {
-            case CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_NONE:
-            case CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_REMOVED:
+            case Get::GROUP_CONTACT_STATUS_NONE:
+            case Get::GROUP_CONTACT_STATUS_REMOVED:
                 return 0;
-            case CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_PENDING:
-            case CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_ADDED:
-                $result = GroupContact::get($check_permissions)
-                    ->addSelect('id')
-                    ->addWhere('group_id', '=', $group_id)
-                    ->addWhere('contact_id', '=', $contact_id)
-                    ->setLimit(1)
-                    ->execute();
-                $group_contact_id = CRM_RcBase_Api_Get::parseResultsFirst($result, 'id');
-                CRM_RcBase_Api_Update::entity('GroupContact', $group_contact_id, ['status' => 'Removed',], $check_permissions);
+            case Get::GROUP_CONTACT_STATUS_PENDING:
+            case Get::GROUP_CONTACT_STATUS_ADDED:
+                $params = [
+                    'select' => ['id'],
+                    'where' => [
+                        ['contact_id', '=', $contact_id],
+                        ['group_id', '=', $group_id],
+                    ],
+                    'limit' => 1,
+                ];
+                $group_contact_id = Get::parseResultsFirst(Get::entity('GroupContact', $params, $check_permissions), 'id');
+                Update::entity('GroupContact', $group_contact_id, ['status' => 'Removed'], $check_permissions);
+
                 return 1;
             default:
-                throw new API_Exception(sprintf('Invalid status returned: %s', $status));
+                throw new APIException('GroupContact', 'get', "Invalid status returned: {$status}");
         }
     }
 
@@ -61,14 +66,14 @@ class CRM_RcBase_Api_Remove
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Number of removed contacts
-     *
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
     public static function emptyGroup(int $group_id, bool $check_permissions = false): int
     {
         if ($group_id < 1) {
-            throw new API_Exception('Invalid ID.');
+            throw new InvalidArgumentException('ID');
         }
 
         $contacts = GroupContact::update($check_permissions)
