@@ -21,9 +21,10 @@ use Civi\Api4\UFMatch;
  * Common Get Actions
  * Wrapper around APIv4
  *
- * @package  rc-base
+ * @deprecated use \Civi\RcBase\ApiWrapper\Get
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
+ * @package  rc-base
  */
 class CRM_RcBase_Api_Get
 {
@@ -136,6 +137,7 @@ class CRM_RcBase_Api_Get
      * @return int|null Contact ID if found, null if not found
      * @throws API_Exception
      * @throws UnauthorizedException
+     * @deprecated
      */
     public static function contactIDFromExternalID(string $external_id, bool $check_permissions = false): ?int
     {
@@ -437,6 +439,7 @@ class CRM_RcBase_Api_Get
      * @throws \API_Exception
      * @throws \CRM_Core_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @deprecated use \Civi\RcBase\Settings::get()
      */
     public static function settingValue(string $setting, ?int $contact_id = null, int $domain_id = 1, bool $check_permissions = false)
     {
