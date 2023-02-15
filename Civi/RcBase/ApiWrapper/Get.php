@@ -300,6 +300,34 @@ class Get
     }
 
     /**
+     * Get value of an option
+     *
+     * @param string $option_group Name of option group
+     * @param string $option_name Name of option
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return string|null Value of option
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public static function optionValue(string $option_group, string $option_name, bool $check_permissions = false): ?string
+    {
+        if (empty($option_group) || empty($option_name)) {
+            return null;
+        }
+
+        $params = [
+            'select' => ['value'],
+            'where' => [
+                ['option_group_id:name', '=', $option_group],
+                ['name', '=', $option_name],
+            ],
+            'limit' => 1,
+        ];
+
+        return self::parseResultsFirst(self::entity('OptionValue', $params, $check_permissions), 'value');
+    }
+
+    /**
      * Get contribution ID from transaction ID
      *
      * @param string $transaction_id Transaction ID

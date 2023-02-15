@@ -290,6 +290,27 @@ class GetTest extends CRM_RcBase_HeadlessTestCase
 
     /**
      * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
+     */
+    public function testOptionValue()
+    {
+        // Create activity type
+        $activity_data = [
+            'label' => 'test_activity',
+            'name' => 'test_activity',
+        ];
+        $activity_type_id = Create::optionValue('activity_type', $activity_data);
+
+        self::assertSame($activity_type_id, Get::optionValue('activity_type', $activity_data['name']), 'Wrong option value returned');
+
+        // Check invalid
+        self::assertNull(Get::optionValue('activity_type', 'non-existent-activity-type'), 'Wrong option value returned on non-existent option');
+        self::assertNull(Get::optionValue('activity_type', ''), 'Wrong option value returned on empty option name');
+    }
+
+    /**
+     * @return void
      * @throws \CRM_Core_Exception
      * @throws \Civi\RcBase\Exception\APIException
      * @throws \Civi\RcBase\Exception\InvalidArgumentException

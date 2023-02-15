@@ -613,6 +613,7 @@ class CRM_RcBase_Api_Get
      * @return string|null Value of option
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::optionValue()
      */
     public static function optionValue(string $option_group, string $option_name, bool $check_permissions = false): ?string
     {
