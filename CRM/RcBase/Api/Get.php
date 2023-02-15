@@ -21,24 +21,29 @@ use Civi\Api4\UFMatch;
  * Common Get Actions
  * Wrapper around APIv4
  *
- * @package  rc-base
+ * @deprecated use \Civi\RcBase\ApiWrapper\Get
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
+ * @package  rc-base
  */
 class CRM_RcBase_Api_Get
 {
     /**
      * Record type id when contact is the assignee of the activity
+     *
+     * @deprecated
      */
     public const ACTIVITY_RECORD_TYPE_ASSIGNEE = 1;
 
     /**
      * Record type id when contact is the source of the activity
+     * @deprecated
      */
     public const ACTIVITY_RECORD_TYPE_SOURCE = 2;
 
     /**
      * Record type id when contact is the target of the activity
+     * @deprecated
      */
     public const ACTIVITY_RECORD_TYPE_TARGET = 3;
 
@@ -132,6 +137,7 @@ class CRM_RcBase_Api_Get
      * @return int|null Contact ID if found, null if not found
      * @throws API_Exception
      * @throws UnauthorizedException
+     * @deprecated
      */
     public static function contactIDFromExternalID(string $external_id, bool $check_permissions = false): ?int
     {
@@ -404,6 +410,7 @@ class CRM_RcBase_Api_Get
      * @return int|null Parent Tag ID if found, null if not found
      * @throws API_Exception
      * @throws CRM_Core_Exception
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::parentTagId()
      */
     public static function parentTagId(int $tag_id, bool $check_permissions = false): ?int
     {
@@ -432,6 +439,7 @@ class CRM_RcBase_Api_Get
      * @throws \API_Exception
      * @throws \CRM_Core_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @deprecated use \Civi\RcBase\Settings::get()
      */
     public static function settingValue(string $setting, ?int $contact_id = null, int $domain_id = 1, bool $check_permissions = false)
     {
@@ -613,6 +621,7 @@ class CRM_RcBase_Api_Get
      * @return string|null Value of option
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::optionValue()
      */
     public static function optionValue(string $option_group, string $option_name, bool $check_permissions = false): ?string
     {
@@ -660,6 +669,7 @@ class CRM_RcBase_Api_Get
      * @return int|null Contribution ID if found, null if not found
      * @throws API_Exception
      * @throws UnauthorizedException
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::contributionIDByTransactionID()
      */
     public static function contributionIDByTransactionID(string $transaction_id, bool $check_permissions = false): ?int
     {

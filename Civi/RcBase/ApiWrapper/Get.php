@@ -18,6 +18,21 @@ use Throwable;
 class Get
 {
     /**
+     * Record type id when contact is the assignee of the activity
+     */
+    public const ACTIVITY_RECORD_TYPE_ASSIGNEE = 1;
+
+    /**
+     * Record type id when contact is the source of the activity
+     */
+    public const ACTIVITY_RECORD_TYPE_SOURCE = 2;
+
+    /**
+     * Record type id when contact is the target of the activity
+     */
+    public const ACTIVITY_RECORD_TYPE_TARGET = 3;
+
+    /**
      * Status represents contact was never in given group
      */
     public const GROUP_CONTACT_STATUS_NONE = 1;
@@ -233,6 +248,31 @@ class Get
     }
 
     /**
+     * Get ID of the parent of a tag
+     *
+     * @param int $tag_id Tag ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null Parent Tag ID if found, null if not found
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public static function parentTagId(int $tag_id, bool $check_permissions = false): ?int
+    {
+        if ($tag_id < 1) {
+            throw new InvalidArgumentException('ID');
+        }
+
+        $params = [
+            'select' => ['parent_id'],
+            'where' => [['id', '=', $tag_id]],
+            'limit' => 1,
+        ];
+
+        return self::parseResultsFirst(self::entity('Tag', $params, $check_permissions), 'parent_id');
+    }
+
+    /**
      * Get current sub-types of a contact
      *
      * @param int $contact_id Contact ID
@@ -297,5 +337,57 @@ class Get
             default:
                 throw new APIException('GroupContact', 'get', "Invalid status returned: {$status}");
         }
+    }
+
+    /**
+     * Get value of an option
+     *
+     * @param string $option_group Name of option group
+     * @param string $option_name Name of option
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return string|null Value of option
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public static function optionValue(string $option_group, string $option_name, bool $check_permissions = false): ?string
+    {
+        if (empty($option_group) || empty($option_name)) {
+            return null;
+        }
+
+        $params = [
+            'select' => ['value'],
+            'where' => [
+                ['option_group_id:name', '=', $option_group],
+                ['name', '=', $option_name],
+            ],
+            'limit' => 1,
+        ];
+
+        return self::parseResultsFirst(self::entity('OptionValue', $params, $check_permissions), 'value');
+    }
+
+    /**
+     * Get contribution ID from transaction ID
+     *
+     * @param string $transaction_id Transaction ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null Contribution ID if found, null if not found
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public static function contributionIDByTransactionID(string $transaction_id, bool $check_permissions = false): ?int
+    {
+        if (empty($transaction_id)) {
+            return null;
+        }
+
+        $params = [
+            'select' => ['id'],
+            'where' => [['trxn_id', '=', $transaction_id]],
+            'limit' => 1,
+        ];
+
+        return self::parseResultsFirst(self::entity('Contribution', $params, $check_permissions), 'id');
     }
 }

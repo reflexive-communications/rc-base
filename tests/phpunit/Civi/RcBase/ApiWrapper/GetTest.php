@@ -211,6 +211,31 @@ class GetTest extends CRM_RcBase_HeadlessTestCase
 
     /**
      * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
+     */
+    public function testParentTag()
+    {
+        // Create tags
+        $parent_tag_id = Create::tag(['name' => 'Parent tag']);
+        $child_tag_id = Create::tag(['name' => 'Child tag', 'parent_id' => $parent_tag_id]);
+
+        // Check tags
+        self::assertSame($parent_tag_id, Get::parentTagId($child_tag_id), 'Wrong parent tag ID returned for child');
+        self::assertNull(Get::parentTagId($parent_tag_id), 'Not null returned for parent');
+        // Check non-existent tag
+        self::assertNull(Get::parentTagId(DB::getNextAutoIncrementValue('civicrm_tag')), 'Not null returned for non-existent tag');
+
+        // Check invalid ID
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage('Invalid ID');
+        Get::parentTagId(-1);
+    }
+
+    /**
+     * @return void
      * @throws \CRM_Core_Exception
      * @throws \Civi\RcBase\Exception\APIException
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
@@ -286,5 +311,50 @@ class GetTest extends CRM_RcBase_HeadlessTestCase
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage('Invalid ID');
         Get::groupContactStatus(-1, -1);
+    }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
+     */
+    public function testOptionValue()
+    {
+        // Create activity type
+        $activity_data = [
+            'label' => 'test_activity',
+            'name' => 'test_activity',
+        ];
+        $activity_type_id = Create::optionValue('activity_type', $activity_data);
+
+        self::assertSame($activity_type_id, Get::optionValue('activity_type', $activity_data['name']), 'Wrong option value returned');
+
+        // Check invalid
+        self::assertNull(Get::optionValue('activity_type', 'non-existent-activity-type'), 'Wrong option value returned on non-existent option');
+        self::assertNull(Get::optionValue('activity_type', ''), 'Wrong option value returned on empty option name');
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testContributionIdByTransactionId()
+    {
+        $transaction_id = 'test-trxn-01';
+        $contact_id = PHPUnit::createIndividual();
+
+        // Check non-existent, empty
+        self::assertNull(Get::contributionIDByTransactionID($transaction_id), 'Not null returned on non-existent transaction ID');
+        self::assertNull(Get::contributionIDByTransactionID(''), 'Not null returned on empty transaction ID');
+
+        // Create contribution
+        $contribution_id = Create::contribution($contact_id, [
+            'trxn_id' => $transaction_id,
+            'financial_type_id' => 1,
+            'total_amount' => 5,
+        ]);
+        self::assertSame($contribution_id, Get::contributionIDByTransactionID($transaction_id), 'Wrong contribution ID returned');
     }
 }
