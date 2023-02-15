@@ -660,6 +660,7 @@ class CRM_RcBase_Api_Get
      * @return int|null Contribution ID if found, null if not found
      * @throws API_Exception
      * @throws UnauthorizedException
+     * @deprecated use \Civi\RcBase\ApiWrapper\Get::contributionIDByTransactionID()
      */
     public static function contributionIDByTransactionID(string $transaction_id, bool $check_permissions = false): ?int
     {

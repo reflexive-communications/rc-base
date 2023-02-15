@@ -298,4 +298,28 @@ class Get
                 throw new APIException('GroupContact', 'get', "Invalid status returned: {$status}");
         }
     }
+
+    /**
+     * Get contribution ID from transaction ID
+     *
+     * @param string $transaction_id Transaction ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int|null Contribution ID if found, null if not found
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public static function contributionIDByTransactionID(string $transaction_id, bool $check_permissions = false): ?int
+    {
+        if (empty($transaction_id)) {
+            return null;
+        }
+
+        $params = [
+            'select' => ['id'],
+            'where' => [['trxn_id', '=', $transaction_id]],
+            'limit' => 1,
+        ];
+
+        return self::parseResultsFirst(self::entity('Contribution', $params, $check_permissions), 'id');
+    }
 }
