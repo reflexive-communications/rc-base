@@ -18,6 +18,21 @@ use Throwable;
 class Get
 {
     /**
+     * Record type id when contact is the assignee of the activity
+     */
+    public const ACTIVITY_RECORD_TYPE_ASSIGNEE = 1;
+
+    /**
+     * Record type id when contact is the source of the activity
+     */
+    public const ACTIVITY_RECORD_TYPE_SOURCE = 2;
+
+    /**
+     * Record type id when contact is the target of the activity
+     */
+    public const ACTIVITY_RECORD_TYPE_TARGET = 3;
+
+    /**
      * Status represents contact was never in given group
      */
     public const GROUP_CONTACT_STATUS_NONE = 1;
