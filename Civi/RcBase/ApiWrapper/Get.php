@@ -110,7 +110,7 @@ class Get
      *
      * @param string $entity Entity name
      * @param int $id Entity ID
-     * @param string $field Optional field to filter (if empty return all fields)
+     * @param string $field Optional field to filter (if empty return all fields: core + custom)
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return mixed|null
@@ -119,10 +119,10 @@ class Get
     public static function entityByID(string $entity, int $id, string $field = '', bool $check_permissions = false)
     {
         // No field specified --> return all fields
-        $select = empty($field) ? '*' : $field;
+        $select = empty($field) ? ['*', 'custom.*'] : [$field];
 
         $params = [
-            'select' => [$select],
+            'select' => $select,
             'where' => [['id', '=', $id]],
             'limit' => 1,
         ];
@@ -135,7 +135,7 @@ class Get
      *
      * @param string $entity Entity name
      * @param string $name Record name/programmatic handle
-     * @param string $field Optional field to filter (if empty return all fields)
+     * @param string $field Optional field to filter (if empty return all fields: core + custom)
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return mixed|null
@@ -144,10 +144,10 @@ class Get
     public static function entityByName(string $entity, string $name, string $field = '', bool $check_permissions = false)
     {
         // No field specified --> return all fields
-        $select = empty($field) ? '*' : $field;
+        $select = empty($field) ? ['*', 'custom.*'] : [$field];
 
         $params = [
-            'select' => [$select],
+            'select' => $select,
             'where' => [['name', '=', $name]],
             'limit' => 1,
         ];
