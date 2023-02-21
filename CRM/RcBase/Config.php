@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @deprecated use Civi\RcBase\Settings
+ * @deprecated use \Civi\RcBase\Settings
  */
 abstract class CRM_RcBase_Config
 {
