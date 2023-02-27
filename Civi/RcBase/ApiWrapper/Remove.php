@@ -126,4 +126,28 @@ class Remove
 
         return count($contacts);
     }
+
+    /**
+     * Remove tag from contact
+     *
+     * @param int $contact_id Contact ID
+     * @param int $tag_id Tag ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return int Number of affected contacts (1 if contact had tag before, 0 if hadn't)
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public static function tagFromContact(int $contact_id, int $tag_id, bool $check_permissions = false): int
+    {
+        // Check if still tagged
+        $entity_tag_id = Get::contactHasTag($contact_id, $tag_id, $check_permissions);
+        if (is_null($entity_tag_id)) {
+            return 0;
+        }
+
+        self::entity('EntityTag', $entity_tag_id, $check_permissions);
+
+        return 1;
+    }
 }

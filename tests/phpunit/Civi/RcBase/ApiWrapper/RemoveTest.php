@@ -164,4 +164,25 @@ class RemoveTest extends CRM_RcBase_HeadlessTestCase
         self::expectExceptionMessage('Invalid ID');
         Remove::emptyGroup(-1);
     }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testRemoveTagFromContact()
+    {
+        // Create contact, tag add tag to contact
+        $contact_id = PHPUnit::createIndividual();
+        $tag_id = Create::tag(['name' => 'Test tag']);
+        Save::tagContact($contact_id, $tag_id);
+
+        // Remove tag
+        self::assertSame(1, Remove::tagFromContact($contact_id, $tag_id), 'Contact was not affected');
+        self::assertNull(Get::contactHasTag($contact_id, $tag_id), 'Tag not removed');
+        // Remove tag from untagged contact
+        self::assertSame(0, Remove::tagFromContact($contact_id, $tag_id), 'Contact was affected');
+        self::assertNull(Get::contactHasTag($contact_id, $tag_id), 'Tag not removed');
+    }
 }
