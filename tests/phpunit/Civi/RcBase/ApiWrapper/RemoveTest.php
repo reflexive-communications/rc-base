@@ -68,24 +68,24 @@ class RemoveTest extends CRM_RcBase_HeadlessTestCase
         $contact_id = PHPUnit::createIndividual();
 
         // Remove not added contact
-        self::assertSame(0, Remove::removeContactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (not added)');
+        self::assertSame(0, Remove::contactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (not added)');
         self::assertSame(Get::GROUP_CONTACT_STATUS_NONE, Get::groupContactStatus($contact_id, $group_id), 'Failed to remove contact (not added)');
         // Add to group then remove
         $group_contact_id = Save::addContactToGroup($contact_id, $group_id);
-        self::assertSame(1, Remove::removeContactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (added)');
+        self::assertSame(1, Remove::contactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (added)');
         self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id), 'Failed to remove contact (added)');
         // Remove removed
-        self::assertSame(0, Remove::removeContactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (removed)');
+        self::assertSame(0, Remove::contactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (removed)');
         self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id), 'Failed to remove contact (removed)');
         // Change to pending then remove
         Update::entity('GroupContact', $group_contact_id, ['status' => 'Pending']);
-        self::assertSame(1, Remove::removeContactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (pending)');
+        self::assertSame(1, Remove::contactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (pending)');
         self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id), 'Failed to remove contact (pending)');
 
         // Invalid ID
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage('Invalid ID');
-        Remove::removeContactFromGroup($contact_id, -1);
+        Remove::contactFromGroup($contact_id, -1);
     }
 
     /**
