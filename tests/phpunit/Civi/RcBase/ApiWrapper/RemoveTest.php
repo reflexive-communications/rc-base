@@ -2,6 +2,7 @@
 
 namespace Civi\RcBase\ApiWrapper;
 
+use Civi\RcBase\Exception\APIException;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Utils\PHPUnit;
 use CRM_RcBase_HeadlessTestCase;
@@ -11,6 +12,48 @@ use CRM_RcBase_HeadlessTestCase;
  */
 class RemoveTest extends CRM_RcBase_HeadlessTestCase
 {
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testRemoveEntity()
+    {
+        $contact_id = PHPUnit::createIndividual();
+        Remove::entity('Contact', $contact_id);
+        self::assertNull(Get::entityByID('Contact', $contact_id), 'Contact not deleted');
+
+        // Non-existent ID (e.g. already deleted)
+        self::expectException(APIException::class);
+        self::expectExceptionMessage('Failed to delete entity');
+        Remove::entity('Contact', $contact_id);
+    }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testRemoveEntityWithInvalidIdThrowsException()
+    {
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage('ID must be positive');
+        Remove::entity('Contact', -5);
+    }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testRemoveEntityWithInvalidEntityThrowsException()
+    {
+        self::expectException(APIException::class);
+        self::expectExceptionMessage('API (InvalidEntityName, delete) does not exist');
+        Remove::entity('InvalidEntityName', 5);
+    }
+
     /**
      * @return void
      * @throws \CRM_Core_Exception

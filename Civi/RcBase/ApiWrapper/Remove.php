@@ -5,6 +5,7 @@ namespace Civi\RcBase\ApiWrapper;
 use Civi\Api4\GroupContact;
 use Civi\RcBase\Exception\APIException;
 use Civi\RcBase\Exception\InvalidArgumentException;
+use Throwable;
 
 /**
  * Common Remove Actions
@@ -16,6 +17,44 @@ use Civi\RcBase\Exception\InvalidArgumentException;
  */
 class Remove
 {
+    /**
+     * Delete entity
+     *
+     * @param string $entity Name of entity
+     * @param int $entity_id Entity ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public static function entity(string $entity, int $entity_id, bool $check_permissions = false): void
+    {
+        if ($entity_id < 1) {
+            throw new InvalidArgumentException('entity ID', 'ID must be positive');
+        }
+
+        $params = [
+            'where' => [['id', '=', $entity_id]],
+            'limit' => 1,
+            'checkPermissions' => $check_permissions,
+        ];
+        if ($entity == 'Contact') {
+            // Bring it on, delete contacts permanently
+            $params['useTrash'] = false;
+        }
+
+        try {
+            $results = civicrm_api4($entity, 'delete', $params);
+        } catch (Throwable $ex) {
+            throw new APIException($entity, 'delete', $ex->getMessage(), $ex);
+        }
+
+        if (count($results) < 1) {
+            throw new APIException($entity, 'delete', 'Failed to delete entity');
+        }
+    }
+
     /**
      * Remove contact from group
      *
