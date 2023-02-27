@@ -2,6 +2,7 @@
 
 namespace Civi\RcBase\ApiWrapper;
 
+use Civi\RcBase\Exception\APIException;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Utils\PHPUnit;
 use CRM_RcBase_HeadlessTestCase;
@@ -16,6 +17,48 @@ class RemoveTest extends CRM_RcBase_HeadlessTestCase
      * @throws \CRM_Core_Exception
      * @throws \Civi\RcBase\Exception\APIException
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testRemoveEntity()
+    {
+        $contact_id = PHPUnit::createIndividual();
+        Remove::entity('Contact', $contact_id);
+        self::assertNull(Get::entityByID('Contact', $contact_id), 'Contact not deleted');
+
+        // Non-existent ID (e.g. already deleted)
+        self::expectException(APIException::class);
+        self::expectExceptionMessage('Failed to delete entity');
+        Remove::entity('Contact', $contact_id);
+    }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testRemoveEntityWithInvalidIdThrowsException()
+    {
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage('ID must be positive');
+        Remove::entity('Contact', -5);
+    }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testRemoveEntityWithInvalidEntityThrowsException()
+    {
+        self::expectException(APIException::class);
+        self::expectExceptionMessage('API (InvalidEntityName, delete) does not exist');
+        Remove::entity('InvalidEntityName', 5);
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
      * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public function testRemoveContactFromGroup()
@@ -25,24 +68,24 @@ class RemoveTest extends CRM_RcBase_HeadlessTestCase
         $contact_id = PHPUnit::createIndividual();
 
         // Remove not added contact
-        self::assertSame(0, Remove::removeContactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (not added)');
+        self::assertSame(0, Remove::contactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (not added)');
         self::assertSame(Get::GROUP_CONTACT_STATUS_NONE, Get::groupContactStatus($contact_id, $group_id), 'Failed to remove contact (not added)');
         // Add to group then remove
         $group_contact_id = Save::addContactToGroup($contact_id, $group_id);
-        self::assertSame(1, Remove::removeContactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (added)');
+        self::assertSame(1, Remove::contactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (added)');
         self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id), 'Failed to remove contact (added)');
         // Remove removed
-        self::assertSame(0, Remove::removeContactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (removed)');
+        self::assertSame(0, Remove::contactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (removed)');
         self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id), 'Failed to remove contact (removed)');
         // Change to pending then remove
         Update::entity('GroupContact', $group_contact_id, ['status' => 'Pending']);
-        self::assertSame(1, Remove::removeContactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (pending)');
+        self::assertSame(1, Remove::contactFromGroup($contact_id, $group_id), 'Wrong number of affected contacts (pending)');
         self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id), 'Failed to remove contact (pending)');
 
         // Invalid ID
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage('Invalid ID');
-        Remove::removeContactFromGroup($contact_id, -1);
+        Remove::contactFromGroup($contact_id, -1);
     }
 
     /**
@@ -120,5 +163,26 @@ class RemoveTest extends CRM_RcBase_HeadlessTestCase
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage('Invalid ID');
         Remove::emptyGroup(-1);
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testRemoveTagFromContact()
+    {
+        // Create contact, tag add tag to contact
+        $contact_id = PHPUnit::createIndividual();
+        $tag_id = Create::tag(['name' => 'Test tag']);
+        Save::tagContact($contact_id, $tag_id);
+
+        // Remove tag
+        self::assertSame(1, Remove::tagFromContact($contact_id, $tag_id), 'Contact was not affected');
+        self::assertNull(Get::contactHasTag($contact_id, $tag_id), 'Tag not removed');
+        // Remove tag from untagged contact
+        self::assertSame(0, Remove::tagFromContact($contact_id, $tag_id), 'Contact was affected');
+        self::assertNull(Get::contactHasTag($contact_id, $tag_id), 'Tag not removed');
     }
 }

@@ -44,9 +44,7 @@ class Update
                 $entity,
                 'update',
                 [
-                    'where' => [
-                        ['id', '=', $entity_id],
-                    ],
+                    'where' => [['id', '=', $entity_id]],
                     'values' => $values,
                     'limit' => 1,
                     'checkPermissions' => $check_permissions,
