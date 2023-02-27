@@ -105,9 +105,8 @@ class Remove
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Number of removed contacts
-     * @throws \API_Exception
-     * @throws \Civi\API\Exception\UnauthorizedException
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\APIException
      */
     public static function emptyGroup(int $group_id, bool $check_permissions = false): int
     {
@@ -115,11 +114,15 @@ class Remove
             throw new InvalidArgumentException('ID');
         }
 
-        $contacts = GroupContact::update($check_permissions)
-            ->addValue('status', 'Removed')
-            ->addWhere('group_id', '=', $group_id)
-            ->addClause('OR', ['status', '=', 'Pending'], ['status', '=', 'Added'])
-            ->execute();
+        try {
+            $contacts = GroupContact::update($check_permissions)
+                ->addValue('status', 'Removed')
+                ->addWhere('group_id', '=', $group_id)
+                ->addClause('OR', ['status', '=', 'Pending'], ['status', '=', 'Added'])
+                ->execute();
+        } catch (Throwable $ex) {
+            throw new APIException('GroupContact', 'update', $ex->getMessage(), $ex);
+        }
 
         return count($contacts);
     }
