@@ -1,0 +1,24 @@
+name: Check formatting
+on:
+  workflow_call:
+jobs:
+  php:
+    name: Run php-cs-fixer
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install php-cs-fixer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          tools: php-cs-fixer:3
+
+      - name: Self checkout
+        uses: actions/checkout@v3
+
+      - name: Check code-style (PHP)
+        run: php-cs-fixer
+  other:
+    name: Run prettier
+    uses: es-progress/shell/.github/workflows/reuse-prettier.yml@main
+    with:
+      pattern: '**/*.{js,css,md,yml,json,html}'
