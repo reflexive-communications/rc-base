@@ -1,0 +1,30 @@
+name: Check formatting
+on:
+  workflow_call:
+    inputs:
+      php_cs_fixer_params:
+        description: Extra parameters to 'php-cs-fixer fix'
+        type: string
+        required: false
+        default: --dry-run -v --rules=@PSR2 .
+jobs:
+  php:
+    name: Run php-cs-fixer
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install php-cs-fixer
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 7.4
+          tools: php-cs-fixer:3
+
+      - name: Self checkout
+        uses: actions/checkout@v3
+
+      - name: Check code-style (PHP)
+        run: php-cs-fixer fix ${{ inputs.php_cs_fixer_params }}
+  other:
+    name: Run prettier
+    uses: es-progress/shell/.github/workflows/reuse-prettier.yml@main
+    with:
+      pattern: '**/*.{js,css,md,yml,json,html}'
