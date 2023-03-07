@@ -1,6 +1,12 @@
 name: Check formatting
 on:
   workflow_call:
+    inputs:
+      php_cs_fixer_params:
+        description: Extra parameters to 'php-cs-fixer fix'
+        type: string
+        required: false
+        default: --dry-run -v --rules=@PSR2 .
 jobs:
   php:
     name: Run php-cs-fixer
@@ -16,7 +22,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Check code-style (PHP)
-        run: php-cs-fixer
+        run: php-cs-fixer fix ${{ inputs.php_cs_fixer_params }}
   other:
     name: Run prettier
     uses: es-progress/shell/.github/workflows/reuse-prettier.yml@main
