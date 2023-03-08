@@ -22,7 +22,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         // Create contacts
         $contact_id_a = $this->individualCreate();
         $contact_id_b = $this->individualCreate();
-        $contact_id_c = $this->individualCreate(['is_deleted' => true,]);
+        $contact_id_c = $this->individualCreate(['is_deleted' => true]);
 
         // Create emails
         $email_a = [
@@ -93,7 +93,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
 
         $contact_id_a = $this->individualCreate(['external_identifier' => $external_id_a]);
         $contact_id_b = $this->individualCreate(['external_identifier' => $external_id_b]);
-        $contact_id_c = $this->individualCreate(['external_identifier' => $external_id_c, 'is_deleted' => true,]);
+        $contact_id_c = $this->individualCreate(['external_identifier' => $external_id_c, 'is_deleted' => true]);
 
         // Check valid id
         self::assertSame(
@@ -724,13 +724,13 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         self::assertCount(0, $subtype, 'Wrong number of subtypes: should be zero');
 
         // Create contact - sub-type A
-        $contact_id = $this->individualCreate(['contact_sub_type' => [$sub_type_a['name']],]);
+        $contact_id = $this->individualCreate(['contact_sub_type' => [$sub_type_a['name']]]);
         $subtype = CRM_RcBase_Api_Get::contactSubType($contact_id);
         self::assertCount(1, $subtype, 'Wrong number of subtypes: should be one');
         self::assertSame([$sub_type_a['name']], $subtype, 'Wrong subtype returned');
 
         // Create contact - sub-type A and B
-        $contact_id = $this->individualCreate(['contact_sub_type' => [$sub_type_a['name'], $sub_type_b['name']],]);
+        $contact_id = $this->individualCreate(['contact_sub_type' => [$sub_type_a['name'], $sub_type_b['name']]]);
         $subtype = CRM_RcBase_Api_Get::contactSubType($contact_id);
         self::assertCount(2, $subtype, 'Wrong number of subtypes: should be 2');
         self::assertSame([$sub_type_a['name'], $sub_type_b['name']], $subtype, 'Wrong subtypes returned');
@@ -750,7 +750,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testGroupContactStatus()
     {
         // Create group, contact
-        $group_data = ['title' => 'Group contact test group',];
+        $group_data = ['title' => 'Group contact test group'];
         $group_id = CRM_RcBase_Test_Utils::cvApi4Create('Group', $group_data);
         $contact_id = $this->individualCreate();
 
@@ -763,7 +763,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_NONE, $result, 'Wrong value returned for non-existent group');
 
         // Add contact to group
-        $group_contact_id = CRM_RcBase_Test_Utils::cvApi4Create('GroupContact', ['group_id' => $group_id, 'contact_id' => $contact_id,]);
+        $group_contact_id = CRM_RcBase_Test_Utils::cvApi4Create('GroupContact', ['group_id' => $group_id, 'contact_id' => $contact_id]);
         $result = CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id);
         self::assertSame(CRM_RcBase_Api_Get::GROUP_CONTACT_STATUS_ADDED, $result, 'Wrong value returned for added contact');
 
@@ -805,7 +805,7 @@ class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         $contact_id = $this->individualCreate();
 
         // Add contact to group with invalid status
-        CRM_RcBase_Test_Utils::cvApi4Create('GroupContact', ['group_id' => $group_id, 'contact_id' => $contact_id, 'status' => 'invalid',]);
+        CRM_RcBase_Test_Utils::cvApi4Create('GroupContact', ['group_id' => $group_id, 'contact_id' => $contact_id, 'status' => 'invalid']);
         self::expectException(API_Exception::class);
         self::expectExceptionMessage('Invalid status returned');
         CRM_RcBase_Api_Get::groupContactStatus($contact_id, $group_id);

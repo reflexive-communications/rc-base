@@ -12,22 +12,22 @@ class CRM_RcBase_Processor_ConfigTest extends TestCase
     public function provideStrings()
     {
         return [
-            'null' => ['option=null', ['option' => null,]],
-            'empty string' => ['option=', ['option' => '',]],
-            'string' => ['option=string', ['option' => 'string',]],
-            'integer' => ['integer=42', ['integer' => 42,]],
-            'float' => ['float=7.523', ['float' => 7.523,]],
-            'int 1' => ['bool_option=1', ['bool_option' => 1,]],
-            'int 0' => ['bool_option=0', ['bool_option' => 0,]],
-            'true' => ['bool_option=true', ['bool_option' => true,]],
-            'yes' => ['bool_option=yes', ['bool_option' => true,]],
-            'on' => ['bool_option=on', ['bool_option' => true,]],
-            'false' => ['bool_option=false', ['bool_option' => false,]],
-            'no' => ['bool_option=no', ['bool_option' => false,]],
-            'off' => ['bool_option=off', ['bool_option' => false,]],
+            'null' => ['option=null', ['option' => null]],
+            'empty string' => ['option=', ['option' => '']],
+            'string' => ['option=string', ['option' => 'string']],
+            'integer' => ['integer=42', ['integer' => 42]],
+            'float' => ['float=7.523', ['float' => 7.523]],
+            'int 1' => ['bool_option=1', ['bool_option' => 1]],
+            'int 0' => ['bool_option=0', ['bool_option' => 0]],
+            'true' => ['bool_option=true', ['bool_option' => true]],
+            'yes' => ['bool_option=yes', ['bool_option' => true]],
+            'on' => ['bool_option=on', ['bool_option' => true]],
+            'false' => ['bool_option=false', ['bool_option' => false]],
+            'no' => ['bool_option=no', ['bool_option' => false]],
+            'off' => ['bool_option=off', ['bool_option' => false]],
             'whitespace' => [
                 "whitespace= \tlong string\t\t  \tparts\t  ",
-                ['whitespace' => 'long string parts',],
+                ['whitespace' => 'long string parts'],
             ],
         ];
     }
@@ -124,7 +124,7 @@ class CRM_RcBase_Processor_ConfigTest extends TestCase
     public function testNormalScanningMode()
     {
         $ini_string = 'bool=true';
-        $expected = ['bool' => '1',];
+        $expected = ['bool' => '1'];
         $result = CRM_RcBase_Processor_Config::parseIniString($ini_string, true, INI_SCANNER_NORMAL);
         self::assertSame($expected, $result, 'Failed to parse ini string');
     }
@@ -135,7 +135,7 @@ class CRM_RcBase_Processor_ConfigTest extends TestCase
     public function testTypedScanningMode()
     {
         $ini_string = 'bool=on';
-        $expected = ['bool' => true,];
+        $expected = ['bool' => true];
         $result = CRM_RcBase_Processor_Config::parseIniString($ini_string, true, INI_SCANNER_TYPED);
         self::assertSame($expected, $result, 'Failed to parse ini string');
     }

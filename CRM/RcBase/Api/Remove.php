@@ -46,7 +46,7 @@ class CRM_RcBase_Api_Remove
                     ->setLimit(1)
                     ->execute();
                 $group_contact_id = CRM_RcBase_Api_Get::parseResultsFirst($result, 'id');
-                CRM_RcBase_Api_Update::entity('GroupContact', $group_contact_id, ['status' => 'Removed',], $check_permissions);
+                CRM_RcBase_Api_Update::entity('GroupContact', $group_contact_id, ['status' => 'Removed'], $check_permissions);
 
                 return 1;
             default:

@@ -120,7 +120,7 @@ class SetSmtpConfig extends AbstractAction
 
             // Merging new values have not changed the array -> there is no change
             if ($old === $merged) {
-                $result[] = ['no_change' => true,];
+                $result[] = ['no_change' => true];
 
                 return;
             }

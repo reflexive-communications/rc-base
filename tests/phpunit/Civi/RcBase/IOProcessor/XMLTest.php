@@ -62,13 +62,13 @@ XML;
                 'urlencode' => '%C3%B6%C3%BC%C3%B3%C5%91%C3%BA',
                 'characters' => [
                     'character' => [
-                        ['name' => 'Ms. Coder', 'actor' => 'Onlivia Áctőré',],
-                        ['name' => '"Mr. Coder"', 'actor' => "'El ActÓr'",],
+                        ['name' => 'Ms. Coder', 'actor' => 'Onlivia Áctőré'],
+                        ['name' => '"Mr. Coder"', 'actor' => "'El ActÓr'"],
                     ],
                 ],
                 'plot' => 'So, this language. It\'s like, a programming language. Or is it a scripting language? All is revealed in this thrilling horror spoof of a documentary.',
-                'great-lines' => ['line' => 'PHP solves all my web problems',],
-                'rating' => ['7', '5',],
+                'great-lines' => ['line' => 'PHP solves all my web problems'],
+                'rating' => ['7', '5'],
             ],
         ];
         $result = XML::parse($xml_string);
@@ -205,13 +205,13 @@ XML;
                 'urlencode' => '%C3%B6%C3%BC%C3%B3%C5%91%C3%BA',
                 'characters' => [
                     'character' => [
-                        ['name' => 'Ms. Coder', 'actor' => 'Onlivia Áctőré',],
-                        ['name' => '"Mr. Coder"', 'actor' => "'El ActÓr'",],
+                        ['name' => 'Ms. Coder', 'actor' => 'Onlivia Áctőré'],
+                        ['name' => '"Mr. Coder"', 'actor' => "'El ActÓr'"],
                     ],
                 ],
                 'plot' => 'So, this language. It\'s like, a programming language. Or is it a scripting language? All is revealed in this thrilling horror spoof of a documentary.',
-                'great-lines' => ['line' => 'PHP solves all my web problems',],
-                'rating' => ['7', '5',],
+                'great-lines' => ['line' => 'PHP solves all my web problems'],
+                'rating' => ['7', '5'],
             ],
         ];
 
@@ -245,7 +245,7 @@ XML;
 <foo>&xxe;<title>Star Wars</title></foo>
 XML;
         $expected = [
-            'xxe' => ['xxe' => null,],
+            'xxe' => ['xxe' => null],
             'title' => 'Star Wars',
         ];
 

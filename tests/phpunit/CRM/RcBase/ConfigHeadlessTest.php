@@ -11,7 +11,7 @@ const DEFAULT_CONFIGURATION = [
     "Key2" => 12,
     "Key3" => true,
     "Key4" => [],
-    "Key5" => ["SubKey" => "Great success!",],
+    "Key5" => ["SubKey" => "Great success!"],
 ];
 const CONFIG_NAME = "rcBase_test";
 

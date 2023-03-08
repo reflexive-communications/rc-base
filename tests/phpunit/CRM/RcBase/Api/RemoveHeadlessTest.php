@@ -18,7 +18,7 @@ class CRM_RcBase_Api_RemoveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testRemoveContactFromGroup()
     {
         // Create group, contact
-        $group_data = ['title' => 'Group contact test group',];
+        $group_data = ['title' => 'Group contact test group'];
         $group_id = CRM_RcBase_Test_Utils::cvApi4Create('Group', $group_data);
         $contact_id = $this->individualCreate();
 
@@ -58,8 +58,8 @@ class CRM_RcBase_Api_RemoveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testEmptyGroup()
     {
         // Create groups, contacts
-        $group_a = ['title' => 'Group A',];
-        $group_b = ['title' => 'Group B',];
+        $group_a = ['title' => 'Group A'];
+        $group_b = ['title' => 'Group B'];
         $group_id_a = CRM_RcBase_Test_Utils::cvApi4Create('Group', $group_a);
         $group_id_b = CRM_RcBase_Test_Utils::cvApi4Create('Group', $group_b);
         $contact_id_a = $this->individualCreate();

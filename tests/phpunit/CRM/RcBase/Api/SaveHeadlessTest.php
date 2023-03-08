@@ -154,7 +154,7 @@ class CRM_RcBase_Api_SaveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
     public function testAddContactToGroup()
     {
         // Create group, contact
-        $group_data = ['title' => 'Group contact test group',];
+        $group_data = ['title' => 'Group contact test group'];
         $group_id = CRM_RcBase_Test_Utils::cvApi4Create('Group', $group_data);
         $contact_id = $this->individualCreate();
 

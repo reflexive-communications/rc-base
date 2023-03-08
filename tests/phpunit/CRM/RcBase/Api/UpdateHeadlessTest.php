@@ -116,7 +116,7 @@ class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
         self::assertNotEquals($contact_id_previous, $contact_id_new, 'Contact IDs are not different');
 
         // Update new contact
-        $contact_new = ['external_identifier' => $contact_previous['external_identifier'],];
+        $contact_new = ['external_identifier' => $contact_previous['external_identifier']];
         self::expectException(CRM_Core_Exception::class);
         self::expectExceptionMessage('DB Error: already exists');
         CRM_RcBase_Api_Update::contact($contact_id_new, $contact_new);
