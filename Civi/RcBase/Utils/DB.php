@@ -56,11 +56,8 @@ class DB
      * Execute SQL query, wrapper for CRM_Core_DAO::executeQuery
      *
      * @param string $sql SQL statement with optionally placeholders
-     *
      *   'SELECT * FROM civicrm_contact WHERE id = %1'
-     *
      * @param array $params Params to insert to placeholders
-     *
      *   $params = [
      *     1 => [$id, 'Integer']
      *   ]
@@ -112,7 +109,7 @@ class DB
         }
 
         $sql = 'UPDATE civicrm_group_contact SET status = "Added" WHERE id = %1';
-        self::query($sql, [1 => [$record[0]['id'], 'Integer'],]);
+        self::query($sql, [1 => [$record[0]['id'], 'Integer']]);
     }
 
     /**
@@ -142,7 +139,7 @@ class DB
         }
 
         $sql = 'UPDATE civicrm_group_contact SET status = "Removed" WHERE id = %1';
-        self::query($sql, [1 => [$record[0]['id'], 'Integer'],]);
+        self::query($sql, [1 => [$record[0]['id'], 'Integer']]);
     }
 
     /**

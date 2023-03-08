@@ -37,12 +37,14 @@ class CRM_RcBase_Api_Get
 
     /**
      * Record type id when contact is the source of the activity
+     *
      * @deprecated
      */
     public const ACTIVITY_RECORD_TYPE_SOURCE = 2;
 
     /**
      * Record type id when contact is the target of the activity
+     *
      * @deprecated
      */
     public const ACTIVITY_RECORD_TYPE_TARGET = 3;
@@ -63,12 +65,14 @@ class CRM_RcBase_Api_Get
 
     /**
      * Status represents contact was removed from given group
+     *
      * @deprecated
      */
     public const GROUP_CONTACT_STATUS_REMOVED = 3;
 
     /**
      * Status represents contact is pending in given group
+     *
      * @deprecated
      */
     public const GROUP_CONTACT_STATUS_PENDING = 4;

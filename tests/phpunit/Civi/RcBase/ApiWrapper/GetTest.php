@@ -22,7 +22,7 @@ class GetTest extends CRM_RcBase_HeadlessTestCase
     public function testGetEntity()
     {
         $api_key = 'get_contact_api_key';
-        $contact_id = PHPUnit::createIndividual(0, ['api_key' => $api_key,]);
+        $contact_id = PHPUnit::createIndividual(0, ['api_key' => $api_key]);
 
         $results = Get::entity('Contact', ['where' => [['api_key', '=', $api_key]]]);
         self::assertSame('Contact', $results->entity, 'Wrong entity called');

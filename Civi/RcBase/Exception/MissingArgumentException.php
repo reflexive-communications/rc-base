@@ -30,6 +30,6 @@ class MissingArgumentException extends BaseException
             $error_msg .= ": {$details}";
         }
 
-        parent::__construct($error_msg, self::ERROR_CODE, ['argument' => $argument,], $prev_exception);
+        parent::__construct($error_msg, self::ERROR_CODE, ['argument' => $argument], $prev_exception);
     }
 }

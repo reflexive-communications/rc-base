@@ -89,7 +89,6 @@ function rc_base_civicrm_upgrade($op, CRM_Queue_Queue $queue = null)
 
 /**
  * Implements hook_civicrm_managed().
- *
  * Generate a list of entities to create/deactivate/delete when this module
  * is installed, disabled, uninstalled.
  *
@@ -102,9 +101,7 @@ function rc_base_civicrm_managed(&$entities)
 
 /**
  * Implements hook_civicrm_caseTypes().
- *
  * Generate a list of case-types.
- *
  * Note: This hook only runs in CiviCRM 4.4+.
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_caseTypes
@@ -116,9 +113,7 @@ function rc_base_civicrm_caseTypes(&$caseTypes)
 
 /**
  * Implements hook_civicrm_angularModules().
- *
  * Generate a list of Angular modules.
- *
  * Note: This hook only runs in CiviCRM 4.5+. It may
  * use features only available in v4.6+.
  *
@@ -141,7 +136,6 @@ function rc_base_civicrm_alterSettingsFolders(&$metaDataFolders = null)
 
 /**
  * Implements hook_civicrm_entityTypes().
- *
  * Declare entity types provided by this module.
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes

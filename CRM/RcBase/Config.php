@@ -38,6 +38,7 @@ abstract class CRM_RcBase_Config
         // check the save process with loading the saved content and compare
         // it with the current configuration
         $saved = Civi::settings()->get($this->configName);
+
         return $saved === $this->configuration;
     }
 
@@ -55,8 +56,10 @@ abstract class CRM_RcBase_Config
         if (is_null($saved)) {
             // cleanup the class config
             $this->configuration = null;
+
             return true;
         }
+
         return false;
     }
 
@@ -90,8 +93,10 @@ abstract class CRM_RcBase_Config
         $saved = Civi::settings()->get($this->configName);
         if ($saved === $newConfig) {
             $this->configuration = $newConfig;
+
             return true;
         }
+
         return false;
     }
 
@@ -99,7 +104,6 @@ abstract class CRM_RcBase_Config
      * Returns the configuration.
      *
      * @return array the configuration.
-     *
      * @throws CRM_Core_Exception.
      */
     public function get(): array
@@ -107,6 +111,7 @@ abstract class CRM_RcBase_Config
         if (is_null($this->configuration)) {
             throw new CRM_Core_Exception($this->configName.' config is missing.');
         }
+
         return $this->configuration;
     }
 }

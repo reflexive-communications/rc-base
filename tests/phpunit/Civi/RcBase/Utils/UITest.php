@@ -18,18 +18,18 @@ class UITest extends CRM_RcBase_HeadlessTestCase
             1 => [
                 'attributes' => ['name' => 'menu-1'],
                 'child' => [
-                    ['attributes' => ['name' => 'submenu-11'],],
-                    ['attributes' => ['name' => 'submenu-12'],],
+                    ['attributes' => ['name' => 'submenu-11']],
+                    ['attributes' => ['name' => 'submenu-12']],
                     [
                         'attributes' => ['name' => 'submenu-13'],
                         'child' => [
-                            ['attributes' => ['name' => 'sub-submenu-131'],],
+                            ['attributes' => ['name' => 'sub-submenu-131']],
                         ],
                     ],
                 ],
             ],
-            3 => ['attributes' => ['name' => 'menu-2'],],
-            4 => ['attributes' => ['name' => 'menu-3'],],
+            3 => ['attributes' => ['name' => 'menu-2']],
+            4 => ['attributes' => ['name' => 'menu-3']],
         ];
 
         // Valid paths

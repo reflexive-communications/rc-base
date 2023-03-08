@@ -101,7 +101,7 @@ class UpdateTest extends CRM_RcBase_HeadlessTestCase
 
         self::expectException(APIException::class);
         self::expectExceptionMessage('DB Error: syntax error');
-        Update::contact($contact_id, ['contact_type' => 'Invalid contact type',]);
+        Update::contact($contact_id, ['contact_type' => 'Invalid contact type']);
     }
 
     /**

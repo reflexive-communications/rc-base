@@ -88,7 +88,7 @@ class DBTest extends CRM_RcBase_HeadlessTestCase
     public function testAddRemoveContactToGroup()
     {
         $contact_id = PHPUnit::createIndividual();
-        $group_id = Create::group(['title' => 'test group',]);
+        $group_id = Create::group(['title' => 'test group']);
 
         $group_members = function () use ($contact_id, $group_id) {
             $results = GroupContact::get()

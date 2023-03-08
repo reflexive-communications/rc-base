@@ -11,7 +11,7 @@ const DEFAULT_CONFIGURATION = [
     "Key2" => 12,
     "Key3" => true,
     "Key4" => [],
-    "Key5" => [ "SubKey" => "Great success!", ],
+    "Key5" => ["SubKey" => "Great success!"],
 ];
 const CONFIG_NAME = "rcBase_test";
 
@@ -22,6 +22,7 @@ class TestConfig extends CRM_RcBase_Config
         return DEFAULT_CONFIGURATION;
     }
 }
+
 /**
  * Config class test cases.
  * It tests the testConfig class that extends from the config and implements the
@@ -37,6 +38,7 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
             ->installMe(__DIR__)
             ->apply();
     }
+
     /**
      * Create a clean DB before running tests
      *
@@ -48,6 +50,7 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
             ->installMe(__DIR__)
             ->apply(true);
     }
+
     /**
      * Create a clean DB before running tests
      *
@@ -87,6 +90,7 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
         self::assertSame(DEFAULT_CONFIGURATION, $cfg, "Invalid configuration has been returned.");
         self::assertTrue($config->create(), "Create config has to be successful multiple times.");
     }
+
     public function testCreateAfterChanges()
     {
         $config = $this->getConfig();
@@ -132,7 +136,7 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
     {
         $config = $this->getConfig();
         // preset the config.
-        Civi::settings()->add([CONFIG_NAME =>DEFAULT_CONFIGURATION]);
+        Civi::settings()->add([CONFIG_NAME => DEFAULT_CONFIGURATION]);
         self::assertSame(DEFAULT_CONFIGURATION, $config->get(), "Invalid configuration has been returned.");
 
         // remove the config
@@ -173,6 +177,7 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
         self::expectExceptionMessage(CONFIG_NAME."_config config invalid.", "Invalid exception message.");
         self::assertEmpty($config->load(), "Load result supposed to be empty.");
     }
+
     public function testLoadCreatedConfig()
     {
         $config = $this->getConfig();

@@ -17,7 +17,7 @@ class UrlEncodedFormTest extends CRM_RcBase_HeadlessTestCase
     public function testParseGet()
     {
         unset($_GET);
-        $get = ['token' => '12345', 'route' => 'echo',];
+        $get = ['token' => '12345', 'route' => 'echo'];
         $_GET = $get;
         self::assertSame($get, UrlEncodedForm::parseGet(), 'Invalid data returned.');
     }
@@ -42,7 +42,7 @@ class UrlEncodedFormTest extends CRM_RcBase_HeadlessTestCase
         unset($_POST);
         unset($_REQUEST);
 
-        $get = ['token' => '12345', 'route' => 'echo',];
+        $get = ['token' => '12345', 'route' => 'echo'];
         $post = ['string' => 'string', 'integer' => 1, 'bool' => true];
         $expected = ['token' => '12345', 'route' => 'echo', 'string' => 'string', 'integer' => 1, 'bool' => true];
 

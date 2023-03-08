@@ -76,5 +76,5 @@ with the command-line tool [cv](https://github.com/civicrm/cv).
 
 ```bash
 git clone https://github.com/reflexive-communications/rc-base.git
-cv en rc_base
+cv en rc-base
 ```

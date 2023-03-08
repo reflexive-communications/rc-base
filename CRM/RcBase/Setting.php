@@ -71,7 +71,6 @@ class CRM_RcBase_Setting
      * @param string $name Setting name
      *
      * @return mixed Setting value
-     *
      * @throws CRM_Core_Exception.
      */
     public static function get(string $name)

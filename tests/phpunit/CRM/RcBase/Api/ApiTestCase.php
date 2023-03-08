@@ -66,7 +66,6 @@ class CRM_RcBase_Api_ApiTestCase extends CRM_RcBase_HeadlessTestCase
      * @param array $extra_params Extra parameters to the Contact entity
      *
      * @return int Contact ID
-     *
      * @throws \CRM_Core_Exception
      */
     protected function individualCreate(array $extra_params = []): int

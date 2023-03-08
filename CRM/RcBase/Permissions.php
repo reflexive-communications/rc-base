@@ -11,7 +11,6 @@ class CRM_RcBase_Permissions
 {
     /**
      * Custom permissions
-     *
      * format:
      *   'permission_name' => ['label', 'description']
      */

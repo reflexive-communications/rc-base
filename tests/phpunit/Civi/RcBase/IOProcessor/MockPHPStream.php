@@ -4,17 +4,13 @@ namespace Civi\RcBase\IOProcessor;
 
 /**
  * Class to mock php:// stream wrapper
- *
  * Usage:
- *
  * // Register Mock Wrapper
  * stream_wrapper_unregister("php");
  * stream_wrapper_register("php", "\Civi\RcBase\IOProcessor\MockPhpStream");
- *
  * // Write & read data
  * file_put_contents("php://${stream}", "data");
  * $data = file_get_contents("php://${stream}");
- *
  * // Restore original wrapper
  * stream_wrapper_restore("php");
  */

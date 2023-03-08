@@ -17,7 +17,6 @@ class CRM_RcBase_Processor_XML
      * @param bool $return_array Return array or SimpleXMLElement
      *
      * @return mixed Parsed XML object
-     *
      * @throws CRM_Core_Exception
      */
     public static function parse(string $xml_string, bool $return_array = true)
@@ -60,7 +59,6 @@ class CRM_RcBase_Processor_XML
      * @param string $stream Name of XML stream
      *
      * @return mixed Parsed data
-     *
      * @throws CRM_Core_Exception
      */
     public static function parseStream(string $stream)
@@ -79,7 +77,6 @@ class CRM_RcBase_Processor_XML
      * Read XML from request body
      *
      * @return mixed Parsed XML
-     *
      * @throws CRM_Core_Exception
      */
     public static function parsePost()
