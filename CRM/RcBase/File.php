@@ -19,7 +19,6 @@ class CRM_RcBase_File
      * @param string $file_b
      *
      * @return bool
-     *
      * @throws \CRM_Core_Exception
      */
     public static function checkFilesEqual(string $file_a, string $file_b): bool

@@ -60,6 +60,7 @@ class GetSmtpConfig extends AbstractAction
 
         if (!$this->validateParams()) {
             $result[] = $this->error(sprintf('Not allowed config: %s', $this->config));
+
             return;
         }
 
@@ -69,11 +70,13 @@ class GetSmtpConfig extends AbstractAction
                 ->execute();
         } catch (Throwable $ex) {
             $result[] = $this->error($ex->getMessage());
+
             return;
         }
 
         if (count($settings) != 1 || !array_key_exists('value', $settings[0])) {
             $result[] = $this->error('Failed to retrieve mailing config');
+
             return;
         }
 

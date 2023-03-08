@@ -59,7 +59,6 @@ class SetSmtpConfig extends AbstractAction
      */
     protected ?bool $needAuth = null;
 
-
     /**
      * @inheritDoc
      */
@@ -122,6 +121,7 @@ class SetSmtpConfig extends AbstractAction
             // Merging new values have not changed the array -> there is no change
             if ($old === $merged) {
                 $result[] = ['no_change' => true,];
+
                 return;
             }
 
@@ -130,11 +130,13 @@ class SetSmtpConfig extends AbstractAction
                 ->execute();
         } catch (Throwable $ex) {
             $result[] = $this->error($ex->getMessage());
+
             return;
         }
 
         if (count($results) != 1) {
             $result[] = $this->error('Failed to set mailing config');
+
             return;
         }
 

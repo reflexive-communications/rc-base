@@ -16,7 +16,6 @@ class CRM_RcBase_Processor_JSON
      * @param string $json JSON to parse
      *
      * @return mixed Parsed JSON object
-     *
      * @throws CRM_Core_Exception
      */
     public static function parse(string $json)
@@ -45,7 +44,6 @@ class CRM_RcBase_Processor_JSON
      * @param string $stream Name of JSON stream
      *
      * @return mixed Parsed data
-     *
      * @throws CRM_Core_Exception
      */
     public static function parseStream(string $stream)
@@ -64,7 +62,6 @@ class CRM_RcBase_Processor_JSON
      * Parse JSON from request body
      *
      * @return mixed Parsed JSON
-     *
      * @throws CRM_Core_Exception
      */
     public static function parsePost()

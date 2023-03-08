@@ -9,12 +9,13 @@
 class CRM_RcBase_ExtensionUtil
 {
     public const SHORT_NAME = 'rc_base';
+
     public const LONG_NAME = 'rc-base';
+
     public const CLASS_PREFIX = 'CRM_RcBase';
 
     /**
      * Translate a string using the extension's domain.
-     *
      * If the extension doesn't have a specific translation
      * for the string, fallback to the default translations.
      *
@@ -31,6 +32,7 @@ class CRM_RcBase_ExtensionUtil
         if (!array_key_exists('domain', $params)) {
             $params['domain'] = [self::LONG_NAME, null];
         }
+
         return ts($text, $params);
     }
 
@@ -50,6 +52,7 @@ class CRM_RcBase_ExtensionUtil
         if ($file === null) {
             return rtrim(CRM_Core_Resources::singleton()->getUrl(self::LONG_NAME), '/');
         }
+
         return CRM_Core_Resources::singleton()->getUrl(self::LONG_NAME, $file);
     }
 
@@ -210,7 +213,6 @@ function _rc_base_civix_civicrm_disable()
  * @return mixed
  *   based on op. for 'check', returns array(boolean) (TRUE if upgrades are pending)
  *   for 'enqueue', returns void
- *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_upgrade
  */
 function _rc_base_civix_civicrm_upgrade($op, CRM_Queue_Queue $queue = null)
@@ -234,7 +236,6 @@ function _rc_base_civix_upgrader()
 
 /**
  * Search directory tree for files which match a glob pattern.
- *
  * Note: Dot-directories (like "..", ".git", or ".svn") will be ignored.
  * Note: Delegate to CRM_Utils_File::findFiles(), this function kept only
  * for backward compatibility of extension code that uses it.
@@ -251,7 +252,6 @@ function _rc_base_civix_find_files($dir, $pattern)
 
 /**
  * (Delegated) Implements hook_civicrm_managed().
- *
  * Find any *.mgd.php files, merge their content, and return.
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_managed
@@ -276,9 +276,7 @@ function _rc_base_civix_civicrm_managed(&$entities)
 
 /**
  * (Delegated) Implements hook_civicrm_caseTypes().
- *
  * Find any and return any files matching "xml/case/*.xml"
- *
  * Note: This hook only runs in CiviCRM 4.4+.
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_caseTypes
@@ -305,9 +303,7 @@ function _rc_base_civix_civicrm_caseTypes(&$caseTypes)
 
 /**
  * (Delegated) Implements hook_civicrm_angularModules().
- *
  * Find any and return any files matching "ang/*.ang.php"
- *
  * Note: This hook only runs in CiviCRM 4.5+.
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_angularModules
@@ -331,7 +327,6 @@ function _rc_base_civix_civicrm_angularModules(&$angularModules)
 
 /**
  * (Delegated) Implements hook_civicrm_themes().
- *
  * Find any and return any files matching "*.theme.php"
  */
 function _rc_base_civix_civicrm_themes(&$themes)
@@ -351,7 +346,6 @@ function _rc_base_civix_civicrm_themes(&$themes)
 
 /**
  * Glob wrapper which is guaranteed to return an array.
- *
  * The documentation for glob() says, "On some systems it is impossible to
  * distinguish between empty match and an error." Anecdotally, the return
  * result for an empty match is sometimes array() and sometimes FALSE.
@@ -366,6 +360,7 @@ function _rc_base_civix_civicrm_themes(&$themes)
 function _rc_base_civix_glob($pattern)
 {
     $result = glob($pattern);
+
     return is_array($result) ? $result : [];
 }
 
@@ -390,6 +385,7 @@ function _rc_base_civix_insert_navigation_menu(&$menu, $path, $item)
                 'active' => 1,
             ], $item),
         ];
+
         return true;
     } else {
         // Find an recurse into the next level down
@@ -404,6 +400,7 @@ function _rc_base_civix_insert_navigation_menu(&$menu, $path, $item)
                 $found = _rc_base_civix_insert_navigation_menu($entry['child'], implode('/', $path), $item);
             }
         }
+
         return $found;
     }
 }
@@ -469,7 +466,6 @@ function _rc_base_civix_civicrm_alterSettingsFolders(&$metaDataFolders = null)
 
 /**
  * (Delegated) Implements hook_civicrm_entityTypes().
- *
  * Find any *.entityType.php files, merge their content, and return.
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_entityTypes

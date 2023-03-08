@@ -93,7 +93,6 @@ class CRM_RcBase_Processor_Base
 
     /**
      * Validate input
-     *
      * Throws exception if problem with input
      * No exception means input OK
      *
@@ -113,7 +112,6 @@ class CRM_RcBase_Processor_Base
      * @param array $allowed_values Allowed values for this input
      *
      * @return void
-     *
      * @throws CRM_Core_Exception
      */
     public static function validateInput(

@@ -2,7 +2,6 @@
 
 /**
  * Common Update Actions
- *
  * Wrapper around APIv4
  *
  * @deprecated use \Civi\RcBase\ApiWrapper\Update instead
@@ -21,7 +20,6 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated entity data
-     *
      * @throws CRM_Core_Exception
      */
     public static function entity(
@@ -62,7 +60,6 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Contact data
-     *
      * @throws CRM_Core_Exception
      */
     public static function contact(int $contact_id, array $values = [], bool $check_permissions = false): array
@@ -78,7 +75,6 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Email data
-     *
      * @throws CRM_Core_Exception
      */
     public static function email(int $email_id, array $values = [], bool $check_permissions = false): array
@@ -94,7 +90,6 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Phone data
-     *
      * @throws CRM_Core_Exception
      */
     public static function phone(int $phone_id, array $values = [], bool $check_permissions = false): array
@@ -110,7 +105,6 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Address data
-     *
      * @throws CRM_Core_Exception
      */
     public static function address(int $address_id, array $values = [], bool $check_permissions = false): array
@@ -126,7 +120,6 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Relationship data
-     *
      * @throws CRM_Core_Exception
      */
     public static function relationship(
@@ -145,7 +138,6 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Activity data
-     *
      * @throws CRM_Core_Exception
      */
     public static function activity(int $activity_id, array $values = [], bool $check_permissions = false): array
@@ -161,7 +153,6 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Group data
-     *
      * @throws \CRM_Core_Exception
      */
     public static function group(int $group_id, array $values = [], bool $check_permissions = false): array
@@ -177,7 +168,6 @@ class CRM_RcBase_Api_Update
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return array Updated Tag data
-     *
      * @throws \CRM_Core_Exception
      */
     public static function tag(int $tag_id, array $values = [], bool $check_permissions = false): array

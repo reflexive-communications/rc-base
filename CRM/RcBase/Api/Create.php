@@ -4,7 +4,6 @@ use Civi\Api4\OptionValue;
 
 /**
  * Common Create Actions
- *
  * Wrapper around APIv4
  *
  * @deprecated use \Civi\RcBase\ApiWrapper\Create instead
@@ -22,7 +21,6 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int ID of created entity
-     *
      * @throws CRM_Core_Exception
      */
     public static function entity(string $entity, array $values = [], bool $check_permissions = false): int
@@ -51,7 +49,6 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Contact ID
-     *
      * @throws CRM_Core_Exception
      */
     public static function contact(array $values = [], bool $check_permissions = false): int
@@ -67,7 +64,6 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Email ID
-     *
      * @throws CRM_Core_Exception
      */
     public static function email(int $contact_id, array $values = [], bool $check_permissions = false): int
@@ -89,7 +85,6 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Phone ID
-     *
      * @throws CRM_Core_Exception
      */
     public static function phone(int $contact_id, array $values = [], bool $check_permissions = false): int
@@ -111,7 +106,6 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Address ID
-     *
      * @throws CRM_Core_Exception
      */
     public static function address(int $contact_id, array $values = [], bool $check_permissions = false): int
@@ -133,7 +127,6 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Relationship ID
-     *
      * @throws CRM_Core_Exception
      */
     public static function relationship(int $contact_id, array $values = [], bool $check_permissions = false): int
@@ -155,7 +148,6 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Contribution ID
-     *
      * @throws CRM_Core_Exception
      */
     public static function contribution(int $contact_id, array $values = [], bool $check_permissions = false): int
@@ -177,7 +169,6 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Activity ID
-     *
      * @throws CRM_Core_Exception
      */
     public static function activity(int $contact_id, array $values = [], bool $check_permissions = false): int
@@ -199,7 +190,6 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int EntityTag ID
-     *
      * @throws CRM_Core_Exception
      */
     public static function tagContact(int $contact_id, int $tag_id, bool $check_permissions = false): int
@@ -224,7 +214,6 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Group ID
-     *
      * @throws CRM_Core_Exception
      */
     public static function group(array $values = [], bool $check_permissions = false): int
@@ -239,7 +228,6 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Tag ID
-     *
      * @throws CRM_Core_Exception
      */
     public static function tag(array $values = [], bool $check_permissions = false): int
@@ -255,7 +243,6 @@ class CRM_RcBase_Api_Create
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return string|null Value of option
-     *
      * @throws \API_Exception
      * @throws \CRM_Core_Exception
      * @throws \Civi\API\Exception\UnauthorizedException

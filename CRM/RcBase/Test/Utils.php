@@ -18,7 +18,6 @@ class CRM_RcBase_Test_Utils
      * @param string $query SQL query
      *
      * @return array Query results indexed by column name
-     *
      * @throws \CRM_Core_Exception
      * @deprecated use \Civi\RcBase\Utils\DB::query()
      */
@@ -39,7 +38,6 @@ class CRM_RcBase_Test_Utils
      * @param string $table_name Name of table
      *
      * @return int Next auto-increment value
-     *
      * @throws \CRM_Core_Exception
      * @deprecated Use \Civi\RcBase\Utils\DB::getNextAutoIncrementValue instead
      */

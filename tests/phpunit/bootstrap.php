@@ -56,6 +56,7 @@ function cv($cmd, $decode = 'json')
             if (substr(trim($result), 0, 12) !== '/*BEGINPHP*/' || substr(trim($result), -10) !== '/*ENDPHP*/') {
                 throw new RuntimeException("Command failed ($cmd):\n$result");
             }
+
             return $result;
 
         case 'json':

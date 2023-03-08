@@ -21,7 +21,6 @@ class CRM_RcBase_Api_Remove
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Number of affected contacts (1 if contact was in group before, 0 if wasn't)
-     *
      * @throws \API_Exception
      * @throws \CRM_Core_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
@@ -48,6 +47,7 @@ class CRM_RcBase_Api_Remove
                     ->execute();
                 $group_contact_id = CRM_RcBase_Api_Get::parseResultsFirst($result, 'id');
                 CRM_RcBase_Api_Update::entity('GroupContact', $group_contact_id, ['status' => 'Removed',], $check_permissions);
+
                 return 1;
             default:
                 throw new API_Exception(sprintf('Invalid status returned: %s', $status));
@@ -61,7 +61,6 @@ class CRM_RcBase_Api_Remove
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
      * @return int Number of removed contacts
-     *
      * @throws \API_Exception
      * @throws \Civi\API\Exception\UnauthorizedException
      */

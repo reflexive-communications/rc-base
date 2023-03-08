@@ -19,7 +19,6 @@ class CRM_RcBase_Processor_Config
      * @param int $scanner_mode Scanner mode
      *
      * @return mixed Parsed config
-     *
      * @throws \CRM_Core_Exception
      */
     public static function parseIniString(
@@ -44,7 +43,6 @@ class CRM_RcBase_Processor_Config
      * @param int $scanner_mode Scanner mode
      *
      * @return mixed Parsed config
-     *
      * @throws \CRM_Core_Exception
      */
     public static function parseIniFile(
