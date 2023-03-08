@@ -6,7 +6,7 @@ on:
         description: Options to 'php-cs-fixer fix'
         type: string
         required: false
-        default: --dry-run -v --rules=@PSR2 .
+        default: --dry-run -v --allow-risky=yes --rules=@PSR12:risky .
 jobs:
   php:
     name: PHP code-style
