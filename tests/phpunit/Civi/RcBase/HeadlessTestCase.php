@@ -26,17 +26,9 @@ class HeadlessTestCase extends TestCase implements HeadlessInterface
     }
 
     /**
-     * The setupHeadless function runs at the start of each test case, right before
-     * the headless environment reboots.
-     * It should perform any necessary steps required for putting the database
-     * in a consistent baseline -- such as loading schema and extensions.
-     * The utility `\Civi\Test::headless()` provides a number of helper functions
-     * for managing this setup, and it includes optimizations to avoid redundant
-     * setup work.
-     *
-     * @see \Civi\Test
+     * @return void
      */
-    public function setUpHeadless()
+    public function setUpHeadless(): void
     {
     }
 }
