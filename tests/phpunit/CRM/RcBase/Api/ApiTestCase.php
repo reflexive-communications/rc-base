@@ -1,10 +1,12 @@
 <?php
 
+use Civi\RcBase\HeadlessTestCase;
+
 /**
  * Base test class for API headless tests
  * Contains helper functions for testing
  */
-class CRM_RcBase_Api_ApiTestCase extends CRM_RcBase_HeadlessTestCase
+class CRM_RcBase_Api_ApiTestCase extends HeadlessTestCase
 {
     /**
      * External ID counter

@@ -1,9 +1,11 @@
 <?php
 
+use Civi\RcBase\HeadlessTestCase;
+
 /**
  * @group headless
  */
-class CRM_RcBase_Processor_XMLTest extends CRM_RcBase_HeadlessTestCase
+class CRM_RcBase_Processor_XMLTest extends HeadlessTestCase
 {
     /**
      * @throws \CRM_Core_Exception

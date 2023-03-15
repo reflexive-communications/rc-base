@@ -1,9 +1,11 @@
 <?php
 
+use Civi\RcBase\HeadlessTestCase;
+
 /**
  * @group headless
  */
-class CRM_RcBase_File_FileTest extends CRM_RcBase_HeadlessTestCase
+class CRM_RcBase_File_FileTest extends HeadlessTestCase
 {
     public function provideFilesToCheck(): array
     {

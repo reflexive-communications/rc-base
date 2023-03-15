@@ -2,12 +2,12 @@
 
 namespace Civi\RcBase\Utils;
 
-use CRM_RcBase_HeadlessTestCase;
+use Civi\RcBase\HeadlessTestCase;
 
 /**
  * @group headless
  */
-class ArraysTest extends CRM_RcBase_HeadlessTestCase
+class ArraysTest extends HeadlessTestCase
 {
     /**
      * @return void

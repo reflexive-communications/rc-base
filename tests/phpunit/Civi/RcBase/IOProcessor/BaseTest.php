@@ -2,9 +2,9 @@
 
 namespace Civi\RcBase\IOProcessor;
 
+use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Exception\MissingArgumentException;
-use CRM_RcBase_HeadlessTestCase;
 use Throwable;
 
 /**
@@ -12,7 +12,7 @@ use Throwable;
  *
  * @group headless
  */
-class BaseTest extends CRM_RcBase_HeadlessTestCase
+class BaseTest extends HeadlessTestCase
 {
     /**
      * Content types

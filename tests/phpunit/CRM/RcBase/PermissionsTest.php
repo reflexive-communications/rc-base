@@ -1,11 +1,13 @@
 <?php
 
+use Civi\RcBase\HeadlessTestCase;
+
 /**
  * Test Permissions class
  *
  * @group headless
  */
-class CRM_RcBase_PermissionsTest extends CRM_RcBase_HeadlessTestCase
+class CRM_RcBase_PermissionsTest extends HeadlessTestCase
 {
     /**
      * Test custom permissions are available

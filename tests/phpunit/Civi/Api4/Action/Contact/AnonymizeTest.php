@@ -2,19 +2,14 @@
 
 namespace Civi\Api4\Action\Contact;
 
-use Civi\Api4\Address;
 use Civi\Api4\Contact;
-use Civi\Api4\Email;
-use Civi\Api4\IM;
-use Civi\Api4\Phone;
-use Civi\Api4\Website;
+use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Utils\PHPUnit;
-use CRM_RcBase_HeadlessTestCase;
 
 /**
  * @group headless
  */
-class AnonymizeTest extends CRM_RcBase_HeadlessTestCase
+class AnonymizeTest extends HeadlessTestCase
 {
     /**
      * @return void

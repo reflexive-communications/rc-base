@@ -2,14 +2,14 @@
 
 namespace Civi\RcBase\Exception;
 
+use Civi\RcBase\HeadlessTestCase;
 use CRM_Core_Error;
 use CRM_Core_Exception;
-use CRM_RcBase_HeadlessTestCase;
 
 /**
  * @group headless
  */
-class ExceptionTest extends CRM_RcBase_HeadlessTestCase
+class ExceptionTest extends HeadlessTestCase
 {
     /**
      * @return void

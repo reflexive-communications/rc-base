@@ -6,15 +6,15 @@ use Civi\Api4\Activity;
 use Civi\Api4\Contact;
 use Civi\Api4\GroupContact;
 use Civi\RcBase\ApiWrapper\Create;
+use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Exception\DataBaseException;
 use Civi\RcBase\Exception\MissingArgumentException;
 use CRM_Contact_BAO_Contact;
-use CRM_RcBase_HeadlessTestCase;
 
 /**
  * @group headless
  */
-class DBTest extends CRM_RcBase_HeadlessTestCase
+class DBTest extends HeadlessTestCase
 {
     /**
      * @return void

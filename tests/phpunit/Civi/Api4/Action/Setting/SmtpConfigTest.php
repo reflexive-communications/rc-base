@@ -3,14 +3,14 @@
 namespace Civi\Api4\Action\Setting;
 
 use Civi\Api4\Setting;
-use CRM_RcBase_HeadlessTestCase;
+use Civi\RcBase\HeadlessTestCase;
 
 /**
  * Test Get/Set SMTP Config API
  *
  * @group headless
  */
-class SmtpConfigTest extends CRM_RcBase_HeadlessTestCase
+class SmtpConfigTest extends HeadlessTestCase
 {
     public const DEFAULT_SMTP_CONFIG
         = [

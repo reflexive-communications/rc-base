@@ -1,9 +1,11 @@
 <?php
 
+use Civi\RcBase\HeadlessTestCase;
+
 /**
  * @group headless
  */
-class CRM_RcBase_Processor_BaseTest extends CRM_RcBase_HeadlessTestCase
+class CRM_RcBase_Processor_BaseTest extends HeadlessTestCase
 {
     /**
      * Content types

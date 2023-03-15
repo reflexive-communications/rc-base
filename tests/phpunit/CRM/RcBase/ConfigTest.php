@@ -1,5 +1,7 @@
 <?php
 
+use Civi\RcBase\HeadlessTestCase;
+
 const DEFAULT_CONFIGURATION = [
     "Key1" => "value1",
     "Key2" => 12,
@@ -24,7 +26,7 @@ class TestConfig extends CRM_RcBase_Config
  *
  * @group headless
  */
-class CRM_RcBase_ConfigTest extends CRM_RcBase_HeadlessTestCase
+class CRM_RcBase_ConfigTest extends HeadlessTestCase
 {
     private function getConfig()
     {

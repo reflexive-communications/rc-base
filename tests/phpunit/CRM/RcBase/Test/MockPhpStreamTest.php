@@ -1,9 +1,11 @@
 <?php
 
+use Civi\RcBase\HeadlessTestCase;
+
 /**
  * @group headless
  */
-class CRM_RcBase_Test_MockPhpStreamTest extends CRM_RcBase_HeadlessTestCase
+class CRM_RcBase_Test_MockPhpStreamTest extends HeadlessTestCase
 {
     /**
      * Provide streams for the php:// stream wrapper

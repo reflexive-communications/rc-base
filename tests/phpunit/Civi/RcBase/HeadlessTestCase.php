@@ -1,5 +1,7 @@
 <?php
 
+namespace Civi\RcBase;
+
 use Civi\Test;
 use Civi\Test\HeadlessInterface;
 use PHPUnit\Framework\TestCase;
@@ -7,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 /**
  * Base headless Test Case
  */
-class CRM_RcBase_HeadlessTestCase extends TestCase implements HeadlessInterface
+class HeadlessTestCase extends TestCase implements HeadlessInterface
 {
     /**
      * Apply a forced rebuild of DB, thus

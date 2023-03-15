@@ -2,14 +2,12 @@
 
 namespace Civi\RcBase\Api4;
 
-require_once 'Civi/RcBase/Api4/ActionUtilsTrait.php';
-
-use CRM_RcBase_HeadlessTestCase;
+use Civi\RcBase\HeadlessTestCase;
 
 /**
  * @group headless
  */
-class ActionUtilsTraitTest extends CRM_RcBase_HeadlessTestCase
+class ActionUtilsTraitTest extends HeadlessTestCase
 {
     use ActionUtilsTrait;
 

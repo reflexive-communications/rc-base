@@ -2,15 +2,15 @@
 
 namespace Civi\RcBase\ApiWrapper;
 
+use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Exception\APIException;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Utils\PHPUnit;
-use CRM_RcBase_HeadlessTestCase;
 
 /**
  * @group headless
  */
-class RemoveTest extends CRM_RcBase_HeadlessTestCase
+class RemoveTest extends HeadlessTestCase
 {
     /**
      * @return void

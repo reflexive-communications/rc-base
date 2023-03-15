@@ -2,14 +2,14 @@
 
 namespace Civi\RcBase\IOProcessor;
 
-use CRM_RcBase_HeadlessTestCase;
+use Civi\RcBase\HeadlessTestCase;
 
 /**
  * Test URL encoded form Processor class
  *
  * @group headless
  */
-class UrlEncodedFormTest extends CRM_RcBase_HeadlessTestCase
+class UrlEncodedFormTest extends HeadlessTestCase
 {
     /**
      * @return void
