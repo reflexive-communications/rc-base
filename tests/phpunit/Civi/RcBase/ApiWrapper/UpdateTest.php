@@ -3,10 +3,10 @@
 namespace Civi\RcBase\ApiWrapper;
 
 use Civi\Api4\Contact;
-use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Exception\APIException;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Exception\MissingArgumentException;
+use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Utils\PHPUnit;
 use CRM_RcBase_Api_Get;
 

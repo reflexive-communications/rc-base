@@ -6,9 +6,9 @@ use Civi\Api4\Activity;
 use Civi\Api4\Contact;
 use Civi\Api4\GroupContact;
 use Civi\RcBase\ApiWrapper\Create;
-use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Exception\DataBaseException;
 use Civi\RcBase\Exception\MissingArgumentException;
+use Civi\RcBase\HeadlessTestCase;
 use CRM_Contact_BAO_Contact;
 
 /**

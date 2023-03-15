@@ -2,9 +2,9 @@
 
 namespace Civi\RcBase\IOProcessor;
 
-use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Exception\RunTimeException;
+use Civi\RcBase\HeadlessTestCase;
 
 /**
  * @group headless

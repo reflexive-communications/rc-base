@@ -2,9 +2,9 @@
 
 namespace Civi\RcBase\ApiWrapper;
 
-use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Exception\APIException;
 use Civi\RcBase\Exception\InvalidArgumentException;
+use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Utils\PHPUnit;
 
 /**

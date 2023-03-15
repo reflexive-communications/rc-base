@@ -2,9 +2,9 @@
 
 namespace Civi\RcBase\IOProcessor;
 
-use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Exception\MissingArgumentException;
+use Civi\RcBase\HeadlessTestCase;
 use Throwable;
 
 /**
@@ -154,7 +154,7 @@ class BaseTest extends HeadlessTestCase
             'UTF-8' => 'kéményŐÜÖÓúőü$!#~`\\|',
         ];
         $expected = [
-            "hello" => 'this is a test',
+            'hello' => 'this is a test',
             'sub_array' => [
                 'first',
                 'se cond',

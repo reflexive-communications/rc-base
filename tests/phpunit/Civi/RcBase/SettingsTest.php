@@ -19,7 +19,7 @@ class SettingsTest extends HeadlessTestCase
     public function provideSettings(): array
     {
         $object = new stdClass();
-        $object->property = "value";
+        $object->property = 'value';
 
         return [
             'string' => ['some string'],
