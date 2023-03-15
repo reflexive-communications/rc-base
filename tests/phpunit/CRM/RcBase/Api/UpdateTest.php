@@ -5,7 +5,7 @@
  *
  * @group headless
  */
-class CRM_RcBase_Api_UpdateHeadlessTest extends CRM_RcBase_Api_ApiTestCase
+class CRM_RcBase_Api_UpdateTest extends CRM_RcBase_Api_ApiTestCase
 {
     /**
      * @throws CRM_Core_Exception

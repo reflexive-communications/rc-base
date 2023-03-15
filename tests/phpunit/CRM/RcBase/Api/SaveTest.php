@@ -7,7 +7,7 @@ use Civi\Api4\GroupContact;
  *
  * @group headless
  */
-class CRM_RcBase_Api_SaveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
+class CRM_RcBase_Api_SaveTest extends CRM_RcBase_Api_ApiTestCase
 {
     /**
      * @throws \API_Exception

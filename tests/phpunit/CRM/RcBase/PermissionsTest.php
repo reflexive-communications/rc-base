@@ -5,7 +5,7 @@
  *
  * @group headless
  */
-class CRM_RcBase_PermissionsHeadlessTest extends CRM_RcBase_HeadlessTestCase
+class CRM_RcBase_PermissionsTest extends CRM_RcBase_HeadlessTestCase
 {
     /**
      * Test custom permissions are available

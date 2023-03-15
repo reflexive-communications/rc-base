@@ -24,7 +24,7 @@ class TestConfig extends CRM_RcBase_Config
  *
  * @group headless
  */
-class CRM_RcBase_ConfigHeadlessTest extends CRM_RcBase_HeadlessTestCase
+class CRM_RcBase_ConfigTest extends CRM_RcBase_HeadlessTestCase
 {
     private function getConfig()
     {

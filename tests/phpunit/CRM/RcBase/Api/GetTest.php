@@ -10,7 +10,7 @@ use Civi\RcBase\Utils\PHPUnit;
  *
  * @group headless
  */
-class CRM_RcBase_Api_GetHeadlessTest extends CRM_RcBase_Api_ApiTestCase
+class CRM_RcBase_Api_GetTest extends CRM_RcBase_Api_ApiTestCase
 {
     /**
      * @throws UnauthorizedException
