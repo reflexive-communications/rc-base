@@ -3,8 +3,6 @@
 use Civi\Api4\GroupContact;
 
 /**
- * Test API Save class
- *
  * @group headless
  */
 class CRM_RcBase_Api_SaveTest extends CRM_RcBase_Api_ApiTestCase

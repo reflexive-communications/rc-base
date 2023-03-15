@@ -5,8 +5,6 @@ namespace Civi\RcBase\IOProcessor;
 use Civi\RcBase\HeadlessTestCase;
 
 /**
- * Test URL encoded form Processor class
- *
  * @group headless
  */
 class UrlEncodedFormTest extends HeadlessTestCase

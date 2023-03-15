@@ -1,8 +1,6 @@
 <?php
 
 /**
- * Test API Update class
- *
  * @group headless
  */
 class CRM_RcBase_Api_UpdateTest extends CRM_RcBase_Api_ApiTestCase

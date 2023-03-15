@@ -7,8 +7,6 @@ use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Exception\RunTimeException;
 
 /**
- * Test JSON Processor class
- *
  * @group headless
  */
 class JSONTest extends HeadlessTestCase

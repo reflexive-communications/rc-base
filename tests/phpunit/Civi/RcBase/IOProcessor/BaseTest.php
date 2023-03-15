@@ -8,8 +8,6 @@ use Civi\RcBase\Exception\MissingArgumentException;
 use Throwable;
 
 /**
- * Test Base Processor class
- *
  * @group headless
  */
 class BaseTest extends HeadlessTestCase

@@ -6,8 +6,6 @@ use Civi\RcBase\ApiWrapper\Create;
 use Civi\RcBase\Utils\PHPUnit;
 
 /**
- * Test API Get class
- *
  * @group headless
  */
 class CRM_RcBase_Api_GetTest extends CRM_RcBase_Api_ApiTestCase

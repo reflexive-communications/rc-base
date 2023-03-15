@@ -3,8 +3,6 @@
 use Civi\RcBase\HeadlessTestCase;
 
 /**
- * Test Utils class
- *
  * @group headless
  */
 class CRM_RcBase_Test_UtilsTest extends HeadlessTestCase

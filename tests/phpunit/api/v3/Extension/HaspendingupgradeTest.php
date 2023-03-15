@@ -3,8 +3,6 @@
 use Civi\RcBase\HeadlessTestCase;
 
 /**
- * Extension.Haspendingupgrade API Test Case
- *
  * @group headless
  */
 class api_v3_Extension_HaspendingupgradeTest extends HeadlessTestCase

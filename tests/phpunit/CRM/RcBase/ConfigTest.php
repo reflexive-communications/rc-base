@@ -20,10 +20,6 @@ class TestConfig extends CRM_RcBase_Config
 }
 
 /**
- * Config class test cases.
- * It tests the testConfig class that extends from the config and implements the
- * defaultConfiguration method.
- *
  * @group headless
  */
 class CRM_RcBase_ConfigTest extends HeadlessTestCase

@@ -3,8 +3,7 @@
 use Civi\RcBase\HeadlessTestCase;
 
 /**
- * Base test class for API headless tests
- * Contains helper functions for testing
+ * @group headless
  */
 class CRM_RcBase_Api_ApiTestCase extends HeadlessTestCase
 {

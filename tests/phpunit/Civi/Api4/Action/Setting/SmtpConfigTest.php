@@ -6,8 +6,6 @@ use Civi\Api4\Setting;
 use Civi\RcBase\HeadlessTestCase;
 
 /**
- * Test Get/Set SMTP Config API
- *
  * @group headless
  */
 class SmtpConfigTest extends HeadlessTestCase

@@ -3,8 +3,6 @@
 use Civi\RcBase\HeadlessTestCase;
 
 /**
- * Test Permissions class
- *
  * @group headless
  */
 class CRM_RcBase_PermissionsTest extends HeadlessTestCase

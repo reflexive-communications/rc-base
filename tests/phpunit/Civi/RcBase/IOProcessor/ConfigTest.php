@@ -6,8 +6,6 @@ use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Exception\InvalidArgumentException;
 
 /**
- * Test Config Processor class
- *
  * @group headless
  */
 class ConfigTest extends HeadlessTestCase

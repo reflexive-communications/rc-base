@@ -7,7 +7,7 @@ use Civi\Test\HeadlessInterface;
 use PHPUnit\Framework\TestCase;
 
 /**
- * Base headless Test Case
+ * @group headless
  */
 class HeadlessTestCase extends TestCase implements HeadlessInterface
 {

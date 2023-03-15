@@ -7,8 +7,6 @@ use Civi\RcBase\Exception\InvalidArgumentException;
 use SimpleXMLElement;
 
 /**
- * Test XML Processor class
- *
  * @group headless
  */
 class XMLTest extends HeadlessTestCase
