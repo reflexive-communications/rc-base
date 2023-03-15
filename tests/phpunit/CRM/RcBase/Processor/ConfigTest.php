@@ -1,13 +1,9 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
 /**
- * Test Config Processor class
- *
- * @group unit
+ * @group headless
  */
-class CRM_RcBase_Processor_ConfigTest extends TestCase
+class CRM_RcBase_Processor_ConfigTest extends CRM_RcBase_HeadlessTestCase
 {
     public function provideStrings()
     {

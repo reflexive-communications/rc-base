@@ -1,13 +1,9 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
 /**
- * Test XML Processor class
- *
- * @group unit
+ * @group headless
  */
-class CRM_RcBase_Processor_XMLTest extends TestCase
+class CRM_RcBase_Processor_XMLTest extends CRM_RcBase_HeadlessTestCase
 {
     /**
      * @throws \CRM_Core_Exception

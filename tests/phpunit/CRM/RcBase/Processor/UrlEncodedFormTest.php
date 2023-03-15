@@ -1,13 +1,9 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
-
 /**
- * Test URL encoded form Processor class
- *
- * @group unit
+ * @group headless
  */
-class CRM_RcBase_Processor_UrlEncodedFormTest extends TestCase
+class CRM_RcBase_Processor_UrlEncodedFormTest extends CRM_RcBase_HeadlessTestCase
 {
     public function testParseGet()
     {

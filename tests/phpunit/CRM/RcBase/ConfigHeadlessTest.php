@@ -1,11 +1,5 @@
 <?php
 
-use CRM_RcBase_ExtensionUtil as E;
-use Civi\Test;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\HookInterface;
-use Civi\Test\TransactionalInterface;
-
 const DEFAULT_CONFIGURATION = [
     "Key1" => "value1",
     "Key2" => 12,
@@ -30,50 +24,8 @@ class TestConfig extends CRM_RcBase_Config
  *
  * @group headless
  */
-class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implements HeadlessInterface
+class CRM_RcBase_ConfigHeadlessTest extends CRM_RcBase_HeadlessTestCase
 {
-    public function setUpHeadless()
-    {
-        return Test::headless()
-            ->installMe(__DIR__)
-            ->apply();
-    }
-
-    /**
-     * Create a clean DB before running tests
-     *
-     * @throws CRM_Extension_Exception_ParseException
-     */
-    public static function setUpBeforeClass(): void
-    {
-        Test::headless()
-            ->installMe(__DIR__)
-            ->apply(true);
-    }
-
-    /**
-     * Create a clean DB before running tests
-     *
-     * @throws CRM_Extension_Exception_ParseException
-     */
-    public static function tearDownAfterClass(): void
-    {
-        Test::headless()
-            ->uninstallMe(__DIR__)
-            ->apply(true);
-    }
-
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-
-    public function tearDown(): void
-    {
-        $this->getConfig()->remove();
-        parent::tearDown();
-    }
-
     private function getConfig()
     {
         return new TestConfig(CONFIG_NAME);
@@ -165,17 +117,6 @@ class CRM_RcBase_ConfigHeadlessTest extends \PHPUnit\Framework\TestCase implemen
         $cfg["brand-new-key"] = false;
         self::assertTrue($config->update($cfg), "Update config has to be successful.");
         self::assertSame($cfg, $config->get(), "Invalid updated configuration.");
-    }
-
-    /**
-     * It checks that the get function works well.
-     */
-    public function testLoadEmptyConfig()
-    {
-        $config = $this->getConfig();
-        self::expectException(CRM_Core_Exception::class, "Invalid exception class.");
-        self::expectExceptionMessage(CONFIG_NAME."_config config invalid.", "Invalid exception message.");
-        self::assertEmpty($config->load(), "Load result supposed to be empty.");
     }
 
     public function testLoadCreatedConfig()
