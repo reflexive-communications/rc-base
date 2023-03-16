@@ -1,13 +1,11 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+use Civi\RcBase\HeadlessTestCase;
 
 /**
- * Test Base Processor class
- *
- * @group unit
+ * @group headless
  */
-class CRM_RcBase_Processor_BaseTest extends TestCase
+class CRM_RcBase_Processor_BaseTest extends HeadlessTestCase
 {
     /**
      * Content types

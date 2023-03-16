@@ -1,9 +1,11 @@
 <?php
 
+use Civi\RcBase\HeadlessTestCase;
+
 /**
  * @group headless
  */
-class CRM_RcBase_SettingTest extends CRM_RcBase_HeadlessTestCase
+class CRM_RcBase_SettingTest extends HeadlessTestCase
 {
     /**
      * @return array

@@ -3,15 +3,13 @@
 namespace Civi\RcBase\IOProcessor;
 
 use Civi\RcBase\Exception\InvalidArgumentException;
-use CRM_RcBase_HeadlessTestCase;
+use Civi\RcBase\HeadlessTestCase;
 use SimpleXMLElement;
 
 /**
- * Test XML Processor class
- *
  * @group headless
  */
-class XMLTest extends CRM_RcBase_HeadlessTestCase
+class XMLTest extends HeadlessTestCase
 {
     /**
      * @return void

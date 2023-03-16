@@ -3,13 +3,13 @@
 namespace Civi\RcBase\ApiWrapper;
 
 use Civi\RcBase\Exception\APIException;
+use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Utils\PHPUnit;
-use CRM_RcBase_HeadlessTestCase;
 
 /**
  * @group headless
  */
-class SaveTest extends CRM_RcBase_HeadlessTestCase
+class SaveTest extends HeadlessTestCase
 {
     /**
      * @return void

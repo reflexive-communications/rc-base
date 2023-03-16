@@ -1,13 +1,11 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+use Civi\RcBase\HeadlessTestCase;
 
 /**
- * Test CRM_RcBase_File
- *
- * @group unit
+ * @group headless
  */
-class CRM_RcBase_File_FileTest extends TestCase
+class CRM_RcBase_File_FileTest extends HeadlessTestCase
 {
     public function provideFilesToCheck(): array
     {

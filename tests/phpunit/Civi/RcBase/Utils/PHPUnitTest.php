@@ -3,14 +3,14 @@
 namespace Civi\RcBase\Utils;
 
 use Civi\Api4\Email;
+use Civi\RcBase\HeadlessTestCase;
 use CRM_Core_Session;
 use CRM_RcBase_Api_Get;
-use CRM_RcBase_HeadlessTestCase;
 
 /**
  * @group headless
  */
-class PHPUnitTest extends CRM_RcBase_HeadlessTestCase
+class PHPUnitTest extends HeadlessTestCase
 {
     /**
      * @return void

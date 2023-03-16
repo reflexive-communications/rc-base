@@ -3,11 +3,9 @@
 use Civi\Api4\GroupContact;
 
 /**
- * Test API Remove class
- *
  * @group headless
  */
-class CRM_RcBase_Api_RemoveHeadlessTest extends CRM_RcBase_Api_ApiTestCase
+class CRM_RcBase_Api_RemoveTest extends CRM_RcBase_Api_ApiTestCase
 {
     /**
      * @return void

@@ -4,14 +4,12 @@ namespace Civi\RcBase\IOProcessor;
 
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Exception\RunTimeException;
-use CRM_RcBase_HeadlessTestCase;
+use Civi\RcBase\HeadlessTestCase;
 
 /**
- * Test JSON Processor class
- *
  * @group headless
  */
-class JSONTest extends CRM_RcBase_HeadlessTestCase
+class JSONTest extends HeadlessTestCase
 {
     /**
      * Provide valid JSON

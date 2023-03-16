@@ -3,14 +3,12 @@
 namespace Civi\RcBase\IOProcessor;
 
 use Civi\RcBase\Exception\InvalidArgumentException;
-use CRM_RcBase_HeadlessTestCase;
+use Civi\RcBase\HeadlessTestCase;
 
 /**
- * Test Config Processor class
- *
  * @group headless
  */
-class ConfigTest extends CRM_RcBase_HeadlessTestCase
+class ConfigTest extends HeadlessTestCase
 {
     /**
      * @return array[]

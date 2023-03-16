@@ -1,13 +1,11 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+use Civi\RcBase\HeadlessTestCase;
 
 /**
- * Test JSON Processor class
- *
- * @group unit
+ * @group headless
  */
-class CRM_RcBase_Processor_JSONTest extends TestCase
+class CRM_RcBase_Processor_JSONTest extends HeadlessTestCase
 {
     /**
      * Provide valid JSON

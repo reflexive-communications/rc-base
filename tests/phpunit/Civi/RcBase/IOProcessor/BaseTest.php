@@ -4,15 +4,13 @@ namespace Civi\RcBase\IOProcessor;
 
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Exception\MissingArgumentException;
-use CRM_RcBase_HeadlessTestCase;
+use Civi\RcBase\HeadlessTestCase;
 use Throwable;
 
 /**
- * Test Base Processor class
- *
  * @group headless
  */
-class BaseTest extends CRM_RcBase_HeadlessTestCase
+class BaseTest extends HeadlessTestCase
 {
     /**
      * Content types
@@ -156,7 +154,7 @@ class BaseTest extends CRM_RcBase_HeadlessTestCase
             'UTF-8' => 'kéményŐÜÖÓúőü$!#~`\\|',
         ];
         $expected = [
-            "hello" => 'this is a test',
+            'hello' => 'this is a test',
             'sub_array' => [
                 'first',
                 'se cond',

@@ -2,14 +2,12 @@
 
 namespace Civi\RcBase\Utils;
 
-use PHPUnit\Framework\TestCase;
-
-require_once 'Civi/RcBase/Utils/Arrays.php';
+use Civi\RcBase\HeadlessTestCase;
 
 /**
- * @group unit
+ * @group headless
  */
-class ArraysTest extends TestCase
+class ArraysTest extends HeadlessTestCase
 {
     /**
      * @return void

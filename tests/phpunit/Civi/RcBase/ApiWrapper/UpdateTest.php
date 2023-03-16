@@ -6,14 +6,14 @@ use Civi\Api4\Contact;
 use Civi\RcBase\Exception\APIException;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Exception\MissingArgumentException;
+use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Utils\PHPUnit;
 use CRM_RcBase_Api_Get;
-use CRM_RcBase_HeadlessTestCase;
 
 /**
  * @group headless
  */
-class UpdateTest extends CRM_RcBase_HeadlessTestCase
+class UpdateTest extends HeadlessTestCase
 {
     /**
      * @return void

@@ -6,13 +6,12 @@ use API_Exception;
 use Civi;
 use Civi\Api4\Setting;
 use Civi\RcBase\Exception\MissingArgumentException;
-use CRM_RcBase_HeadlessTestCase;
 use stdClass;
 
 /**
  * @group headless
  */
-class SettingsTest extends CRM_RcBase_HeadlessTestCase
+class SettingsTest extends HeadlessTestCase
 {
     /**
      * @return array
@@ -20,7 +19,7 @@ class SettingsTest extends CRM_RcBase_HeadlessTestCase
     public function provideSettings(): array
     {
         $object = new stdClass();
-        $object->property = "value";
+        $object->property = 'value';
 
         return [
             'string' => ['some string'],

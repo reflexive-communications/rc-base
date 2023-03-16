@@ -1,13 +1,11 @@
 <?php
 
-use PHPUnit\Framework\TestCase;
+use Civi\RcBase\HeadlessTestCase;
 
 /**
- * Test MockPhpStream Processor class
- *
- * @group unit
+ * @group headless
  */
-class CRM_RcBase_Test_MockPhpStreamTest extends TestCase
+class CRM_RcBase_Test_MockPhpStreamTest extends HeadlessTestCase
 {
     /**
      * Provide streams for the php:// stream wrapper
