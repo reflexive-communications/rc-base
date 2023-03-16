@@ -2,6 +2,8 @@
 
 namespace Civi\RcBase\Api4;
 
+require_once 'Civi/RcBase/Api4/ActionUtilsTrait.php';
+
 use Civi\RcBase\HeadlessTestCase;
 
 /**
