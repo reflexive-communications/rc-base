@@ -62,7 +62,7 @@ class SetSmtpConfig extends AbstractAction
     /**
      * @inheritDoc
      */
-    public function _run(Result $result)
+    public function _run(Result $result): void
     {
         $new = [];
 

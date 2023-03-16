@@ -24,7 +24,7 @@ class CRM_RcBase_Permissions
      *
      * @param $permissions
      */
-    public static function addCustomPermissions(&$permissions)
+    public static function addCustomPermissions(&$permissions): void
     {
         foreach (self::PERMISSIONS as $permission_name => $details) {
             $permissions[$permission_name] = $details;

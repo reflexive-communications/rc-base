@@ -54,7 +54,7 @@ class GetSmtpConfig extends AbstractAction
     /**
      * @inheritDoc
      */
-    public function _run(Result $result)
+    public function _run(Result $result): void
     {
         $configs = [];
 

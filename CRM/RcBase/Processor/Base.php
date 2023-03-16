@@ -78,7 +78,7 @@ class CRM_RcBase_Processor_Base
      *
      * @return string Sanitized string
      */
-    public static function sanitizeString($value)
+    public static function sanitizeString($value): string
     {
         // Strip whitespace
         $value = CRM_Utils_String::stripSpaces($value);
