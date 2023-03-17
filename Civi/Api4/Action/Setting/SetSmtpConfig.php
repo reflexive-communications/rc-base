@@ -62,7 +62,7 @@ class SetSmtpConfig extends AbstractAction
     /**
      * @inheritDoc
      */
-    public function _run(Result $result)
+    public function _run(Result $result): void
     {
         $new = [];
 
@@ -81,9 +81,9 @@ class SetSmtpConfig extends AbstractAction
         }
         if (!is_null($this->needAuth)) {
             if ($this->needAuth) {
-                $new['smtpAuth'] = "1";
+                $new['smtpAuth'] = '1';
             } else {
-                $new['smtpAuth'] = "0";
+                $new['smtpAuth'] = '0';
             }
         }
 
@@ -105,15 +105,15 @@ class SetSmtpConfig extends AbstractAction
 
             // If both passwords are encrypted, we have to compare the plain-text passwords
             // Ciphertext passwords always differ, even if plain-texts are the same
-            $old_pass = $old['smtpPassword'] ?? "";
-            $merged_pass = $merged['smtpPassword'] ?? "";
+            $old_pass = $old['smtpPassword'] ?? '';
+            $merged_pass = $merged['smtpPassword'] ?? '';
             if (($old_pass != $merged_pass)
                 && !Civi::service('crypto.token')->isPlainText($old_pass)
                 && !Civi::service('crypto.token')->isPlainText($merged_pass)
                 && (Civi::service('crypto.token')->decrypt($old_pass) == Civi::service('crypto.token')->decrypt($merged_pass))
             ) {
                 // Same plain-text password -> use old value (avoid unnecessary change, even if it would have the same effect)
-                if ($old_pass != "") {
+                if ($old_pass != '') {
                     $merged['smtpPassword'] = $old_pass;
                 }
             }

@@ -2,11 +2,9 @@
 
 namespace Civi\RcBase\ApiWrapper;
 
-use Civi\Api4\OptionValue;
 use Civi\RcBase\Exception\APIException;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Exception\MissingArgumentException;
-use CRM_RcBase_Api_Get;
 use Throwable;
 
 /**

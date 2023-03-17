@@ -15,7 +15,7 @@ class CRM_RcBase_Processor_UrlEncodedForm
      *
      * @return array GET parameters parsed
      */
-    public static function parseGet()
+    public static function parseGet(): array
     {
         return CRM_RcBase_Processor_Base::sanitize($_GET);
     }
@@ -25,7 +25,7 @@ class CRM_RcBase_Processor_UrlEncodedForm
      *
      * @return array Request POST parsed
      */
-    public static function parsePost()
+    public static function parsePost(): array
     {
         return CRM_RcBase_Processor_Base::sanitize($_POST);
     }
@@ -35,7 +35,7 @@ class CRM_RcBase_Processor_UrlEncodedForm
      *
      * @return array Request parameters parsed
      */
-    public static function parseRequest()
+    public static function parseRequest(): array
     {
         return CRM_RcBase_Processor_Base::sanitize($_REQUEST);
     }

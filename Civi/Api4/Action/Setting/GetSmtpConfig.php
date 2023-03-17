@@ -54,7 +54,7 @@ class GetSmtpConfig extends AbstractAction
     /**
      * @inheritDoc
      */
-    public function _run(Result $result)
+    public function _run(Result $result): void
     {
         $configs = [];
 
@@ -88,10 +88,10 @@ class GetSmtpConfig extends AbstractAction
         // No config -> return all
         if ($this->config === '') {
             foreach (self::CONFIGS_MAP as $name => $civi_name) {
-                $configs[$name] = $settings[0]['value'][$civi_name] ?? "";
+                $configs[$name] = $settings[0]['value'][$civi_name] ?? '';
             }
         } else {
-            $configs[$this->config] = $settings[0]['value'][self::CONFIGS_MAP[$this->config]] ?? "";
+            $configs[$this->config] = $settings[0]['value'][self::CONFIGS_MAP[$this->config]] ?? '';
         }
 
         $result[] = $configs;
