@@ -93,7 +93,7 @@ class SetSmtpConfig extends AbstractAction
         }
 
         try {
-            $configs = Setting::get()
+            $configs = Setting::get(false)
                 ->addSelect('mailing_backend')
                 ->execute();
             if (count($configs) != 1 || !array_key_exists('value', $configs[0])) {

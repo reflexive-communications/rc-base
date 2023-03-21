@@ -47,7 +47,7 @@ class PHPUnit
      */
     public static function createLoggedInUser(int $uf_id = 1): int
     {
-        $results = UFMatch::get()
+        $results = UFMatch::get(false)
             ->addSelect('contact_id')
             ->addWhere('uf_id', '=', $uf_id)
             ->setLimit(1)

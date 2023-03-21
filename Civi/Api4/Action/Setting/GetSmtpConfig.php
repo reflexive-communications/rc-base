@@ -65,7 +65,7 @@ class GetSmtpConfig extends AbstractAction
         }
 
         try {
-            $settings = Setting::get()
+            $settings = Setting::get(false)
                 ->addSelect('mailing_backend')
                 ->execute();
         } catch (Throwable $ex) {

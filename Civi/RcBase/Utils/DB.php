@@ -42,7 +42,7 @@ class DB
             throw new MissingArgumentException('table name');
         }
 
-        $result = self::query('SHOW TABLE STATUS WHERE name=%1', [1 => [$table_name, 'String']]);
+        $result = self::query('SHOW TABLE STATUS WHERE name = %1', [1 => [$table_name, 'String']]);
         $auto_increment = $result[0]['Auto_increment'] ?? 0;
 
         if ($auto_increment === 0) {
@@ -90,8 +90,8 @@ class DB
                 WHERE contact_id = %1 AND group_id = %2
                 LIMIT 1';
         $params = [
-            1 => [$contact_id, 'Integer'],
-            2 => [$group_id, 'Integer'],
+            1 => [$contact_id, 'Positive'],
+            2 => [$group_id, 'Positive'],
         ];
         $record = self::query($sql, $params);
 
@@ -109,7 +109,7 @@ class DB
         }
 
         $sql = 'UPDATE civicrm_group_contact SET status = "Added" WHERE id = %1';
-        self::query($sql, [1 => [$record[0]['id'], 'Integer']]);
+        self::query($sql, [1 => [$record[0]['id'], 'Positive']]);
     }
 
     /**
@@ -128,8 +128,8 @@ class DB
                 WHERE contact_id = %1 AND group_id = %2
                 LIMIT 1';
         $params = [
-            1 => [$contact_id, 'Integer'],
-            2 => [$group_id, 'Integer'],
+            1 => [$contact_id, 'Positive'],
+            2 => [$group_id, 'Positive'],
         ];
         $record = self::query($sql, $params);
 
@@ -139,7 +139,7 @@ class DB
         }
 
         $sql = 'UPDATE civicrm_group_contact SET status = "Removed" WHERE id = %1';
-        self::query($sql, [1 => [$record[0]['id'], 'Integer']]);
+        self::query($sql, [1 => [$record[0]['id'], 'Positive']]);
     }
 
     /**
