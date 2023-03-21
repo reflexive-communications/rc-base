@@ -6,6 +6,7 @@
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
          convertDeprecationsToExceptions="true"
+         failOnRisky="true"
          bootstrap="tests/phpunit/bootstrap.php"
          testdox="true">
     <coverage>
