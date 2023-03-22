@@ -67,7 +67,7 @@ Some `.css` file with general classes.
 ## Requirements
 
 -   PHP v7.4+
--   CiviCRM (5.48)
+-   CiviCRM v5.48+
 
 ## Installation
 
