@@ -4,21 +4,7 @@
 
 This extension does nothing, it's only required by some other extensions. It contains shared components, libraries.
 
-The extension is licensed under [AGPL-3.0](LICENSE.txt).
-
-## Features
-
-### Extra permissions
-
-New CMS permissions:
-
--   **access custom API**: this can be used for an unprivileged CMS user to access custom API endpoints
-
-### New API
-
-#### New API actions are provided.
-
-Below is a summary, for more details check the API Explorer.
+**New API actions**
 
 -   `Setting::getSmtpConfig`, APIv4
     -   Returns current SMTP config nicely formatted. If SMTP password is encrypted, decrypted text is provided.
@@ -33,36 +19,23 @@ Below is a summary, for more details check the API Explorer.
     -   Thin wrapper for `CRM_Extension_Upgrades::hasPending()`
     -   Returns `1` if there are pending DB upgrades for extensions, `0` otherwise
 
-#### API wrappers
+**Wrappers**
 
-Generic PHP classes that wrap standard Civi APIv4. (`\Civi\RcBase\ApiWrapper`)
+-   `\Civi\RcBase\ApiWrapper`: classes that wrap standard Civi APIv4
+-   `\Civi\RcBase\IOProcessor`: IO processors for JSON, URL-encoded, XML or INI files or streams
+-   `\Civi\RcBase\Exception`: new specific exceptions and handlers
+-   `\Civi\RcBase\Utils`: helper methods for arrays, files, handling DataBase, UI management and for PHP unit testing
+-   `\Civi\RcBase\Settings`: for managing settings and configs, wrapper for `Civi::Settings`
 
-### Processor
+**Other**
 
-Generic PHP IO processors for JSON, URL-encoded, XML or INI files or streams. (`\Civi\RcBase\IOProcessor`)
+-   `CRM_RcBase_Config`: wraps `Civi::Settings` wrapper. For details check the [Developer Notes](DEVELOPER.md). **DEPRECATED**
+-   `CRM_RcBase_Setting`: same as above with a few extra methods. **DEPRECATED** in favor of `\Civi\RcBase\Settings`!
+-   stylesheets: some `.css` file with general classes.
+-   New CMS permissions:
+    -   **access custom API**: this can be used for an unprivileged CMS user to access custom API endpoints
 
-### Exceptions
-
-New specific exceptions and handlers. (`\Civi\RcBase\Exception`)
-
-### Utilities
-
-Helper methods for arrays, handling DataBase, UI management and for PHP unit testing. (`\Civi\RcBase\Utils`)
-
-### Civi::Settings wrapper
-
-A Base class (`CRM_RcBase_Config`) that wraps `Civi::Settings()` for easier use. For details check
-the [Developer Notes](DEVELOPER.md).
-
-### Settings
-
-Helper class (`CRM_RcBase_Setting`) for managing settings, basically a thin wrapper for `Civi::Settings()`.
-You can encrypt sensitive data (only strings) with `CRM_RcBase_Setting::saveSecret()`.
-When retrieving saved setting with `CRM_RcBase_Setting::get()` setting values are automatically decrypted if it was encrypted.
-
-### Stylesheets
-
-Some `.css` file with general classes.
+The extension is licensed under [AGPL-3.0](LICENSE.txt).
 
 ## Requirements
 
