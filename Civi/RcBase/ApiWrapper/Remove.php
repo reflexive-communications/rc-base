@@ -121,6 +121,14 @@ class Remove
 
         switch ($status) {
             case Get::GROUP_CONTACT_STATUS_NONE:
+                $values = [
+                    'group_id' => $group_id,
+                    'contact_id' => $contact_id,
+                    'status' => 'Removed',
+                ];
+                Create::entity('GroupContact', $values, $check_permissions);
+
+                return 1;
             case Get::GROUP_CONTACT_STATUS_REMOVED:
                 return 0;
             case Get::GROUP_CONTACT_STATUS_PENDING:
