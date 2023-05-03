@@ -5,6 +5,8 @@ namespace Civi\RcBase\ApiWrapper;
 use Civi\Api4\Generic\Result;
 use Civi\RcBase\Exception\APIException;
 use Civi\RcBase\Exception\InvalidArgumentException;
+use Civi\RcBase\Utils\DB;
+use CRM_Contact_BAO_GroupContactCache;
 use Throwable;
 
 /**
@@ -303,12 +305,15 @@ class Get
      * @param int $contact_id Contact ID
      * @param int $group_id Group ID
      * @param bool $check_permissions Should we check permissions (ACLs)?
+     * @param bool $smart_group Check group_contact_cache also
      *
      * @return int Status code
      * @throws \Civi\RcBase\Exception\APIException
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @todo Change signature in v2
      */
-    public static function groupContactStatus(int $contact_id, int $group_id, bool $check_permissions = false): int
+    public static function groupContactStatus(int $contact_id, int $group_id, bool $check_permissions = false, bool $smart_group = false): int
     {
         if ($contact_id < 1 || $group_id < 1) {
             throw new InvalidArgumentException('ID');
@@ -333,7 +338,23 @@ class Get
             case 'Pending':
                 return self::GROUP_CONTACT_STATUS_PENDING;
             case null:
-                return self::GROUP_CONTACT_STATUS_NONE;
+                // Skip checking smart groups
+                if (!$smart_group) {
+                    return self::GROUP_CONTACT_STATUS_NONE;
+                }
+
+                // Regenerate cache if expired
+                CRM_Contact_BAO_GroupContactCache::check([$group_id]);
+                $sql = 'SELECT contact_id
+                        FROM civicrm_group_contact_cache
+                        WHERE contact_id = %1 AND group_id = %2
+                        LIMIT 1';
+                $group_contact_cache = DB::query($sql, [
+                    1 => [$contact_id, 'Positive'],
+                    2 => [$group_id, 'Positive'],
+                ]);
+
+                return empty($group_contact_cache) ? self::GROUP_CONTACT_STATUS_NONE : self::GROUP_CONTACT_STATUS_ADDED;
             default:
                 throw new APIException('GroupContact', 'get', "Invalid status returned: {$status}");
         }

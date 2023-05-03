@@ -5,6 +5,7 @@ namespace Civi\RcBase\ApiWrapper;
 use Civi\RcBase\Exception\APIException;
 use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Utils\PHPUnit;
+use CRM_Contact_BAO_GroupContactCache;
 
 /**
  * @group headless
@@ -94,7 +95,7 @@ class SaveTest extends HeadlessTestCase
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
-    public function testAddContactToGroup()
+    public function testAddContactToNormalGroup()
     {
         // Create group, contact
         $group_data = ['title' => 'Group contact test group'];
@@ -126,5 +127,63 @@ class SaveTest extends HeadlessTestCase
         self::expectException(APIException::class);
         self::expectExceptionMessage('DB Error: constraint violation');
         Save::addContactToGroup($contact_id, $group_id + 1);
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
+     */
+    public function testAddContactToSmartGroup()
+    {
+        // Create smart groups, contact
+        $saved_search_id_all = Create::entity('SavedSearch');
+        $saved_search_id_nobody = Create::entity('SavedSearch', [
+            'api_entity' => 'Contact',
+            'api_params' => [
+                'version' => 4,
+                'where' => [['first_name', '=', 'nobody']],
+            ],
+        ]);
+        $group_id_all = Create::group([
+            'title' => 'Smart group with all contacts',
+            'saved_search_id' => $saved_search_id_all,
+        ]);
+        $group_id_nobody = Create::group([
+            'title' => 'Smart group with no contacts',
+            'saved_search_id' => $saved_search_id_nobody,
+        ]);
+        $contact_id = PHPUnit::createIndividual();
+
+        // Add contact manually to group (already in by search)
+        $groups_cache = CRM_Contact_BAO_GroupContactCache::contactGroup($contact_id);
+        self::assertCount(1, $groups_cache['group'], 'Contact not in single smart group');
+        self::assertEquals($group_id_all, $groups_cache['group'][0]['id'], 'Contact in wrong smart group');
+        Save::addContactToGroup($contact_id, $group_id_all);
+        self::assertSame(Get::GROUP_CONTACT_STATUS_ADDED, Get::groupContactStatus($contact_id, $group_id_all), 'Failed to add contact (new)');
+
+        // Add contact manually to group (not present yet) - don't update cache
+        Save::addContactToGroup($contact_id, $group_id_nobody);
+        self::assertSame(Get::GROUP_CONTACT_STATUS_ADDED, Get::groupContactStatus($contact_id, $group_id_nobody), 'Failed to add contact (added)');
+        // Check cache still holds old group membership
+        $groups_cache = CRM_Contact_BAO_GroupContactCache::contactGroup($contact_id);
+        self::assertCount(1, $groups_cache['group'], 'Contact not in single smart group');
+        self::assertEquals($group_id_all, $groups_cache['group'][0]['id'], 'Contact in wrong smart group');
+
+        // Add contact again - this time update cache
+        $group_contact_id = Save::addContactToGroup($contact_id, $group_id_nobody, false, true);
+        self::assertSame(Get::GROUP_CONTACT_STATUS_ADDED, Get::groupContactStatus($contact_id, $group_id_nobody), 'Failed to add contact (added)');
+        // Check cache has real group membership
+        $groups_cache = CRM_Contact_BAO_GroupContactCache::contactGroup($contact_id);
+        self::assertCount(2, $groups_cache['group'], 'Contact not in two smart groups');
+
+        // Check invalid status
+        Update::entity('GroupContact', $group_contact_id, ['status' => 'invalid']);
+        self::expectException(APIException::class);
+        self::expectExceptionMessage('Invalid status returned');
+        Save::addContactToGroup($contact_id, $group_id_nobody);
     }
 }
