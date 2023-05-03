@@ -3,6 +3,8 @@
 namespace Civi\RcBase\ApiWrapper;
 
 use Civi\RcBase\Exception\APIException;
+use Civi\RcBase\Utils\DB;
+use CRM_Contact_BAO_GroupContactCache;
 
 /**
  * Common Save Actions
@@ -62,13 +64,16 @@ class Save
      * @param int $contact_id Contact ID
      * @param int $group_id Group ID
      * @param bool $check_permissions Should we check permissions (ACLs)?
+     * @param bool $smart_group Update group_contact_cache also
      *
      * @return int Group contact ID
      * @throws \Civi\RcBase\Exception\APIException
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      * @throws \Civi\RcBase\Exception\MissingArgumentException
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @todo Change signature in v2
      */
-    public static function addContactToGroup(int $contact_id, int $group_id, bool $check_permissions = false): int
+    public static function addContactToGroup(int $contact_id, int $group_id, bool $check_permissions = false, bool $smart_group = false): int
     {
         $status = Get::groupContactStatus($contact_id, $group_id, $check_permissions);
 
@@ -107,6 +112,28 @@ class Save
                 break;
             default:
                 throw new APIException('GroupContact', 'get', "Invalid status returned: {$status}");
+        }
+
+        // Update cache manually if cache is not expired yet --> so cache will be accurate even until regeneration
+        if ($smart_group && CRM_Contact_BAO_GroupContactCache::check([$group_id])) {
+            // Check record present
+            $sql = 'SELECT contact_id
+                    FROM civicrm_group_contact_cache
+                    WHERE contact_id = %1 AND group_id = %2
+                    LIMIT 1';
+            $group_contact_cache = DB::query($sql, [
+                1 => [$contact_id, 'Positive'],
+                2 => [$group_id, 'Positive'],
+            ]);
+
+            // Add to cache
+            if (empty($group_contact_cache)) {
+                $sql = 'INSERT INTO civicrm_group_contact_cache (id, group_id, contact_id) VALUES (NULL, %2, %1)';
+                DB::query($sql, [
+                    1 => [$contact_id, 'Positive'],
+                    2 => [$group_id, 'Positive'],
+                ]);
+            }
         }
 
         return $group_contact_id;
