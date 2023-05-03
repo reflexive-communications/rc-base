@@ -6,6 +6,7 @@ use Civi\RcBase\Exception\APIException;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Utils\PHPUnit;
+use CRM_Contact_BAO_GroupContactCache;
 
 /**
  * @group headless
@@ -61,7 +62,7 @@ class RemoveTest extends HeadlessTestCase
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
-    public function testRemoveContactFromGroup()
+    public function testRemoveContactFromNormalGroup()
     {
         // Create group, contact
         $group_id = Create::group(['title' => 'Group contact test group']);
@@ -86,6 +87,58 @@ class RemoveTest extends HeadlessTestCase
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage('Invalid ID');
         Remove::contactFromGroup($contact_id, -1);
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
+     */
+    public function testRemoveContactFromSmartGroup()
+    {
+        // Create smart groups, contact
+        $saved_search_id_all = Create::entity('SavedSearch');
+        $saved_search_id_nobody = Create::entity('SavedSearch', [
+            'api_entity' => 'Contact',
+            'api_params' => [
+                'version' => 4,
+                'where' => [['first_name', '=', 'nobody']],
+            ],
+        ]);
+        $group_id_all = Create::group([
+            'title' => 'Smart group with all contacts',
+            'saved_search_id' => $saved_search_id_all,
+        ]);
+        $group_id_nobody = Create::group([
+            'title' => 'Smart group with no contacts',
+            'saved_search_id' => $saved_search_id_nobody,
+        ]);
+        $contact_id = PHPUnit::createIndividual();
+
+        // Remove contact manually from group (already not present by search)
+        $groups_cache = CRM_Contact_BAO_GroupContactCache::contactGroup($contact_id);
+        self::assertCount(1, $groups_cache['group'], 'Contact not in single smart group');
+        self::assertEquals($group_id_all, $groups_cache['group'][0]['id'], 'Contact in wrong smart group');
+        self::assertSame(1, Remove::contactFromGroup($contact_id, $group_id_nobody), 'Wrong number of affected contacts (not added by search)');
+        self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id_nobody), 'Failed to remove contact (not added by search)');
+
+        // Remove contact manually from group (added by search) - don't update cache
+        self::assertSame(1, Remove::contactFromGroup($contact_id, $group_id_all), 'Wrong number of affected contacts (added by search)');
+        self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id_all), 'Failed to remove contact (added by search)');
+        // Check cache still holds old group membership
+        $groups_cache = CRM_Contact_BAO_GroupContactCache::contactGroup($contact_id);
+        self::assertCount(1, $groups_cache['group'], 'Contact not in single smart group');
+        self::assertEquals($group_id_all, $groups_cache['group'][0]['id'], 'Contact in wrong smart group');
+
+        // Remove contact again - this time update cache
+        self::assertSame(0, Remove::contactFromGroup($contact_id, $group_id_all, false, true), 'Wrong number of affected contacts (added by search)');
+        self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id_all), 'Failed to remove contact (added by search)');
+        // Check cache has real group membership
+        $groups_cache = CRM_Contact_BAO_GroupContactCache::contactGroup($contact_id);
+        self::assertSame([], $groups_cache, 'Contact not removed from smart group');
     }
 
     /**
