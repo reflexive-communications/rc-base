@@ -407,6 +407,25 @@ class GetTest extends HeadlessTestCase
 
     /**
      * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
+     */
+    public function testLastOptionValue()
+    {
+        $last_value_before_insert = Get::lastOptionValue('group_type');
+
+        // Add new option
+        $group_type_id = Create::optionValue('group_type', [
+            'label' => 'test_group_type',
+            'name' => 'test_group_type',
+        ]);
+
+        self::assertEquals($group_type_id - 1, $last_value_before_insert, 'Wrong option value before insert');
+        self::assertSame($group_type_id, Get::lastOptionValue('group_type'), 'Wrong option value after insert');
+    }
+
+    /**
+     * @return void
      * @throws \CRM_Core_Exception
      * @throws \Civi\RcBase\Exception\APIException
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
