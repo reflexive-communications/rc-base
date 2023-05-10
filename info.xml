@@ -27,6 +27,7 @@
         <psr0 prefix="CRM_" path=""/>
         <psr4 prefix="Civi\" path="Civi"/>
     </classloader>
+    <upgrader>CRM_RcBase_Upgrader</upgrader>
     <civix>
         <namespace>CRM/RcBase</namespace>
         <format>22.12.1</format>
