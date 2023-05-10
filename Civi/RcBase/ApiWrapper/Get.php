@@ -389,6 +389,31 @@ class Get
     }
 
     /**
+     * Get highest value in an option group
+     * Useful if you want to add a new option with unique value (e.g. last_value + 1)
+     *
+     * @param string $option_group Name of option group
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return string|null Highest option value
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public static function lastOptionValue(string $option_group, bool $check_permissions = false): ?string
+    {
+        if (empty($option_group)) {
+            return null;
+        }
+
+        $params = [
+            'where' => [['option_group_id:name', '=', 'group_type']],
+            'orderBy' => ['value' => 'DESC'],
+            'limit' => 1,
+        ];
+
+        return self::parseResultsFirst(self::entity('OptionValue', $params, $check_permissions), 'value');
+    }
+
+    /**
      * Get contribution ID from transaction ID
      *
      * @param string $transaction_id Transaction ID
