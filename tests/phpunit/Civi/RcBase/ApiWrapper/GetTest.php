@@ -91,13 +91,22 @@ class GetTest extends HeadlessTestCase
         ];
         $id = Create::tag($values);
 
+        // Check all fields
         $data = Get::entityByID('Tag', $id);
         self::assertArrayHasKey('name', $data, 'name missing');
         self::assertArrayHasKey('description', $data, 'description missing');
         self::assertSame($values['name'], $data['name'], 'Wrong name');
         self::assertSame($values['description'], $data['description'], 'Wrong description');
+        self::assertGreaterThan(2, count($data), 'Not all fields returned: for a Tag entity at least 3 fields is expected');
+
         // Check single field
         self::assertSame($values['description'], Get::entityByID('Tag', $id, 'description'), 'description not returned as string');
+
+        // Check two fields
+        $data = Get::entityByID('Tag', $id, ['id', 'description']);
+        self::assertArrayHasKey('id', $data, 'id missing');
+        self::assertArrayHasKey('description', $data, 'description missing');
+        self::assertCount(2, $data, 'Not exactly two fields returned');
     }
 
     /**
@@ -112,13 +121,22 @@ class GetTest extends HeadlessTestCase
         ];
         $id = Create::entity('Group', $values);
 
+        // Check all fields
         $data = Get::entityByName('Group', $values['name']);
         self::assertArrayHasKey('id', $data, 'id missing');
         self::assertArrayHasKey('title', $data, 'title missing');
         self::assertSame($id, $data['id'], 'Wrong id');
         self::assertSame($values['title'], $data['title'], 'Wrong title');
+        self::assertGreaterThan(2, count($data), 'Not all fields returned: for a Group entity at least 3 fields is expected');
+
         // Check single field
-        self::assertSame($values['title'], Get::entityByID('Group', $id, 'title'), 'title not returned as string');
+        self::assertSame($values['title'], Get::entityByName('Group', $values['name'], 'title'), 'title not returned as string');
+
+        // Check two fields
+        $data = Get::entityByName('Group', $values['name'], ['id', 'title']);
+        self::assertArrayHasKey('id', $data, 'id missing');
+        self::assertArrayHasKey('title', $data, 'title missing');
+        self::assertCount(2, $data, 'Not exactly two fields returned');
     }
 
     /**
