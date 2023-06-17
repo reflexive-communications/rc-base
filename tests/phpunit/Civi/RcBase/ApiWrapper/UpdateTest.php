@@ -71,8 +71,8 @@ class UpdateTest extends HeadlessTestCase
     public function testUpdateInvalidEntityIdThrowsException()
     {
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('ID must be positive');
-        Update::entity('Contact', -5, []);
+        self::expectExceptionMessage('must be positive');
+        Update::entity('Contact', -5);
     }
 
     /**

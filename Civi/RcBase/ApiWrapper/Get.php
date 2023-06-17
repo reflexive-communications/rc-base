@@ -256,7 +256,7 @@ class Get
     public static function contactHasTag(int $contact_id, int $tag_id, bool $check_permissions = false): ?int
     {
         if ($contact_id < 1 || $tag_id < 1) {
-            throw new InvalidArgumentException('ID');
+            throw new InvalidArgumentException('ID', 'must be positive');
         }
 
         $params = [
@@ -285,7 +285,7 @@ class Get
     public static function parentTagId(int $tag_id, bool $check_permissions = false): ?int
     {
         if ($tag_id < 1) {
-            throw new InvalidArgumentException('ID');
+            throw new InvalidArgumentException('ID', 'must be positive');
         }
 
         $params = [
@@ -310,7 +310,7 @@ class Get
     public static function contactSubType(int $contact_id, bool $check_permissions = false): array
     {
         if ($contact_id < 1) {
-            throw new InvalidArgumentException('ID');
+            throw new InvalidArgumentException('ID', 'must be positive');
         }
 
         $params = [
@@ -339,7 +339,7 @@ class Get
     public static function groupContactStatus(int $contact_id, int $group_id, bool $check_permissions = false, bool $smart_group = false): int
     {
         if ($contact_id < 1 || $group_id < 1) {
-            throw new InvalidArgumentException('ID');
+            throw new InvalidArgumentException('ID', 'must be positive');
         }
 
         $params = [

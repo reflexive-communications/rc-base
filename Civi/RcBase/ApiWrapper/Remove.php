@@ -73,7 +73,7 @@ class Remove
     public static function removeContactFromGroup(int $contact_id, int $group_id, bool $check_permissions = false): int
     {
         if ($contact_id < 1 || $group_id < 1) {
-            throw new InvalidArgumentException('ID');
+            throw new InvalidArgumentException('ID', 'must be positive');
         }
 
         $status = Get::groupContactStatus($contact_id, $group_id, $check_permissions);
@@ -119,7 +119,7 @@ class Remove
     public static function contactFromGroup(int $contact_id, int $group_id, bool $check_permissions = false, bool $smart_group = false): int
     {
         if ($contact_id < 1 || $group_id < 1) {
-            throw new InvalidArgumentException('ID');
+            throw new InvalidArgumentException('ID', 'must be positive');
         }
 
         $status = Get::groupContactStatus($contact_id, $group_id, $check_permissions);
@@ -195,7 +195,7 @@ class Remove
     public static function emptyGroup(int $group_id, bool $check_permissions = false): int
     {
         if ($group_id < 1) {
-            throw new InvalidArgumentException('ID');
+            throw new InvalidArgumentException('ID', 'must be positive');
         }
 
         try {
