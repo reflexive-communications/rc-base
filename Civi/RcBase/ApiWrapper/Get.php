@@ -82,7 +82,7 @@ class Get
      * Parse result set, return first row
      *
      * @param Result $results Api4 Result set
-     * @param string $field Field to return
+     * @param string $field Field to return (if empty return all fields)
      *
      * @return mixed|null
      * @throws \Civi\RcBase\Exception\APIException
@@ -105,6 +105,25 @@ class Get
 
         // No field specified --> return all fields
         return $result;
+    }
+
+    /**
+     * Retrieve single record.
+     * Makes sense when only one record is expected.
+     * If more records are returned from query, only the first one is returned.
+     * Wrap idiomatic invocation of Get::entity() and Get::parseResultsFirst() for convenience.
+     *
+     * @param string $entity Entity name
+     * @param array $params Parameters for get query
+     * @param string $field Field to return (if empty return all fields)
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return mixed|null
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public static function entitySingle(string $entity, array $params = [], string $field = '', bool $check_permissions = false)
+    {
+        return self::parseResultsFirst(self::entity($entity, $params, null, $check_permissions), $field);
     }
 
     /**
@@ -131,7 +150,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity($entity, $params, $check_permissions), is_string($fields) ? $fields : '');
+        return self::entitySingle($entity, $params, is_string($fields) ? $fields : '', $check_permissions);
     }
 
     /**
@@ -158,7 +177,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity($entity, $params, $check_permissions), is_string($fields) ? $fields : '');
+        return self::entitySingle($entity, $params, is_string($fields) ? $fields : '', $check_permissions);
     }
 
     /**
@@ -182,7 +201,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('Email', $params, $check_permissions), 'contact_id');
+        return self::entitySingle('Email', $params, 'contact_id', $check_permissions);
     }
 
     /**
@@ -201,7 +220,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('UFMatch', $params, $check_permissions), 'contact_id');
+        return self::entitySingle('UFMatch', $params, 'contact_id', $check_permissions);
     }
 
     /**
@@ -220,7 +239,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('LocationType', $params, $check_permissions), 'id');
+        return self::entitySingle('LocationType', $params, 'id', $check_permissions);
     }
 
     /**
@@ -237,7 +256,7 @@ class Get
     public static function contactHasTag(int $contact_id, int $tag_id, bool $check_permissions = false): ?int
     {
         if ($contact_id < 1 || $tag_id < 1) {
-            throw new InvalidArgumentException('ID');
+            throw new InvalidArgumentException('ID', 'must be positive');
         }
 
         $params = [
@@ -250,7 +269,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('EntityTag', $params, $check_permissions), 'id');
+        return self::entitySingle('EntityTag', $params, 'id', $check_permissions);
     }
 
     /**
@@ -266,7 +285,7 @@ class Get
     public static function parentTagId(int $tag_id, bool $check_permissions = false): ?int
     {
         if ($tag_id < 1) {
-            throw new InvalidArgumentException('ID');
+            throw new InvalidArgumentException('ID', 'must be positive');
         }
 
         $params = [
@@ -275,7 +294,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('Tag', $params, $check_permissions), 'parent_id');
+        return self::entitySingle('Tag', $params, 'parent_id', $check_permissions);
     }
 
     /**
@@ -291,7 +310,7 @@ class Get
     public static function contactSubType(int $contact_id, bool $check_permissions = false): array
     {
         if ($contact_id < 1) {
-            throw new InvalidArgumentException('ID');
+            throw new InvalidArgumentException('ID', 'must be positive');
         }
 
         $params = [
@@ -300,7 +319,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('Contact', $params, $check_permissions), 'contact_sub_type') ?? [];
+        return self::entitySingle('Contact', $params, 'contact_sub_type', $check_permissions) ?? [];
     }
 
     /**
@@ -320,7 +339,7 @@ class Get
     public static function groupContactStatus(int $contact_id, int $group_id, bool $check_permissions = false, bool $smart_group = false): int
     {
         if ($contact_id < 1 || $group_id < 1) {
-            throw new InvalidArgumentException('ID');
+            throw new InvalidArgumentException('ID', 'must be positive');
         }
 
         $params = [
@@ -332,7 +351,7 @@ class Get
             'limit' => 1,
         ];
 
-        $status = self::parseResultsFirst(self::entity('GroupContact', $params, $check_permissions), 'status');
+        $status = self::entitySingle('GroupContact', $params, 'status', $check_permissions);
 
         switch ($status) {
             case 'Added':
@@ -389,7 +408,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('OptionValue', $params, $check_permissions), 'value');
+        return self::entitySingle('OptionValue', $params, 'value', $check_permissions);
     }
 
     /**
@@ -414,7 +433,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('OptionValue', $params, $check_permissions), 'value');
+        return self::entitySingle('OptionValue', $params, 'value', $check_permissions);
     }
 
     /**
@@ -438,6 +457,6 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('Contribution', $params, $check_permissions), 'id');
+        return self::entitySingle('Contribution', $params, 'id', $check_permissions);
     }
 }

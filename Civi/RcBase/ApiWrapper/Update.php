@@ -33,7 +33,7 @@ class Update
     public static function entity(string $entity, int $entity_id, array $values = [], bool $check_permissions = false): array
     {
         if ($entity_id < 1) {
-            throw new InvalidArgumentException('entity ID', 'ID must be positive');
+            throw new InvalidArgumentException('entity ID', 'must be positive');
         }
         if (empty($values)) {
             throw new MissingArgumentException('values', 'must contain at least one parameter');

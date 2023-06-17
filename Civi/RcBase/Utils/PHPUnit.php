@@ -2,7 +2,6 @@
 
 namespace Civi\RcBase\Utils;
 
-use Civi\Api4\UFMatch;
 use Civi\RcBase\ApiWrapper\Get;
 use CRM_Core_Session;
 use CRM_RcBase_Api_Create;
@@ -47,12 +46,11 @@ class PHPUnit
      */
     public static function createLoggedInUser(int $uf_id = 1): int
     {
-        $results = UFMatch::get(false)
-            ->addSelect('contact_id')
-            ->addWhere('uf_id', '=', $uf_id)
-            ->setLimit(1)
-            ->execute();
-        $contact_id = Get::parseResultsFirst($results, 'contact_id');
+        $contact_id = Get::entitySingle('UFMatch', [
+            'select' => ['contact_id'],
+            'where' => [['uf_id', '=', $uf_id]],
+            'limit' => 1,
+        ], 'contact_id');
 
         // User not exists --> create
         if (is_null($contact_id)) {

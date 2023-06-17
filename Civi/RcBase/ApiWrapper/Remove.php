@@ -73,7 +73,7 @@ class Remove
     public static function removeContactFromGroup(int $contact_id, int $group_id, bool $check_permissions = false): int
     {
         if ($contact_id < 1 || $group_id < 1) {
-            throw new InvalidArgumentException('ID');
+            throw new InvalidArgumentException('ID', 'must be positive');
         }
 
         $status = Get::groupContactStatus($contact_id, $group_id, $check_permissions);
@@ -92,7 +92,7 @@ class Remove
                     ],
                     'limit' => 1,
                 ];
-                $group_contact_id = Get::parseResultsFirst(Get::entity('GroupContact', $params, $check_permissions), 'id');
+                $group_contact_id = Get::entitySingle('GroupContact', $params, 'id', $check_permissions);
                 Update::entity('GroupContact', $group_contact_id, ['status' => 'Removed'], $check_permissions);
 
                 return 1;
@@ -119,7 +119,7 @@ class Remove
     public static function contactFromGroup(int $contact_id, int $group_id, bool $check_permissions = false, bool $smart_group = false): int
     {
         if ($contact_id < 1 || $group_id < 1) {
-            throw new InvalidArgumentException('ID');
+            throw new InvalidArgumentException('ID', 'must be positive');
         }
 
         $status = Get::groupContactStatus($contact_id, $group_id, $check_permissions);
@@ -148,7 +148,7 @@ class Remove
                     ],
                     'limit' => 1,
                 ];
-                $group_contact_id = Get::parseResultsFirst(Get::entity('GroupContact', $params, $check_permissions), 'id');
+                $group_contact_id = Get::entitySingle('GroupContact', $params, 'id', $check_permissions);
                 Update::entity('GroupContact', $group_contact_id, ['status' => 'Removed'], $check_permissions);
 
                 $affected_rows = 1;
@@ -195,7 +195,7 @@ class Remove
     public static function emptyGroup(int $group_id, bool $check_permissions = false): int
     {
         if ($group_id < 1) {
-            throw new InvalidArgumentException('ID');
+            throw new InvalidArgumentException('ID', 'must be positive');
         }
 
         try {
