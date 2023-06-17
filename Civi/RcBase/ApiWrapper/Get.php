@@ -82,7 +82,7 @@ class Get
      * Parse result set, return first row
      *
      * @param Result $results Api4 Result set
-     * @param string $field Field to return
+     * @param string $field Field to return (if empty return all fields)
      *
      * @return mixed|null
      * @throws \Civi\RcBase\Exception\APIException
@@ -105,6 +105,25 @@ class Get
 
         // No field specified --> return all fields
         return $result;
+    }
+
+    /**
+     * Retrieve single record.
+     * Makes sense when only one record is expected.
+     * If more records are returned from query, only the first one is returned.
+     * Wrap idiomatic invocation of Get::entity() and Get::parseResultsFirst() for convenience.
+     *
+     * @param string $entity Entity name
+     * @param array $params Parameters for get query
+     * @param string $field Field to return (if empty return all fields)
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return mixed|null
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public static function entitySingle(string $entity, array $params = [], string $field = '', bool $check_permissions = false)
+    {
+        return self::parseResultsFirst(self::entity($entity, $params, null, $check_permissions), $field);
     }
 
     /**

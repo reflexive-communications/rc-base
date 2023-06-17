@@ -81,6 +81,26 @@ class GetTest extends HeadlessTestCase
 
     /**
      * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public static function testGetEntitySingle()
+    {
+        $api_key = 'single_contact_api_key';
+        $contact_id = PHPUnit::createIndividual(0, ['api_key' => $api_key]);
+
+        // Check all fields requested
+        $contact = Get::entitySingle('Contact', ['where' => [['api_key', '=', $api_key]]]);
+        self::assertArrayHasKey('id', $contact, 'id not returned');
+        self::assertArrayHasKey('first_name', $contact, 'first_name not returned');
+        self::assertSame($contact_id, $contact['id'], 'Wrong contact returned');
+
+        // Check single field requested
+        self::assertSame($api_key, Get::entitySingle('Contact', ['where' => [['api_key', '=', $api_key]]], 'api_key'), 'api_key not returned as string');
+    }
+
+    /**
+     * @return void
      * @throws \Civi\RcBase\Exception\APIException
      */
     public function testGetEntityById()
