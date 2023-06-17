@@ -150,7 +150,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity($entity, $params, $check_permissions), is_string($fields) ? $fields : '');
+        return self::entitySingle($entity, $params, is_string($fields) ? $fields : '', $check_permissions);
     }
 
     /**
@@ -177,7 +177,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity($entity, $params, $check_permissions), is_string($fields) ? $fields : '');
+        return self::entitySingle($entity, $params, is_string($fields) ? $fields : '', $check_permissions);
     }
 
     /**
@@ -201,7 +201,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('Email', $params, $check_permissions), 'contact_id');
+        return self::entitySingle('Email', $params, 'contact_id', $check_permissions);
     }
 
     /**
@@ -220,7 +220,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('UFMatch', $params, $check_permissions), 'contact_id');
+        return self::entitySingle('UFMatch', $params, 'contact_id', $check_permissions);
     }
 
     /**
@@ -239,7 +239,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('LocationType', $params, $check_permissions), 'id');
+        return self::entitySingle('LocationType', $params, 'id', $check_permissions);
     }
 
     /**
@@ -269,7 +269,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('EntityTag', $params, $check_permissions), 'id');
+        return self::entitySingle('EntityTag', $params, 'id', $check_permissions);
     }
 
     /**
@@ -294,7 +294,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('Tag', $params, $check_permissions), 'parent_id');
+        return self::entitySingle('Tag', $params, 'parent_id', $check_permissions);
     }
 
     /**
@@ -319,7 +319,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('Contact', $params, $check_permissions), 'contact_sub_type') ?? [];
+        return self::entitySingle('Contact', $params, 'contact_sub_type', $check_permissions) ?? [];
     }
 
     /**
@@ -351,7 +351,7 @@ class Get
             'limit' => 1,
         ];
 
-        $status = self::parseResultsFirst(self::entity('GroupContact', $params, $check_permissions), 'status');
+        $status = self::entitySingle('GroupContact', $params, 'status', $check_permissions);
 
         switch ($status) {
             case 'Added':
@@ -408,7 +408,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('OptionValue', $params, $check_permissions), 'value');
+        return self::entitySingle('OptionValue', $params, 'value', $check_permissions);
     }
 
     /**
@@ -433,7 +433,7 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('OptionValue', $params, $check_permissions), 'value');
+        return self::entitySingle('OptionValue', $params, 'value', $check_permissions);
     }
 
     /**
@@ -457,6 +457,6 @@ class Get
             'limit' => 1,
         ];
 
-        return self::parseResultsFirst(self::entity('Contribution', $params, $check_permissions), 'id');
+        return self::entitySingle('Contribution', $params, 'id', $check_permissions);
     }
 }

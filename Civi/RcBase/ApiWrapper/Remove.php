@@ -92,7 +92,7 @@ class Remove
                     ],
                     'limit' => 1,
                 ];
-                $group_contact_id = Get::parseResultsFirst(Get::entity('GroupContact', $params, $check_permissions), 'id');
+                $group_contact_id = Get::entitySingle('GroupContact', $params, 'id', $check_permissions);
                 Update::entity('GroupContact', $group_contact_id, ['status' => 'Removed'], $check_permissions);
 
                 return 1;
@@ -148,7 +148,7 @@ class Remove
                     ],
                     'limit' => 1,
                 ];
-                $group_contact_id = Get::parseResultsFirst(Get::entity('GroupContact', $params, $check_permissions), 'id');
+                $group_contact_id = Get::entitySingle('GroupContact', $params, 'id', $check_permissions);
                 Update::entity('GroupContact', $group_contact_id, ['status' => 'Removed'], $check_permissions);
 
                 $affected_rows = 1;

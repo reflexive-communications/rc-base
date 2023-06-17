@@ -96,7 +96,7 @@ class Save
                     ],
                     'limit' => 1,
                 ];
-                $group_contact_id = Get::parseResultsFirst(Get::entity('GroupContact', $params, $check_permissions), 'id');
+                $group_contact_id = Get::entitySingle('GroupContact', $params, 'id', $check_permissions);
                 Update::entity('GroupContact', $group_contact_id, ['status' => 'Added'], $check_permissions);
                 break;
             case Get::GROUP_CONTACT_STATUS_ADDED:
@@ -108,7 +108,7 @@ class Save
                     ],
                     'limit' => 1,
                 ];
-                $group_contact_id = Get::parseResultsFirst(Get::entity('GroupContact', $params, $check_permissions), 'id');
+                $group_contact_id = Get::entitySingle('GroupContact', $params, 'id', $check_permissions);
                 break;
             default:
                 throw new APIException('GroupContact', 'get', "Invalid status returned: {$status}");
