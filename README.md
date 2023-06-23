@@ -32,8 +32,6 @@ This extension does nothing, it's only required by some other extensions. It con
 -   `CRM_RcBase_Config`: wraps `Civi::Settings` wrapper. For details check the [Developer Notes](DEVELOPER.md). **DEPRECATED**
 -   `CRM_RcBase_Setting`: same as above with a few extra methods. **DEPRECATED** in favor of `\Civi\RcBase\Settings`!
 -   stylesheets: some `.css` file with general classes.
--   New CMS permissions:
-    -   **access custom API**: this can be used for an unprivileged CMS user to access custom API endpoints
 
 The extension is licensed under [AGPL-3.0](LICENSE.txt).
 

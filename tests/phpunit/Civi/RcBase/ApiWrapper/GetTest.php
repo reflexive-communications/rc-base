@@ -8,6 +8,7 @@ use Civi\RcBase\HeadlessTestCase;
 use Civi\RcBase\Utils\DB;
 use Civi\RcBase\Utils\PHPUnit;
 use CRM_Contact_BAO_GroupContactCache;
+use CRM_Core_BAO_Domain;
 use CRM_Core_BAO_LocationType;
 
 /**
@@ -207,7 +208,7 @@ class GetTest extends HeadlessTestCase
      */
     public function testGetSystemUser()
     {
-        self::assertSame(PHPUnit::createLoggedInUser(), Get::systemUserContactID(), 'Wrong contact ID returned');
+        self::assertSame((int)CRM_Core_BAO_Domain::getDomain()->contact_id, Get::systemUserContactID(), 'Wrong contact ID returned');
     }
 
     /**
