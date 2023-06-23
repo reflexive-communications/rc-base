@@ -11,11 +11,3 @@ function rc_base_civicrm_config(&$config): void
 {
     _rc_base_civix_civicrm_config($config);
 }
-
-/**
- * Implements hook_civicrm_permission().
- */
-function rc_base_civicrm_permission(&$permissions): void
-{
-    CRM_RcBase_Permissions::addCustomPermissions($permissions);
-}
