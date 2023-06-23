@@ -205,7 +205,7 @@ class Get
     }
 
     /**
-     * Get contact ID of system user
+     * Get contact ID of default organization a.k.a. system user
      *
      * @param bool $check_permissions Should we check permissions (ACLs)?
      *
@@ -216,11 +216,11 @@ class Get
     {
         $params = [
             'select' => ['contact_id'],
-            'where' => [['uf_id', '=', 1]],
+            'where' => [['is_active', '=', true]],
             'limit' => 1,
         ];
 
-        return self::entitySingle('UFMatch', $params, 'contact_id', $check_permissions);
+        return self::entitySingle('Domain', $params, 'contact_id', $check_permissions);
     }
 
     /**
