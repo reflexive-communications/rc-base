@@ -155,7 +155,7 @@ class DB
     public static function normalizeValues(CRM_Core_DAO $dao): array
     {
         $results = [];
-        $fields_meta = $dao->fields();
+        $fields_meta = $dao::fields();
 
         foreach ($dao->fetchAll() as $record) {
             if (empty($record)) {
