@@ -10,7 +10,7 @@ use CRM_Contact_BAO_GroupContactCache;
 use Throwable;
 
 /**
- * Common Get Actions
+ * Common Get Actions, mainly for single records
  * Wrapper around APIv4
  *
  * @package  rc-base
