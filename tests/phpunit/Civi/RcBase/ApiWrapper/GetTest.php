@@ -2,6 +2,7 @@
 
 namespace Civi\RcBase\ApiWrapper;
 
+use Civi\Api4\Contact;
 use Civi\RcBase\Exception\APIException;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\HeadlessTestCase;
@@ -32,6 +33,42 @@ class GetTest extends HeadlessTestCase
         self::assertCount(1, $results, 'Contact not found');
         self::assertArrayHasKey('id', $results[0], 'id not returned');
         self::assertSame($contact_id, $results[0]['id'], 'Wrong contact returned');
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \Civi\RcBase\Exception\APIException
+     */
+    public function testGetEntityIndex()
+    {
+        $contact = ['first_name' => 'John'];
+        $contact_id = PHPUnit::createIndividual(PHPUnit::nextCounter(), $contact);
+        $contacts_all = Contact::get()->execute()->count();
+
+        // Get last contact
+        $results = Get::entity('Contact', ['orderBy' => ['id' => 'ASC']], -1);
+        self::assertArrayHasKey('id', $results, 'id not returned');
+        self::assertArrayHasKey('first_name', $results, 'first_name not returned');
+        self::assertSame($contact_id, $results['id'], 'Wrong contact returned');
+
+        // Index by a field
+        $results = Get::entity('Contact', [], 'id');
+        self::assertCount($contacts_all, $results, 'Wrong number of contacts returned');
+        self::assertSame($contact['first_name'], $results[$contact_id]['first_name'], 'Results not indexed by id');
+
+        // Return only IDs
+        $results = Get::entity('Contact', [], ['id']);
+        self::assertCount($contacts_all, $results, 'Wrong number of contacts returned');
+        foreach ($results as $result) {
+            self::assertIsInt($result, 'ID not returned as integer');
+        }
+
+        // Return first names indexed by ID
+        $results = Get::entity('Contact', [], ['id' => 'first_name']);
+        self::assertCount($contacts_all, $results, 'Wrong number of contacts returned');
+        self::assertSame($contact['first_name'], $results[$contact_id], 'Results not indexed by id');
     }
 
     /**
