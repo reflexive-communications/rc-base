@@ -26,4 +26,24 @@ class Strings
 
         return $trim ? trim($input) : $input;
     }
+
+    /**
+     * Remove comments from string
+     * Removes both multi-line /* and single-line // style comments
+     *
+     * @param string $input Input string
+     *
+     * @return string Filtered string
+     */
+    public static function removeComments(string $input): string
+    {
+        if (empty($input)) {
+            return '';
+        }
+
+        $input = preg_replace('@/\*.*?\*/@s', '', $input);
+        $input = preg_replace('@//.*$@m', '', $input);
+
+        return $input;
+    }
 }
