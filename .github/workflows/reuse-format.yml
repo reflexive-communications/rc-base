@@ -10,11 +10,11 @@ on:
 jobs:
   php:
     name: PHP code-style
-    uses: ./.github/workflows/reuse-php-cs-fixer.yml
+    uses: es-progress/.github/.github/workflows/php-cs-fixer.yml@main
     with:
       params: ${{ inputs.php_cs_fixer }}
   other:
     name: Other code-style
-    uses: es-progress/shell/.github/workflows/reuse-prettier.yml@main
+    uses: es-progress/.github/.github/workflows/prettier.yml@main
     with:
       pattern: '**/*.{js,css,md,yml,json,html}'
