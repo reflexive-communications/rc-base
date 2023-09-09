@@ -66,7 +66,12 @@ class Settings
      */
     public static function rotateSecret(string $name): void
     {
-        self::save($name, self::reencrypt(Civi::settings()->get($name)));
+        $cipher_text = Civi::settings()->get($name);
+        if (is_null($cipher_text)) {
+            return;
+        }
+
+        self::save($name, self::reencrypt($cipher_text));
     }
 
     /**
