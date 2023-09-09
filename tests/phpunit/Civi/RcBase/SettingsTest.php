@@ -85,6 +85,10 @@ class SettingsTest extends HeadlessTestCase
         $cipher_text_rotated = Civi::settings()->get($name);
         self::assertFalse(Civi::service('crypto.token')->isPlainText($cipher_text_rotated), 'Secret was not encrypted');
         self::assertNotEquals($cipher_text_original, $cipher_text_rotated, 'Secret not rotated');
+
+        // Rotate non-existent secret
+        Settings::rotateSecret('non-existent-secret-key');
+        self::assertNull(Civi::settings()->get('non-existent-secret-key'), 'Non-existent secret created');
     }
 
     /**
