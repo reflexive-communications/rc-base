@@ -45,6 +45,15 @@ trait EntityPagingTrait
     protected $maxProcessed = 0;
 
     /**
+     * Dry-run
+     *
+     * If true, no changes will be made, just report what would be done
+     *
+     * @var bool
+     */
+    protected $dryRun = false;
+
+    /**
      * Validate paging parameters
      *
      * @return void
