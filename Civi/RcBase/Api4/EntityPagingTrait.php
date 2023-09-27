@@ -3,6 +3,8 @@
 namespace Civi\RcBase\Api4;
 
 use Civi\RcBase\Exception\InvalidArgumentException;
+use Civi\RcBase\Exception\MissingArgumentException;
+use Civi\RcBase\Utils\DB;
 
 /**
  * Properties and methods for APIv4 actions that page through entities
@@ -61,5 +63,42 @@ trait EntityPagingTrait
         if ($this->maxProcessed < 0) {
             throw new InvalidArgumentException('max processed', 'must be non-negative');
         }
+    }
+
+    /**
+     * Fetch next page of entities. Use cursor method for paging
+     * Note: it's expected that select and where are already sanitized & escaped
+     *
+     * @param string $table Table name
+     * @param array $select Columns to select
+     * @param string $where Where clause
+     * @param int $limit Number of entities to return
+     * @param int $id Last retrieved entity ID
+     *
+     * @return array
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
+     */
+    public function fetchNextPage(string $table, array $select, string $where, int $limit, int $id): array
+    {
+        if (empty($select)) {
+            throw new MissingArgumentException('select');
+        }
+
+        $select_clause = implode(',', $select);
+        $where = !empty($where) ? "({$where}) AND" : '';
+
+        $sql = "SELECT {$select_clause}
+                FROM %1
+                WHERE {$where} id > %2
+                ORDER BY id
+                LIMIT %3";
+        $params = [
+            1 => [$table, 'MysqlColumnNameOrAlias'],
+            2 => [$id, 'Positive'],
+            3 => [$limit, 'Positive'],
+        ];
+
+        return DB::query($sql, $params);
     }
 }
