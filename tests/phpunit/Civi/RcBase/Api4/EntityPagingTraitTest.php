@@ -103,6 +103,30 @@ class EntityPagingTraitTest extends HeadlessTestCase
         self::assertEquals($params['first_name'], $results[0]['name'], 'wrong name returned');
         self::assertEquals($params['last_name'], $results[0]['last_name'], 'wrong last_name returned');
 
+        // Joins
+        $params = [
+            'first_name' => 'Jane',
+            'last_name' => 'Doe',
+            'external_identifier' => 'join-123',
+        ];
+        $contact_id = PHPUnit::createIndividualWithEmail(PHPUnit::nextCounter(), $params);
+        $results = $this->fetchNextPage(
+            'civicrm_email e INNER JOIN civicrm_contact c ON e.contact_id = c.id',
+            ['c.id AS contact_id', 'e.email', 'c.first_name', 'c.last_name'],
+            "c.external_identifier = '{$params['external_identifier']}'",
+            1000,
+            0,
+            'e'
+        );
+        self::assertCount(1, $results, 'not single row returned');
+        self::assertArrayHasKey('contact_id', $results[0], 'contact_id not returned');
+        self::assertArrayHasKey('email', $results[0], 'id not returned');
+        self::assertArrayHasKey('first_name', $results[0], 'first_name not returned');
+        self::assertArrayHasKey('last_name', $results[0], 'last_name not returned');
+        self::assertEquals($contact_id, $results[0]['contact_id'], 'wrong contact_id returned');
+        self::assertEquals($params['first_name'], $results[0]['first_name'], 'wrong first_name returned');
+        self::assertEquals($params['last_name'], $results[0]['last_name'], 'wrong last_name returned');
+
         // Get all contacts
         $contacts = Get::entity('Contact', [
             'where' => [
