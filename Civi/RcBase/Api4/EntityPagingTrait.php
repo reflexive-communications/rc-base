@@ -76,19 +76,20 @@ trait EntityPagingTrait
 
     /**
      * Fetch next page of entities. Use cursor method for paging
-     * Note: it's expected that select and where are already sanitized & escaped
+     * Note: it's expected that from, select and where are already sanitized & escaped
      *
-     * @param string $table Table name
+     * @param string $from Table name optionally with joins
      * @param array $select Columns to select
      * @param string $where Where clause
      * @param int $limit Number of entities to return
      * @param int $id Last retrieved entity ID
+     * @param string $id_prefix If ID is ambiguous, specify table alias
      *
      * @return array
      * @throws \Civi\RcBase\Exception\DataBaseException
      * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
-    public function fetchNextPage(string $table, array $select, string $where, int $limit, int $id): array
+    public function fetchNextPage(string $from, array $select, string $where, int $limit, int $id, string $id_prefix = ''): array
     {
         if (empty($select)) {
             throw new MissingArgumentException('select');
@@ -96,16 +97,16 @@ trait EntityPagingTrait
 
         $select_clause = implode(',', $select);
         $where = !empty($where) ? "({$where}) AND" : '';
+        $id_prefix = !empty($id_prefix) ? "{$id_prefix}." : '';
 
         $sql = "SELECT {$select_clause}
-                FROM %1
-                WHERE {$where} id > %2
-                ORDER BY id
-                LIMIT %3";
+                FROM {$from}
+                WHERE {$where} {$id_prefix}id > %1
+                ORDER BY {$id_prefix}id
+                LIMIT %2";
         $params = [
-            1 => [$table, 'MysqlColumnNameOrAlias'],
-            2 => [$id, 'Positive'],
-            3 => [$limit, 'Positive'],
+            1 => [$id, 'Positive'],
+            2 => [$limit, 'Positive'],
         ];
 
         return DB::query($sql, $params);
