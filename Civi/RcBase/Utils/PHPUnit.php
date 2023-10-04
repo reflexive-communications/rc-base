@@ -2,9 +2,9 @@
 
 namespace Civi\RcBase\Utils;
 
+use Civi\RcBase\ApiWrapper\Create;
 use Civi\RcBase\ApiWrapper\Get;
 use CRM_Core_Session;
-use CRM_RcBase_Api_Create;
 
 /**
  * Utilities for unit-testing
@@ -37,14 +37,14 @@ class PHPUnit
      * Simulate a logged in system user
      *
      * @param int $uf_id UF ID for system contact (e.g. Drupal user ID)
+     * @param array $extra Extra parameters to contact
      *
      * @return int Contact ID
      * @throws \API_Exception
      * @throws \CRM_Core_Exception
-     * @throws \Civi\API\Exception\UnauthorizedException
      * @throws \Civi\RcBase\Exception\APIException
      */
-    public static function createLoggedInUser(int $uf_id = 1): int
+    public static function createLoggedInUser(int $uf_id = 1, array $extra = []): int
     {
         $contact_id = Get::entitySingle('UFMatch', [
             'select' => ['contact_id'],
@@ -54,12 +54,13 @@ class PHPUnit
 
         // User not exists --> create
         if (is_null($contact_id)) {
-            $contact_id = CRM_RcBase_Api_Create::contact([
+            $params = array_merge([
                 'first_name' => 'logged_in',
                 'last_name' => 'user',
                 'contact_type' => 'Individual',
-            ]);
-            CRM_RcBase_Api_Create::email(
+            ], $extra);
+            $contact_id = Create::contact($params);
+            Create::email(
                 $contact_id,
                 [
                     'email' => "logged.in.user{$uf_id}@testing.com",
@@ -69,7 +70,7 @@ class PHPUnit
 
             // Create UF match, uf_id is the ID of the user in the CMS
             // Use ID #1, simulate system user
-            CRM_RcBase_Api_Create::entity('UFMatch', [
+            Create::entity('UFMatch', [
                 'uf_id' => $uf_id,
                 'contact_id' => $contact_id,
             ]);
@@ -103,7 +104,7 @@ class PHPUnit
             'external_identifier' => "ext_{$counter}",
         ];
 
-        return CRM_RcBase_Api_Create::contact(array_merge($default, $extra));
+        return Create::contact(array_merge($default, $extra));
     }
 
     /**
@@ -129,7 +130,7 @@ class PHPUnit
         ];
 
         $contact_id = self::createIndividual($counter, $extra_contact);
-        CRM_RcBase_Api_Create::email($contact_id, array_merge($default, $extra_email));
+        Create::email($contact_id, array_merge($default, $extra_email));
 
         return $contact_id;
     }

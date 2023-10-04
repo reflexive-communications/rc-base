@@ -2,10 +2,9 @@
 
 namespace Civi\RcBase\Utils;
 
-use Civi\Api4\Email;
+use Civi\RcBase\ApiWrapper\Get;
 use Civi\RcBase\HeadlessTestCase;
 use CRM_Core_Session;
-use CRM_RcBase_Api_Get;
 
 /**
  * @group headless
@@ -28,11 +27,20 @@ class PHPUnitTest extends HeadlessTestCase
      */
     public function testCreateLoggedInUser()
     {
-        $contact_id = PHPUnit::createLoggedInUser();
+        $uf_id = 2;
+        $params = ['api_key' => 'abc123'];
+        $contact_id = PHPUnit::createLoggedInUser($uf_id, $params);
 
         $session = CRM_Core_Session::singleton();
         self::assertSame($contact_id, CRM_Core_Session::getLoggedInContactID(), 'Contact ID not set in session');
         self::assertSame('logged_in user', $session->getLoggedInContactDisplayName(), 'Wrong name for logged in user');
+
+        $contact = Get::entitySingle('UFMatch', [
+            'select' => ['contact_id.api_key'],
+            'where' => [['uf_id', '=', $uf_id]],
+            'limit' => 1,
+        ]);
+        self::assertSame($params['api_key'], $contact['contact_id.api_key'], 'Wrong api_key returned');
     }
 
     /**
@@ -50,7 +58,7 @@ class PHPUnitTest extends HeadlessTestCase
         ];
         $contact_id = PHPUnit::createIndividual($counter, $values);
 
-        $contact = CRM_RcBase_Api_Get::contactData($contact_id);
+        $contact = Get::entityByID('Contact', $contact_id);
         self::assertSame($values['api_key'], $contact['api_key'], 'Wrong api_key returned');
         self::assertSame($values['last_name'], $contact['last_name'], 'Wrong last_name returned');
         self::assertSame("user_{$counter}", $contact['first_name'], 'Wrong first_name returned');
@@ -71,13 +79,13 @@ class PHPUnitTest extends HeadlessTestCase
         ];
         $contact_id = PHPUnit::createIndividualWithEmail($counter, [], $values);
 
-        self::assertSame($contact_id, CRM_RcBase_Api_Get::contactIDFromEmail("user_{$counter}@test.com"), 'Failed to create contact with email');
+        self::assertSame($contact_id, Get::contactIDByEmail("user_{$counter}@test.com"), 'Failed to create contact with email');
 
-        $emails = Email::get()
-            ->addWhere('email', '=', "user_{$counter}@test.com")
-            ->setLimit(1)
-            ->execute()
-            ->first();
-        self::assertSame($values['signature_text'], $emails['signature_text'], 'Wrong signature_text returned');
+        $signature_text = Get::entitySingle('Email', [
+            'select' => ['signature_text'],
+            'where' => [['email', '=', "user_{$counter}@test.com"]],
+            'limit' => 1,
+        ], 'signature_text');
+        self::assertSame($values['signature_text'], $signature_text, 'Wrong signature_text returned');
     }
 }
