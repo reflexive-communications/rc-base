@@ -5,7 +5,6 @@ namespace Civi\RcBase\IOProcessor;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Exception\MissingArgumentException;
 use Civi\RcBase\HeadlessTestCase;
-use Throwable;
 
 /**
  * @group headless
@@ -278,7 +277,7 @@ class BaseTest extends HeadlessTestCase
         $name = 'array instead string';
 
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('is not type of');
+        self::expectExceptionMessage("is not {$type}");
         Base::validateInput($value, $type, $name);
     }
 
@@ -294,7 +293,7 @@ class BaseTest extends HeadlessTestCase
         $name = 'missing local part';
 
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('is not type of');
+        self::expectExceptionMessage("is not {$type}");
         Base::validateInput($value, $type, $name);
     }
 
@@ -310,7 +309,7 @@ class BaseTest extends HeadlessTestCase
         $name = 'missing domain';
 
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('is not type of');
+        self::expectExceptionMessage("is not {$type}");
         Base::validateInput($value, $type, $name);
     }
 
@@ -326,7 +325,7 @@ class BaseTest extends HeadlessTestCase
         $name = 'missing top level domain';
 
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('is not type of');
+        self::expectExceptionMessage("is not {$type}");
         Base::validateInput($value, $type, $name);
     }
 
@@ -342,7 +341,7 @@ class BaseTest extends HeadlessTestCase
         $name = 'string';
 
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('is not type of');
+        self::expectExceptionMessage("is not {$type}");
         Base::validateInput($value, $type, $name);
     }
 
@@ -358,7 +357,7 @@ class BaseTest extends HeadlessTestCase
         $name = 'string';
 
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('is not type of');
+        self::expectExceptionMessage("is not {$type}");
         Base::validateInput($value, $type, $name);
     }
 
@@ -374,7 +373,7 @@ class BaseTest extends HeadlessTestCase
         $name = 'string';
 
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('is not type of');
+        self::expectExceptionMessage("is not {$type}");
         Base::validateInput($value, $type, $name);
     }
 
@@ -390,7 +389,7 @@ class BaseTest extends HeadlessTestCase
         $name = 'date with time';
 
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage('is not type of');
+        self::expectExceptionMessage("is not {$type}");
         Base::validateInput($value, $type, $name);
     }
 
@@ -406,7 +405,7 @@ class BaseTest extends HeadlessTestCase
         $name = 'missing day';
 
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage("${name} is not type of: ${type}");
+        self::expectExceptionMessage("is not {$type}");
         Base::validateInput($value, $type, $name);
     }
 
@@ -422,7 +421,7 @@ class BaseTest extends HeadlessTestCase
         $name = 'missing day month';
 
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage("${name} is not type of: ${type}");
+        self::expectExceptionMessage("is not {$type}");
         Base::validateInput($value, $type, $name);
     }
 
@@ -438,7 +437,7 @@ class BaseTest extends HeadlessTestCase
         $name = 'random string';
 
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage("${name} is not type of: ${type}");
+        self::expectExceptionMessage("is not {$type}");
         Base::validateInput($value, $type, $name);
     }
 
@@ -454,7 +453,7 @@ class BaseTest extends HeadlessTestCase
         $name = 'missing seconds decimals';
 
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage("${name} is not type of: ${type}");
+        self::expectExceptionMessage("is not {$type}");
         Base::validateInput($value, $type, $name);
     }
 
@@ -470,7 +469,7 @@ class BaseTest extends HeadlessTestCase
         $name = 'more than 6 seconds decimals';
 
         self::expectException(InvalidArgumentException::class);
-        self::expectExceptionMessage("${name} is not type of: ${type}");
+        self::expectExceptionMessage("is not {$type}");
         Base::validateInput($value, $type, $name);
     }
 
@@ -577,13 +576,13 @@ class BaseTest extends HeadlessTestCase
      * @param $name
      * @param $required
      * @param $allowedValues
+     *
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
     public function testValidateInputValidValues($value, $type, $name, $required, $allowedValues)
     {
-        try {
-            self::assertEmpty(Base::validateInput($value, $type, $name, $required, $allowedValues), 'Should be empty for valid setup.');
-        } catch (Throwable $ex) {
-            self::fail('Should not throw exception for valid setup. '.$ex->getMessage());
-        }
+        $validated = Base::validateInput($value, $type, $name, $required, $allowedValues);
+        self::assertEquals($value, $validated, 'Wrong validated value returned.');
     }
 }
