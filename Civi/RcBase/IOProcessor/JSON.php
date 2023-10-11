@@ -20,10 +20,10 @@ class JSON
      *
      * @param string $json JSON to parse
      *
-     * @return array Parsed JSON object as associative array
+     * @return mixed Parsed JSON object
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
-    public static function parse(string $json): array
+    public static function parse(string $json)
     {
         // Decode JSON
         $decoded = json_decode($json, true);
