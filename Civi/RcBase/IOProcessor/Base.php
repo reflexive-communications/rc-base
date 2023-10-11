@@ -110,11 +110,11 @@ class Base
      *                       throws exception if value is empty
      * @param array $allowed_values Allowed values for this input
      *
-     * @return void
+     * @return mixed Value casted to correct type
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      * @throws \Civi\RcBase\Exception\MissingArgumentException
      */
-    public static function validateInput($value, string $type, string $name, bool $required = true, array $allowed_values = []): void
+    public static function validateInput($value, string $type, string $name, bool $required = true, array $allowed_values = [])
     {
         if (empty($type)) {
             throw new MissingArgumentException('type');
@@ -129,7 +129,7 @@ class Base
             }
 
             // Value empty and not required --> skip validation
-            return;
+            return $value;
         }
 
         switch ($type) {
@@ -141,15 +141,27 @@ class Base
                 break;
             case 'int':
                 $valid = CRM_Utils_Rule::integer($value);
+                if ($valid) {
+                    $value = (int)$value;
+                }
                 break;
             case 'id':
                 $valid = CRM_Utils_Rule::positiveInteger($value);
+                if ($valid) {
+                    $value = (int)$value;
+                }
                 break;
             case 'float':
                 $valid = (is_float($value) || CRM_Utils_Rule::numeric($value));
+                if ($valid) {
+                    $value = (float)$value;
+                }
                 break;
             case 'bool':
                 $valid = (is_bool($value) || CRM_Utils_Rule::boolean($value));
+                if ($valid) {
+                    $value = (bool)$value;
+                }
                 break;
             case 'date':
                 $valid = CRM_Utils_Rule::date($value);
@@ -158,19 +170,21 @@ class Base
                 $valid = CRM_Utils_Rule::dateTime($value);
                 break;
             case 'datetimeIso':
-                $valid = (is_string($value) && (preg_match('/^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{1,6}(Z|(\+|-)\d\d:\d\d)$/', $value)));
+                $valid = (is_string($value) && (preg_match('/^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d{1,6}(Z|([+-])\d\d:\d\d)$/', $value)));
                 break;
             default:
                 throw new InvalidArgumentException('type', 'Not supported type');
         }
 
         if (!$valid) {
-            throw new InvalidArgumentException($name, sprintf('%s is not type of: %s (value: %s)', $name, $type, var_export($value, true)));
+            throw new InvalidArgumentException($name, "{$name} is not {$type} (value: ".var_export($value, true).')');
         }
 
         // Allowed values values set --> check
         if (!empty($allowed_values) && !in_array($value, $allowed_values)) {
             throw new InvalidArgumentException($name, 'Not allowed value for');
         }
+
+        return $value;
     }
 }
