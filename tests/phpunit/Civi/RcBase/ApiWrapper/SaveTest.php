@@ -86,6 +86,12 @@ class SaveTest extends HeadlessTestCase
         $subtype = Get::contactSubType($contact_id);
         self::assertCount(2, $subtype, 'Wrong number of subtypes');
         self::assertSame([$sub_type_a['name'], $sub_type_b['name']], $subtype, 'Wrong subtypes returned');
+
+        // Add subtype A again
+        Save::addSubTypeToContact($contact_id, [$sub_type_a['name']]);
+        $subtype = Get::contactSubType($contact_id);
+        self::assertCount(2, $subtype, 'Subtypes not deduplicated');
+        self::assertSame([$sub_type_a['name'], $sub_type_b['name']], $subtype, 'Wrong subtypes returned');
     }
 
     /**
