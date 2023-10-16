@@ -55,7 +55,7 @@ class Save
     {
         $current_sub_types = Get::contactSubType($contact_id, $check_permissions);
 
-        return Update::contact($contact_id, ['contact_sub_type' => array_merge($current_sub_types, $subtypes)], $check_permissions);
+        return Update::contact($contact_id, ['contact_sub_type' => array_unique(array_merge($current_sub_types, $subtypes))], $check_permissions);
     }
 
     /**
