@@ -212,4 +212,20 @@ class ExceptionTest extends HeadlessTestCase
         self::assertSame("Unauthorized: {$msg}", $exception->getMessage(), 'Wrong message returned');
         self::assertSame($prev, $exception->getPreviousException(), 'Wrong previous exception returned');
     }
+
+    /**
+     * @return void
+     */
+    public function testIllegalException()
+    {
+        $exception = new IllegalException();
+        self::assertSame('Illegal condition', $exception->getMessage(), 'Wrong message returned for empty message');
+        self::assertSame(IllegalException::ERROR_CODE, $exception->getErrorCode(), 'Wrong error code returned');
+
+        $msg = 'configuration error';
+        $prev = new CRM_Core_Exception('prev');
+        $exception = new IllegalException($msg, $prev);
+        self::assertSame("Illegal condition: {$msg}", $exception->getMessage(), 'Wrong message returned');
+        self::assertSame($prev, $exception->getPreviousException(), 'Wrong previous exception returned');
+    }
 }
