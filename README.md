@@ -24,8 +24,13 @@ This extension does nothing, it's only required by some other extensions. It con
 -   `\Civi\RcBase\ApiWrapper`: classes that wrap standard Civi APIv4
 -   `\Civi\RcBase\IOProcessor`: IO processors for JSON, URL-encoded, XML or INI files or streams
 -   `\Civi\RcBase\Exception`: new specific exceptions and handlers
--   `\Civi\RcBase\Utils`: helper methods for arrays, files, handling DataBase, UI management and for PHP unit testing
+-   `\Civi\RcBase\Utils`: utility classes and various helper methods
 -   `\Civi\RcBase\Settings`: for managing settings and configs, wrapper for `Civi::Settings`
+
+**Traits**
+
+-   `\Civi\RcBase\Api4\ActionUtilsTrait`: methods for APIv4 abstract (non-CRUD) actions
+-   `\Civi\RcBase\Api4\EntityPagingTrait`: methods for APIv4 actions that use paging through MySQL results
 
 **Other**
 
