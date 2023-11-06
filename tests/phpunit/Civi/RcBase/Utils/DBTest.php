@@ -159,5 +159,6 @@ class DBTest extends HeadlessTestCase
         self::assertSame($values['nick_name'], $result[0]['nick_name'], 'Wrong data returned');
         self::assertSame($values['do_not_email'], $result[0]['do_not_email'], 'Wrong data returned');
         self::assertSame($values['gender_id'], $result[0]['gender_id'], 'Wrong data returned');
+        self::assertNull($result[0]['external_identifier'], 'Wrong data returned');
     }
 }

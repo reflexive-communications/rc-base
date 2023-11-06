@@ -157,13 +157,19 @@ class DB
         $results = [];
         $fields_meta = $dao::fields();
 
-        foreach ($dao->fetchAll() as $record) {
-            if (empty($record)) {
-                continue;
-            }
+        while ($dao->fetch()) {
+            $record = [];
+            foreach ($fields_meta as $field => $meta) {
+                $field_name = $meta['name'];
+                $value = $dao->$field_name;
 
-            foreach ($record as $field => $value) {
-                switch ($fields_meta[$field]['type'] ?? 0) {
+                // Leave null values as is
+                if (is_null($value)) {
+                    $record[$field] = $value;
+                    continue;
+                }
+
+                switch ($meta['type'] ?? 0) {
                     case CRM_Utils_Type::T_INT:
                         $record[$field] = (int)$value;
                         break;
@@ -174,11 +180,12 @@ class DB
                         $record[$field] = (bool)$value;
                         break;
                     default:
+                        $record[$field] = $value;
                         break;
                 }
 
-                if (isset($fields_meta[$field]['serialize'])) {
-                    $record[$field] = $dao::unSerializeField($value, $fields_meta[$field]['serialize']);
+                if (isset($meta['serialize'])) {
+                    $record[$field] = $dao::unSerializeField($value, $meta['serialize']);
                 }
             }
             $results[] = $record;
