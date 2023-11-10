@@ -202,9 +202,7 @@ class UpdateTest extends HeadlessTestCase
     public function testUpdateActivity()
     {
         $contact_id = PHPUnit::createIndividual();
-        $contact_id_source = PHPUnit::createIndividual();
         $values = [
-            'source_contact_id' => $contact_id_source,
             'activity_type_id' => 1,
             'subject' => 'Test',
         ];

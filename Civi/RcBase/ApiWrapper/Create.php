@@ -179,7 +179,7 @@ class Create
     }
 
     /**
-     * Add activity to contact
+     * Add activity to contact, with contact as target and system user as source by default
      *
      * @param int $contact_id Contact ID
      * @param array $values Activity data
@@ -196,6 +196,7 @@ class Create
         }
 
         $values['target_contact_id'] = $contact_id;
+        $values['source_contact_id'] = $values['source_contact_id'] ?? Get::systemUserContactID();
 
         return self::entity('Activity', $values, $check_permissions);
     }
