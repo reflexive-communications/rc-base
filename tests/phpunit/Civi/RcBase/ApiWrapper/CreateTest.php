@@ -251,15 +251,41 @@ class CreateTest extends HeadlessTestCase
      */
     public function testCreateActivity()
     {
+        $contact_id = PHPUnit::createIndividual();
         $contact_id_source = PHPUnit::createIndividual();
+
+        // Source contact passed
         $values = [
             'source_contact_id' => $contact_id_source,
             'activity_type_id' => 1,
             'subject' => 'Tribute',
         ];
-        $contact_id = PHPUnit::createIndividual();
+        $activity_id = Create::activity($contact_id, $values);
+        self::assertNotNull($activity_id, 'Valid ID needs to be returned');
+        $activity_contact = Get::entitySingle('ActivityContact', [
+            'where' => [
+                ['activity_id', '=', $activity_id],
+                ['record_type_id:name', '=', 'Activity Source'],
+            ],
+            'limit' => 1,
+        ]);
+        self::assertSame($contact_id_source, $activity_contact['contact_id'], 'Wrong source contact');
 
-        self::assertNotNull(Create::activity($contact_id, $values), 'Valid ID needs to be returned');
+        // Source contact not passed
+        $values = [
+            'activity_type_id' => 1,
+            'subject' => 'Tribute',
+        ];
+        $activity_id = Create::activity($contact_id, $values);
+        self::assertNotNull($activity_id, 'Valid ID needs to be returned');
+        $activity_contact = Get::entitySingle('ActivityContact', [
+            'where' => [
+                ['activity_id', '=', $activity_id],
+                ['record_type_id:name', '=', 'Activity Source'],
+            ],
+            'limit' => 1,
+        ]);
+        self::assertSame(Get::systemUserContactID(), $activity_contact['contact_id'], 'Wrong source contact');
 
         // Check invalid ID
         self::expectException(InvalidArgumentException::class);
