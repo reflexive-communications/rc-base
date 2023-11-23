@@ -197,7 +197,10 @@ class Get
 
         $params = [
             'select' => ['contact_id'],
-            'where' => [['email', '=', $email]],
+            'where' => [
+                ['email', '=', $email],
+                ['contact_id.is_deleted', '=', false],
+            ],
             'limit' => 1,
         ];
 

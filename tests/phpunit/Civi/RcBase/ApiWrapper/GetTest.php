@@ -208,6 +208,7 @@ class GetTest extends HeadlessTestCase
         // Create contacts
         $contact_id_a = PHPUnit::createIndividual();
         $contact_id_b = PHPUnit::createIndividual();
+        $contact_id_deleted = PHPUnit::createIndividual(PHPUnit::nextCounter(), ['is_deleted' => 1]);
 
         // Create emails
         $email_a = [
@@ -222,9 +223,14 @@ class GetTest extends HeadlessTestCase
             'email' => 'antonius@senate.rome',
             'location_type_id' => 1,
         ];
+        $email_d = [
+            'email' => 'brutus@senate.rome',
+            'location_type_id' => 1,
+        ];
         Create::email($contact_id_a, $email_a);
         Create::email($contact_id_a, $email_b);
         Create::email($contact_id_b, $email_c);
+        Create::email($contact_id_deleted, $email_d);
 
         // Check valid email
         self::assertSame($contact_id_a, Get::contactIDByEmail($email_a['email']), 'Wrong contact ID returned');
@@ -234,6 +240,12 @@ class GetTest extends HeadlessTestCase
         self::assertNull(Get::contactIDByEmail(''), 'Not null returned on empty email');
         // Check non-existent email
         self::assertNull(Get::contactIDByEmail('nonexistent@rome.com'), 'Not null returned on non-existent email');
+        // Check soft deleted contact
+        self::assertNull(Get::contactIDByEmail($email_d['email']), 'Not null returned on deleted contact');
+
+        // Create contact with same email as deleted contact
+        $contact_id_duplicate = PHPUnit::createIndividualWithEmail(PHPUnit::nextCounter(), [], ['email' => $email_d['email']]);
+        self::assertSame($contact_id_duplicate, Get::contactIDByEmail($email_d['email']), 'Wrong contact ID returned');
     }
 
     /**
