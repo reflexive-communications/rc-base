@@ -2,6 +2,7 @@
 
 namespace Civi\RcBase\IOProcessor;
 
+use Civi\Core\Service\AutoService;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Exception\MissingArgumentException;
 use CRM_Utils_Rule;
@@ -13,8 +14,10 @@ use CRM_Utils_String;
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
+ * @service
+ * @internal
  */
-class Base
+class Base extends AutoService
 {
     /**
      * Detect content-type

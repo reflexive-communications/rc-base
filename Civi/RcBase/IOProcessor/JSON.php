@@ -12,8 +12,9 @@ use Throwable;
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
+ * @service IOProcessor.JSON
  */
-class JSON
+class JSON extends Base
 {
     /**
      * Parse JSON string

@@ -13,8 +13,9 @@ use Throwable;
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
+ * @service IOProcessor.Config
  */
-class Config
+class Config extends Base
 {
     /**
      * Parse INI string
