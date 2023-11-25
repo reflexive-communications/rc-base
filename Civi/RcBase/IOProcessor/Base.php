@@ -2,6 +2,7 @@
 
 namespace Civi\RcBase\IOProcessor;
 
+use Civi;
 use Civi\Core\Service\AutoService;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Exception\MissingArgumentException;
@@ -56,6 +57,33 @@ abstract class Base extends AutoService implements IOProcessorInterface
     public function decodePost()
     {
         return $this->decodeStream('php://input');
+    }
+
+    /**
+     * Return appropriate IO Processor service based on request content-type
+     *
+     * @return \Civi\RcBase\IOProcessor\IOProcessorInterface
+     */
+    public static function getIOProcessorService(): IOProcessorInterface
+    {
+        if (empty($_SERVER['CONTENT_TYPE'] ?? '')) {
+            return Civi::service('IOProcessor.UrlEncodedForm');
+        }
+
+        $fields = explode(';', $_SERVER['CONTENT_TYPE']);
+        $media_type = trim(array_shift($fields));
+
+        switch ($media_type) {
+            case 'application/json':
+            case 'application/javascript':
+                return Civi::service('IOProcessor.JSON');
+            case 'text/xml':
+            case 'application/xml':
+                return Civi::service('IOProcessor.XML');
+            case 'application/x-www-form-urlencoded':
+            default:
+                return Civi::service('IOProcessor.UrlEncodedForm');
+        }
     }
 
     /**

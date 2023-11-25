@@ -115,8 +115,6 @@ class BaseTest extends HeadlessTestCase
     }
 
     /**
-     * Content types
-     *
      * @return \string[][]
      */
     public function provideContentTypes(): array
@@ -136,30 +134,24 @@ class BaseTest extends HeadlessTestCase
     }
 
     /**
-     * Detect content-type.
-     * If not set, it returns default.
-     * If set with handled value it returns the relevant class string.
-     * If set with unknown value, it returns default.
-     *
      * @dataProvider provideContentTypes
      */
-    public function testDetectContentType($header, $expected)
+    public function testGetIOProcessorService($header, $expected)
     {
         $_SERVER['CONTENT_TYPE'] = $header;
-        $result = Base::detectContentType();
-        self::assertEquals($expected, $result, 'Invalid class returned.');
+        $service = Base::getIOProcessorService();
+        self::assertInstanceOf($expected, $service, 'Wrong service returned.');
     }
 
     /**
-     * Detect content-type.
-     * If not set, it returns default.
+     * @return void
      */
     public function testDetectContentTypeWithNoHeadersSet()
     {
         // not set
         unset($_SERVER['CONTENT_TYPE']);
-        $result = Base::detectContentType();
-        self::assertEquals('Civi\RcBase\IOProcessor\UrlEncodedForm', $result, 'Invalid class returned.');
+        $service = Base::getIOProcessorService();
+        self::assertInstanceOf('Civi\RcBase\IOProcessor\UrlEncodedForm', $service, 'Wrong service returned.');
     }
 
     /**
