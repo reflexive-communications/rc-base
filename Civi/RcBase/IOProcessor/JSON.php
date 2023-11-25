@@ -19,6 +19,25 @@ class JSON extends Base
     /**
      * Parse JSON string
      *
+     * @param string $input JSON string to parse
+     *
+     * @return mixed Parsed JSON object
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function decode(string $input)
+    {
+        $decoded = json_decode($input, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new InvalidArgumentException('input', 'Invalid JSON received: '.json_last_error_msg());
+        }
+
+        return Base::sanitize($decoded);
+    }
+
+    /**
+     * Parse JSON string
+     *
      * @param string $json JSON to parse
      *
      * @return mixed Parsed JSON object

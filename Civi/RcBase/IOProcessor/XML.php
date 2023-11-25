@@ -20,6 +20,40 @@ class XML extends Base
     /**
      * Parse XML string
      *
+     * @param string $input XML to parse
+     * @param bool $return_array Return array or SimpleXMLElement
+     *
+     * @return mixed Parsed XML object
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function decode(string $input, bool $return_array = true)
+    {
+        // Disable external entity parsing to prevent XXE attack
+        // In libxml versions from 2.9.0 XXE is disabled by default
+        if (LIBXML_VERSION < 20900) {
+            libxml_disable_entity_loader();
+        }
+
+        try {
+            $xml_obj = new SimpleXMLElement($input);
+
+            if (!$return_array) {
+                return $xml_obj;
+            }
+
+            // Encode & decode to JSON to convert XML_Element to array
+            $array = json_encode($xml_obj, JSON_UNESCAPED_UNICODE);
+            $array = json_decode($array, true);
+
+            return Base::sanitize($array);
+        } catch (Throwable $ex) {
+            throw new InvalidArgumentException('input', 'Invalid XML received: '.$ex->getMessage(), $ex);
+        }
+    }
+
+    /**
+     * Parse XML string
+     *
      * @param string $xml_string XML to parse
      * @param bool $return_array Return array or SimpleXMLElement
      *

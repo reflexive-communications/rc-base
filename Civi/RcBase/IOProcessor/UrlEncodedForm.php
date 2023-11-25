@@ -13,6 +13,34 @@ namespace Civi\RcBase\IOProcessor;
 class UrlEncodedForm extends Base
 {
     /**
+     * Parse URL-encoded string
+     *
+     * @param string $input x-www-form-urlencoded string to parse
+     *
+     * @return mixed Parsed URL-encoded object
+     */
+    public function decode(string $input)
+    {
+        $result = [];
+        foreach (explode('&', $input) as $element) {
+            $parts = explode('=', urldecode($element));
+            $result[$parts[0]] = $parts[1];
+        }
+
+        return Base::sanitize($result);
+    }
+
+    /**
+     * Parse POST request body
+     *
+     * @return array Request POST parsed
+     */
+    public function decodePost(): array
+    {
+        return Base::sanitize($_POST);
+    }
+
+    /**
      * Parse GET request parameters
      *
      * @return array GET parameters parsed

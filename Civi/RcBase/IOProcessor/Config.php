@@ -20,6 +20,35 @@ class Config extends Base
     /**
      * Parse INI string
      *
+     * @param string $input INI string to parse
+     * @param bool $process_sections Process sections
+     * @param int $scanner_mode Scanner mode
+     *
+     * @return mixed Parsed config
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function decode(string $input, bool $process_sections = true, int $scanner_mode = INI_SCANNER_TYPED)
+    {
+        try {
+            // Temporarily switch-off error handler to be able to catch all errors
+            set_error_handler(function (int $errno, string $message) {
+                throw new Exception($message);
+            });
+            $result = parse_ini_string($input, $process_sections, $scanner_mode);
+        } catch (Throwable $ex) {
+            // Exception is caught --> switch back to old one --> re-throw
+            restore_error_handler();
+            throw new InvalidArgumentException('input', 'Failed to parse ini string: '.$ex->getMessage(), $ex);
+        }
+        // No exception thrown --> switch back to old one
+        restore_error_handler();
+
+        return Base::sanitize($result);
+    }
+
+    /**
+     * Parse INI string
+     *
      * @param string $ini_string INI string to parse
      * @param bool $process_sections Process sections
      * @param int $scanner_mode Scanner mode

@@ -5,8 +5,10 @@ namespace Civi\RcBase\IOProcessor;
 use Civi\Core\Service\AutoService;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Exception\MissingArgumentException;
+use Civi\RcBase\Exception\RunTimeException;
 use CRM_Utils_Rule;
 use CRM_Utils_String;
+use Throwable;
 
 /**
  * Base IO Processor
@@ -17,8 +19,45 @@ use CRM_Utils_String;
  * @service
  * @internal
  */
-class Base extends AutoService
+abstract class Base extends AutoService implements IOProcessorInterface
 {
+    /**
+     * Parse input from stream wrappers
+     * Example:
+     *   - http: $stream="https://example.com/json"
+     *   - file: $stream="file:///path/to/local/file"
+     *   - data: $stream="data://text/plain;base64,bW9ua2V5Cg=="
+     *   - php:  $stream="php://input"
+     *
+     * @link https://www.php.net/manual/en/wrappers.expect.php
+     *
+     * @param string $stream Name of input stream
+     *
+     * @return mixed Parsed data
+     * @throws \Civi\RcBase\Exception\RunTimeException
+     */
+    public function decodeStream(string $stream)
+    {
+        try {
+            $raw = file_get_contents($stream);
+        } catch (Throwable $ex) {
+            throw new RunTimeException('Failed to open stream: '.$ex->getMessage(), $ex);
+        }
+
+        return $this->decode($raw);
+    }
+
+    /**
+     * Parse input from POST request body
+     *
+     * @return mixed Parsed data
+     * @throws \Civi\RcBase\Exception\RunTimeException
+     */
+    public function decodePost()
+    {
+        return $this->decodeStream('php://input');
+    }
+
     /**
      * Detect content-type
      *
