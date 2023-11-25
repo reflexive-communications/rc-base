@@ -146,7 +146,7 @@ class ConfigTest extends HeadlessTestCase
      * @return void
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
-    public function testNormalScanningMode()
+    public function testDecodeWithNormalScanningMode()
     {
         $ini_string = 'bool=true';
         $expected = ['bool' => '1'];
@@ -158,7 +158,7 @@ class ConfigTest extends HeadlessTestCase
      * @return void
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
-    public function testTypedScanningMode()
+    public function testDecodeWithTypedScanningMode()
     {
         $ini_string = 'bool=on';
         $expected = ['bool' => true];
