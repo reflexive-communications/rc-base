@@ -2,10 +2,14 @@
 
 namespace Civi\RcBase\IOProcessor;
 
+use Civi;
+use Civi\Core\Service\AutoService;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Exception\MissingArgumentException;
+use Civi\RcBase\Exception\RunTimeException;
 use CRM_Utils_Rule;
 use CRM_Utils_String;
+use Throwable;
 
 /**
  * Base IO Processor
@@ -13,13 +17,80 @@ use CRM_Utils_String;
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
+ * @service
+ * @internal
  */
-class Base
+abstract class Base extends AutoService implements IOProcessorInterface
 {
+    /**
+     * Parse input from stream wrappers
+     * Example:
+     *   - http: $stream="https://example.com/json"
+     *   - file: $stream="file:///path/to/local/file"
+     *   - data: $stream="data://text/plain;base64,bW9ua2V5Cg=="
+     *   - php:  $stream="php://input"
+     *
+     * @link https://www.php.net/manual/en/wrappers.expect.php
+     *
+     * @param string $stream Name of input stream
+     *
+     * @return mixed Parsed data
+     * @throws \Civi\RcBase\Exception\RunTimeException
+     */
+    public function decodeStream(string $stream)
+    {
+        try {
+            $raw = file_get_contents($stream);
+        } catch (Throwable $ex) {
+            throw new RunTimeException('Failed to open stream: '.$ex->getMessage(), $ex);
+        }
+
+        return $this->decode($raw);
+    }
+
+    /**
+     * Parse input from POST request body
+     *
+     * @return mixed Parsed data
+     * @throws \Civi\RcBase\Exception\RunTimeException
+     */
+    public function decodePost()
+    {
+        return $this->decodeStream('php://input');
+    }
+
+    /**
+     * Return appropriate IO Processor service based on request content-type
+     *
+     * @return \Civi\RcBase\IOProcessor\IOProcessorInterface
+     */
+    public static function getIOProcessorService(): IOProcessorInterface
+    {
+        if (empty($_SERVER['CONTENT_TYPE'] ?? '')) {
+            return Civi::service('IOProcessor.UrlEncodedForm');
+        }
+
+        $fields = explode(';', $_SERVER['CONTENT_TYPE']);
+        $media_type = trim(array_shift($fields));
+
+        switch ($media_type) {
+            case 'application/json':
+            case 'application/javascript':
+                return Civi::service('IOProcessor.JSON');
+            case 'text/xml':
+            case 'application/xml':
+                return Civi::service('IOProcessor.XML');
+            case 'application/x-www-form-urlencoded':
+            default:
+                return Civi::service('IOProcessor.UrlEncodedForm');
+        }
+    }
+
     /**
      * Detect content-type
      *
      * @return string Relevant Processor class name
+     * @deprecated Use getIOProcessorService() instead
      */
     public static function detectContentType(): string
     {

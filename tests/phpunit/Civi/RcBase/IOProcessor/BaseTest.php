@@ -2,8 +2,10 @@
 
 namespace Civi\RcBase\IOProcessor;
 
+use Civi;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\Exception\MissingArgumentException;
+use Civi\RcBase\Exception\RunTimeException;
 use Civi\RcBase\HeadlessTestCase;
 
 /**
@@ -12,8 +14,107 @@ use Civi\RcBase\HeadlessTestCase;
 class BaseTest extends HeadlessTestCase
 {
     /**
-     * Content types
+     * IOProcessor service
      *
+     * @var \Civi\RcBase\IOProcessor\JSON
+     */
+    protected JSON $service;
+
+    /**
+     * @return void
+     */
+    public function setUpHeadless(): void
+    {
+        $this->service = Civi::service('IOProcessor.JSON');
+    }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\RunTimeException
+     */
+    public function testDecodeDataStream()
+    {
+        $base64_enc = 'eyLDlsOcw5PFkMOaw4nDgcWww40iOiAiw7bDvMOzxZHDusOpw6HFscOtIn0K';
+        $expected = ['ÖÜÓŐÚÉÁŰÍ' => 'öüóőúéáűí'];
+
+        $result = $this->service->decodeStream('data://text/plain;base64,'.$base64_enc);
+        self::assertSame($expected, $result, 'Invalid JSON returned.');
+    }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\RunTimeException
+     */
+    public function testDecodeFileStream()
+    {
+        $expected = [
+            'string' => 'some string',
+            1 => '5',
+            2 => 5,
+            3 => -5,
+            4 => 1.1,
+            5 => true,
+            'field_1' => 'value_2',
+            'field_2' => 'value_2',
+            6 =>
+                [
+                    0 => 'a',
+                    1 => 'b',
+                    2 => 'c',
+                ],
+        ];
+        $result = $this->service->decodeStream('file://'.__DIR__.'/test.json');
+        self::assertSame($expected, $result, 'Invalid JSON returned.');
+    }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\RunTimeException
+     */
+    public function testFailedDecodeStreamThrowsException()
+    {
+        self::expectException(RunTimeException::class);
+        self::expectExceptionMessage('Failed to open stream');
+        $this->service->decodeStream('file://'.__DIR__.'/non-existent.json');
+    }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\RunTimeException
+     */
+    public function testDecodePost()
+    {
+        $json = [
+            '{"0":"string","1":"5","2":5,"3":-5,"4":1.1,"5":true,"field_1":"value_2","field_2":"value_2","6":["a","b","c"],"utf-8":"éáÜŐ"}',
+        ];
+        $expected
+            = [
+            'string',
+            '5',
+            5,
+            -5,
+            1.1,
+            true,
+            'field_1' => 'value_2',
+            'field_2' => 'value_2',
+            ['a', 'b', 'c'],
+            'utf-8' => 'éáÜŐ',
+        ];
+
+        // Register Mock wrapper
+        stream_wrapper_unregister('php');
+        stream_wrapper_register('php', '\Civi\RcBase\IOProcessor\MockPHPStream');
+
+        // Feed JSON to stream
+        file_put_contents('php://input', $json);
+
+        // Parse raw data from the request body
+        $result = $this->service->decodePost();
+
+        self::assertSame($expected, $result, 'Invalid JSON returned.');
+    }
+
+    /**
      * @return \string[][]
      */
     public function provideContentTypes(): array
@@ -33,30 +134,24 @@ class BaseTest extends HeadlessTestCase
     }
 
     /**
-     * Detect content-type.
-     * If not set, it returns default.
-     * If set with handled value it returns the relevant class string.
-     * If set with unknown value, it returns default.
-     *
      * @dataProvider provideContentTypes
      */
-    public function testDetectContentType($header, $expected)
+    public function testGetIOProcessorService($header, $expected)
     {
         $_SERVER['CONTENT_TYPE'] = $header;
-        $result = Base::detectContentType();
-        self::assertEquals($expected, $result, 'Invalid class returned.');
+        $service = Base::getIOProcessorService();
+        self::assertInstanceOf($expected, $service, 'Wrong service returned.');
     }
 
     /**
-     * Detect content-type.
-     * If not set, it returns default.
+     * @return void
      */
     public function testDetectContentTypeWithNoHeadersSet()
     {
         // not set
         unset($_SERVER['CONTENT_TYPE']);
-        $result = Base::detectContentType();
-        self::assertEquals('Civi\RcBase\IOProcessor\UrlEncodedForm', $result, 'Invalid class returned.');
+        $service = Base::getIOProcessorService();
+        self::assertInstanceOf('Civi\RcBase\IOProcessor\UrlEncodedForm', $service, 'Wrong service returned.');
     }
 
     /**
@@ -476,7 +571,7 @@ class BaseTest extends HeadlessTestCase
     /**
      * @return array[]
      */
-    public function provideValidInput()
+    public function provideValidInput(): array
     {
         return [
             'empty string' => ['', 'string', 'empty string', false, []],

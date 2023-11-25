@@ -12,9 +12,29 @@ use Throwable;
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
+ * @service IOProcessor.JSON
  */
-class JSON
+class JSON extends Base
 {
+    /**
+     * Parse JSON string
+     *
+     * @param string $input JSON string to parse
+     *
+     * @return mixed Parsed JSON object
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function decode(string $input)
+    {
+        $decoded = json_decode($input, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new InvalidArgumentException('input', 'Invalid JSON received: '.json_last_error_msg());
+        }
+
+        return Base::sanitize($decoded);
+    }
+
     /**
      * Parse JSON string
      *
@@ -22,6 +42,7 @@ class JSON
      *
      * @return mixed Parsed JSON object
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @deprecated Use decode() instead
      */
     public static function parse(string $json)
     {
@@ -51,6 +72,7 @@ class JSON
      * @return mixed Parsed data
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      * @throws \Civi\RcBase\Exception\RunTimeException
+     * @deprecated Use decodeStream() instead
      */
     public static function parseStream(string $stream)
     {
@@ -70,6 +92,7 @@ class JSON
      * @return mixed Parsed JSON
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      * @throws \Civi\RcBase\Exception\RunTimeException
+     * @deprecated Use decodePost() instead
      */
     public static function parsePost()
     {

@@ -2,6 +2,7 @@
 
 namespace Civi\RcBase\IOProcessor;
 
+use Civi;
 use Civi\RcBase\HeadlessTestCase;
 
 /**
@@ -9,6 +10,31 @@ use Civi\RcBase\HeadlessTestCase;
  */
 class UrlEncodedFormTest extends HeadlessTestCase
 {
+    /**
+     * IOProcessor service
+     *
+     * @var \Civi\RcBase\IOProcessor\UrlEncodedForm
+     */
+    protected UrlEncodedForm $service;
+
+    /**
+     * @return void
+     */
+    public function setUpHeadless(): void
+    {
+        $this->service = Civi::service('IOProcessor.UrlEncodedForm');
+    }
+
+    /**
+     * @return void
+     */
+    public function testDecode()
+    {
+        $data = ['string' => 'string', 'integer' => '1'];
+        $encoded = http_build_query($data);
+        self::assertSame($data, $this->service->decode($encoded), 'Invalid data returned.');
+    }
+
     /**
      * @return void
      */
@@ -23,12 +49,11 @@ class UrlEncodedFormTest extends HeadlessTestCase
     /**
      * @return void
      */
-    public function testParsePost()
+    public function testDecodePost()
     {
         unset($_POST);
-        $post = ['string' => 'string', 'integer' => 1, 'bool' => true];
-        $_POST = $post;
-        self::assertSame($post, UrlEncodedForm::parsePost(), 'Invalid data returned.');
+        $_POST = ['string' => 'string', 'integer' => '1'];
+        self::assertSame($_POST, $this->service->decodePost(), 'Invalid data returned.');
     }
 
     /**

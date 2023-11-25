@@ -2,6 +2,7 @@
 
 namespace Civi\RcBase\IOProcessor;
 
+use Civi;
 use Civi\RcBase\Exception\InvalidArgumentException;
 use Civi\RcBase\HeadlessTestCase;
 
@@ -10,6 +11,21 @@ use Civi\RcBase\HeadlessTestCase;
  */
 class ConfigTest extends HeadlessTestCase
 {
+    /**
+     * IOProcessor service
+     *
+     * @var \Civi\RcBase\IOProcessor\Config
+     */
+    protected Config $service;
+
+    /**
+     * @return void
+     */
+    public function setUpHeadless(): void
+    {
+        $this->service = Civi::service('IOProcessor.Config');
+    }
+
     /**
      * @return array[]
      */
@@ -93,9 +109,9 @@ class ConfigTest extends HeadlessTestCase
      *
      * @throws \CRM_Core_Exception
      */
-    public function testParseIniString($ini_string, $expected)
+    public function testDecode($ini_string, $expected)
     {
-        $result = Config::parseIniString($ini_string);
+        $result = $this->service->decode($ini_string);
         self::assertSame($expected, $result, 'Failed to parse ini string');
     }
 
@@ -108,9 +124,9 @@ class ConfigTest extends HeadlessTestCase
      *
      * @throws \CRM_Core_Exception
      */
-    public function testParsingHeaders($ini_string, $process_sections, $expected)
+    public function testDecodeWithHeaders($ini_string, $process_sections, $expected)
     {
-        $result = Config::parseIniString($ini_string, $process_sections);
+        $result = $this->service->decode($ini_string, $process_sections);
         self::assertSame($expected, $result, 'Failed to parse ini string');
     }
 
@@ -118,23 +134,23 @@ class ConfigTest extends HeadlessTestCase
      * @return void
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
-    public function testParseInvalidStringThrowsException()
+    public function testDecodeWithInvalidStringThrowsException()
     {
         $ini_string = 'options=off second=no newline';
         self::expectException(InvalidArgumentException::class);
         self::expectExceptionMessage('ini string');
-        Config::parseIniString($ini_string);
+        $this->service->decode($ini_string);
     }
 
     /**
      * @return void
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
-    public function testNormalScanningMode()
+    public function testDecodeWithNormalScanningMode()
     {
         $ini_string = 'bool=true';
         $expected = ['bool' => '1'];
-        $result = Config::parseIniString($ini_string, true, INI_SCANNER_NORMAL);
+        $result = $this->service->decode($ini_string, true, INI_SCANNER_NORMAL);
         self::assertSame($expected, $result, 'Failed to parse ini string');
     }
 
@@ -142,11 +158,11 @@ class ConfigTest extends HeadlessTestCase
      * @return void
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
-    public function testTypedScanningMode()
+    public function testDecodeWithTypedScanningMode()
     {
         $ini_string = 'bool=on';
         $expected = ['bool' => true];
-        $result = Config::parseIniString($ini_string, true, INI_SCANNER_TYPED);
+        $result = $this->service->decode($ini_string, true, INI_SCANNER_TYPED);
         self::assertSame($expected, $result, 'Failed to parse ini string');
     }
 
