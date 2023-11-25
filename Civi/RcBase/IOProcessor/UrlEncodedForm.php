@@ -44,6 +44,7 @@ class UrlEncodedForm extends Base
      * Parse GET request parameters
      *
      * @return array GET parameters parsed
+     * @deprecated
      */
     public static function parseGet(): array
     {
@@ -54,6 +55,7 @@ class UrlEncodedForm extends Base
      * Parse POST request body
      *
      * @return array Request POST parsed
+     * @deprecated Use decodePost() instead
      */
     public static function parsePost(): array
     {
@@ -64,6 +66,7 @@ class UrlEncodedForm extends Base
      * Parse request parameters
      *
      * @return array Request parameters parsed
+     * @deprecated
      */
     public static function parseRequest(): array
     {

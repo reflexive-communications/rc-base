@@ -42,6 +42,7 @@ class JSON extends Base
      *
      * @return mixed Parsed JSON object
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @deprecated Use decode() instead
      */
     public static function parse(string $json)
     {
@@ -71,6 +72,7 @@ class JSON extends Base
      * @return mixed Parsed data
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      * @throws \Civi\RcBase\Exception\RunTimeException
+     * @deprecated Use decodeStream() instead
      */
     public static function parseStream(string $stream)
     {
@@ -90,6 +92,7 @@ class JSON extends Base
      * @return mixed Parsed JSON
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      * @throws \Civi\RcBase\Exception\RunTimeException
+     * @deprecated Use decodePost() instead
      */
     public static function parsePost()
     {

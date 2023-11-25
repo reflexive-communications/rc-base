@@ -90,6 +90,7 @@ abstract class Base extends AutoService implements IOProcessorInterface
      * Detect content-type
      *
      * @return string Relevant Processor class name
+     * @deprecated Use getIOProcessorService() instead
      */
     public static function detectContentType(): string
     {

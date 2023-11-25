@@ -55,6 +55,7 @@ class Config extends Base
      *
      * @return mixed Parsed config
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @deprecated Use decode() instead
      */
     public static function parseIniString(string $ini_string, bool $process_sections = true, int $scanner_mode = INI_SCANNER_TYPED)
     {
@@ -84,6 +85,7 @@ class Config extends Base
      *
      * @return mixed Parsed config
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @deprecated Use decodeStream() instead
      */
     public static function parseIniFile(string $filename, bool $process_sections = true, int $scanner_mode = INI_SCANNER_TYPED)
     {

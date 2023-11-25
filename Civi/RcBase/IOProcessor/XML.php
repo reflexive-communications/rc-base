@@ -59,6 +59,7 @@ class XML extends Base
      *
      * @return mixed Parsed XML object
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @deprecated Use decode() instead
      */
     public static function parse(string $xml_string, bool $return_array = true)
     {
@@ -102,6 +103,7 @@ class XML extends Base
      * @return mixed Parsed data
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      * @throws \Civi\RcBase\Exception\RunTimeException
+     * @deprecated Use decodeStream() instead
      */
     public static function parseStream(string $stream)
     {
@@ -121,6 +123,7 @@ class XML extends Base
      * @return mixed Parsed XML
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      * @throws \Civi\RcBase\Exception\RunTimeException
+     * @deprecated Use decodePost() instead
      */
     public static function parsePost()
     {
