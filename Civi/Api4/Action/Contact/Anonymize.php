@@ -2,7 +2,6 @@
 
 namespace Civi\Api4\Action\Contact;
 
-use Civi;
 use Civi\Api4\Contact;
 use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
@@ -10,6 +9,7 @@ use Civi\RcBase\ApiWrapper\Get;
 
 /**
  * Anonymize Contact
+ *
  * Contact's all personal data will be deleted: name, addresses, correspondence details
  *
  * @package  rc-base
