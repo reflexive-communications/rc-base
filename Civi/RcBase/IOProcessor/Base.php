@@ -125,10 +125,9 @@ abstract class Base extends AutoService implements IOProcessorInterface
      */
     public static function sanitize($input)
     {
-        $sanitized = null;
-
         // Input is array --> loop through and recurse
         if (is_array($input)) {
+            $sanitized = [];
             foreach ($input as $key => $value) {
                 // Sanitize key
                 $key = self::sanitizeString($key);
@@ -141,7 +140,7 @@ abstract class Base extends AutoService implements IOProcessorInterface
             // Input is string --> sanitize
             $sanitized = self::sanitizeString($input);
         } else {
-            // Input is int, float or bool --> no need to sanitize
+            // Input is int, float, bool or null --> no need to sanitize
             $sanitized = $input;
         }
 

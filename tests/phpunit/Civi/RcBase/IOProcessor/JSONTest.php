@@ -35,8 +35,8 @@ class JSONTest extends HeadlessTestCase
     {
         return [
             'empty string' => ['""', ''],
-            'empty object' => ['{}', null],
-            'empty array' => ['[]', null],
+            'empty object' => ['{}', []],
+            'empty array' => ['[]', []],
             'null' => ['null', null],
             'string' => ['"some string"', 'some string'],
             'integer' => ['5', 5],
@@ -59,7 +59,7 @@ class JSONTest extends HeadlessTestCase
                 ],
             ],
             'whitespace' => [
-                '{"\n   field_1   "  :  "\t\t\tvalue_1","field_2":"value_2"}',
+                '{"\n   field_1   "  :  "\t\t\t value_1","field_2":"value_2"}',
                 [
                     'field_1' => 'value_1',
                     'field_2' => 'value_2',
@@ -76,14 +76,14 @@ class JSONTest extends HeadlessTestCase
      * @dataProvider provideValidJson
      *
      * @param $json
-     * @param $object
+     * @param $expected
      *
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      */
-    public function testDecodeValidJson($json, $object)
+    public function testDecodeValidJson($json, $expected)
     {
         $result = $this->service->decode($json);
-        self::assertSame($object, $result, 'Invalid JSON returned.');
+        self::assertSame($expected, $result, 'Invalid JSON returned.');
     }
 
     /**
@@ -115,8 +115,7 @@ class JSONTest extends HeadlessTestCase
             ['a', 'b', 'c'],
             'ÖÜÓŐÚÉÁŰÍ' => 'öüóőúéáűí',
         ];
-        $json
-            = '{"0":"string","1":"5","2":5,"3":-5,"4":1.1,"5":true,"field_1":"value_2","field_2":"value_2","6":["a","b","c"],"ÖÜÓŐÚÉÁŰÍ":"öüóőúéáűí"}';
+        $json = '{"0":"string","1":"5","2":5,"3":-5,"4":1.1,"5":true,"field_1":"value_2","field_2":"value_2","6":["a","b","c"],"ÖÜÓŐÚÉÁŰÍ":"öüóőúéáűí"}';
 
         $result = JSON::encode($data);
         self::assertSame($json, $result, 'Invalid JSON returned.');
