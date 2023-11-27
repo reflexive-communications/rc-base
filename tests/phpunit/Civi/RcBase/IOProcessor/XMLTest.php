@@ -160,7 +160,7 @@ XML;
 <foo>&xxe;<title>Star Wars</title></foo>
 XML;
         $expected = [
-            'xxe' => ['xxe' => null],
+            'xxe' => ['xxe' => []],
             'title' => 'Star Wars',
         ];
 

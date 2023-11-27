@@ -136,7 +136,7 @@ class BaseTest extends HeadlessTestCase
     /**
      * @dataProvider provideContentTypes
      */
-    public function testGetIOProcessorService($header, $expected)
+    public function testGetIoProcessorService($header, $expected)
     {
         $_SERVER['CONTENT_TYPE'] = $header;
         $service = Base::getIOProcessorService();
@@ -201,7 +201,7 @@ class BaseTest extends HeadlessTestCase
             'bool true' => [true, true],
             'bool false' => [false, false],
             'null' => [null, null],
-            'empty array' => [[], null],
+            'empty array' => [[], []],
             'empty string' => ['', ''],
         ];
     }
