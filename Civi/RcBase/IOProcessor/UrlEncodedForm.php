@@ -37,7 +37,7 @@ class UrlEncodedForm extends Base
      */
     public function decodePost(): array
     {
-        return Base::sanitize($_POST);
+        return Base::sanitize($_POST ?? []);
     }
 
     /**
