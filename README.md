@@ -22,10 +22,12 @@ This extension does nothing, it's only required by some other extensions. It con
 **Wrappers**
 
 -   `\Civi\RcBase\ApiWrapper`: classes that wrap standard Civi APIv4
--   `\Civi\RcBase\IOProcessor`: IO processors for JSON, URL-encoded, XML or INI files or streams
--   `\Civi\RcBase\Exception`: new specific exceptions and handlers
--   `\Civi\RcBase\Utils`: utility classes and various helper methods
 -   `\Civi\RcBase\Settings`: for managing settings and configs, wrapper for `Civi::Settings`
+
+**Services**
+
+-   `\Civi\RcBase\IOProcessor`: IO processors for JSON, URL-encoded, XML or INI files or streams
+-   `\Civi\RcBase\Logger`: file logger, use as `Civi::log('rc-base')->info('message')`
 
 **Traits**
 
@@ -34,6 +36,8 @@ This extension does nothing, it's only required by some other extensions. It con
 
 **Other**
 
+-   `\Civi\RcBase\Exception`: new specific exceptions and handlers
+-   `\Civi\RcBase\Utils`: utility classes and various helper methods
 -   `CRM_RcBase_Config`: wraps `Civi::Settings` wrapper. For details check the [Developer Notes](DEVELOPER.md). **DEPRECATED**
 -   `CRM_RcBase_Setting`: same as above with a few extra methods. **DEPRECATED** in favor of `\Civi\RcBase\Settings`!
 -   stylesheets: some `.css` file with general classes.
