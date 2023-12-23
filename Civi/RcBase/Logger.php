@@ -33,7 +33,7 @@ class Logger extends CRM_Core_Error_Log implements AutoServiceInterface
             $message = "{$context['extension']} | {$message}";
         }
         if (!empty($context['details'])) {
-            $message .= ' | '.json_encode($context['details']);
+            $message .= ' | '.json_encode($context['details'], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         }
 
         $logger = CRM_Core_Error::createDebugLogger($context['log_prefix'] ?? $context['extension'] ?? 'debug');
