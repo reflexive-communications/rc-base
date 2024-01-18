@@ -91,7 +91,7 @@ class Settings
         $value = Civi::settings()->get($name);
 
         // Decrypt if needed
-        if (is_string($value) && !Civi::service('crypto.token')->isPlainText($value)) {
+        if (is_string($value) && self::isEncrypted($value)) {
             return self::decrypt($value);
         }
 
