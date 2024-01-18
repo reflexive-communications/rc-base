@@ -55,7 +55,7 @@ class SettingsTest extends HeadlessTestCase
         Settings::saveSecret($name, $secret);
 
         $raw_value = Civi::settings()->get($name);
-        self::assertFalse(Civi::service('crypto.token')->isPlainText($raw_value), 'Secret was not encrypted');
+        self::assertTrue(Settings::isEncrypted($raw_value), 'Secret was not encrypted');
 
         $saved = Settings::get($name);
         self::assertSame($secret, $saved, 'Wrong secret returned');
@@ -71,7 +71,7 @@ class SettingsTest extends HeadlessTestCase
         $secret = 'original_pass';
         Settings::saveSecret($name, $secret);
         $cipher_text_original = Civi::settings()->get($name);
-        self::assertFalse(Civi::service('crypto.token')->isPlainText($cipher_text_original), 'Secret was not encrypted');
+        self::assertTrue(Settings::isEncrypted($cipher_text_original), 'Secret was not encrypted');
 
         // Add new encryption key & rotate secrets
         Civi::service('crypto.registry')->addSymmetricKey([
@@ -83,7 +83,7 @@ class SettingsTest extends HeadlessTestCase
         Settings::rotateSecret($name);
 
         $cipher_text_rotated = Civi::settings()->get($name);
-        self::assertFalse(Civi::service('crypto.token')->isPlainText($cipher_text_rotated), 'Secret was not encrypted');
+        self::assertTrue(Settings::isEncrypted($cipher_text_rotated), 'Secret was not encrypted');
         self::assertNotEquals($cipher_text_original, $cipher_text_rotated, 'Secret not rotated');
 
         // Rotate non-existent secret
@@ -141,13 +141,25 @@ class SettingsTest extends HeadlessTestCase
     /**
      * @return void
      */
+    public function testIsEncrypted()
+    {
+        $plain_text = 'plain';
+        $cipher_text = Settings::encrypt($plain_text);
+        self::assertFalse(Settings::isEncrypted(''), 'Empty string reported as encrypted');
+        self::assertFalse(Settings::isEncrypted($plain_text), 'Non-encrypted setting reported as encrypted');
+        self::assertTrue(Settings::isEncrypted($cipher_text), 'Encrypted setting reported as non-encrypted');
+    }
+
+    /**
+     * @return void
+     */
     public function testEncrypt()
     {
         $value = 'secret-api-key';
 
         $encrypted = Settings::encrypt($value);
         self::assertNotSame($value, $encrypted, 'Secret not encrypted');
-        self::assertFalse(Civi::service('crypto.token')->isPlainText($encrypted), 'Secret was not encrypted');
+        self::assertTrue(Settings::isEncrypted($encrypted), 'Secret was not encrypted');
 
         $decrypted = Settings::decrypt($encrypted);
         self::assertSame($value, $decrypted, 'Secret not decrypted');

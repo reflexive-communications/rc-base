@@ -91,7 +91,7 @@ class Settings
         $value = Civi::settings()->get($name);
 
         // Decrypt if needed
-        if (is_string($value) && !Civi::service('crypto.token')->isPlainText($value)) {
+        if (is_string($value) && self::isEncrypted($value)) {
             return self::decrypt($value);
         }
 
@@ -138,6 +138,22 @@ class Settings
         if (!is_null(Civi::settings()->get($name))) {
             throw new DataBaseException("Failed to delete setting: {$name}");
         }
+    }
+
+    /**
+     * Check if text is encrypted
+     *
+     * @param string $text Text to check
+     *
+     * @return bool
+     */
+    public static function isEncrypted(string $text): bool
+    {
+        if (empty($text)) {
+            return false;
+        }
+
+        return !Civi::service('crypto.token')->isPlainText($text);
     }
 
     /**

@@ -8,6 +8,7 @@ use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 use Civi\Api4\Setting;
 use Civi\RcBase\Api4\ActionUtilsTrait;
+use Civi\RcBase\Settings;
 use Throwable;
 
 /**
@@ -108,8 +109,8 @@ class SetSmtpConfig extends AbstractAction
             $old_pass = $old['smtpPassword'] ?? '';
             $merged_pass = $merged['smtpPassword'] ?? '';
             if (($old_pass != $merged_pass)
-                && !Civi::service('crypto.token')->isPlainText($old_pass)
-                && !Civi::service('crypto.token')->isPlainText($merged_pass)
+                && Settings::isEncrypted($old_pass)
+                && Settings::isEncrypted($merged_pass)
                 && (Civi::service('crypto.token')->decrypt($old_pass) == Civi::service('crypto.token')->decrypt($merged_pass))
             ) {
                 // Same plain-text password -> use old value (avoid unnecessary change, even if it would have the same effect)
