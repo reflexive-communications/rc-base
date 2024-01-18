@@ -141,6 +141,18 @@ class SettingsTest extends HeadlessTestCase
     /**
      * @return void
      */
+    public function testIsEncrypted()
+    {
+        $plain_text = 'plain';
+        $cipher_text = Settings::encrypt($plain_text);
+        self::assertFalse(Settings::isEncrypted(''), 'Empty string reported as encrypted');
+        self::assertFalse(Settings::isEncrypted($plain_text), 'Non-encrypted setting reported as encrypted');
+        self::assertTrue(Settings::isEncrypted($cipher_text), 'Encrypted setting reported as non-encrypted');
+    }
+
+    /**
+     * @return void
+     */
     public function testEncrypt()
     {
         $value = 'secret-api-key';

@@ -141,6 +141,22 @@ class Settings
     }
 
     /**
+     * Check if text is encrypted
+     *
+     * @param string $text Text to check
+     *
+     * @return bool
+     */
+    public static function isEncrypted(string $text): bool
+    {
+        if (empty($text)) {
+            return false;
+        }
+
+        return !Civi::service('crypto.token')->isPlainText($text);
+    }
+
+    /**
      * Encrypt secret
      *
      * @param string $plain_text Plain text
