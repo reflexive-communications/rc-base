@@ -52,4 +52,87 @@ class CLITest extends HeadlessTestCase
         self::expectExceptionMessage('option value is not passed');
         CLI::parseArguments(['-r'], 'r:');
     }
+
+    /**
+     * @return array
+     */
+    public function provideColors(): array
+    {
+        return [
+            'normal' => ['normal', `tput sgr0`],
+            'bold' => ['bold', `tput bold`],
+            'red' => ['red', `tput setaf 1`],
+            'green' => ['green', `tput setaf 2`],
+            'yellow' => ['yellow', `tput setaf 3`],
+            'invalid' => ['invalid', ''],
+        ];
+    }
+
+    /**
+     * @dataProvider provideColors
+     */
+    public function testColor(string $color, string $expected)
+    {
+        self::assertSame($expected, CLI::color($color), 'Wrong color escape sequence');
+    }
+
+    /**
+     * @return void
+     */
+    public function testPrint()
+    {
+        $msg = "This is a test message with new line\n";
+        CLI::print($msg);
+        self::expectOutputString($msg);
+    }
+
+    /**
+     * @return void
+     */
+    public function testPrintError()
+    {
+        $errorMessage = 'This is an error message';
+        CLI::printError($errorMessage);
+        // Check stdout is empty
+        self::expectOutputString('');
+    }
+
+    /**
+     * @return void
+     */
+    public function testPrintHeader()
+    {
+        $header = 'This is a header';
+        CLI::printHeader($header);
+        self::expectOutputString(CLI::color('yellow').$header.CLI::color('normal')."\n");
+    }
+
+    /**
+     * @return void
+     */
+    public function testPrintStatus()
+    {
+        $status = 'This is a status message';
+        CLI::printStatus($status);
+        self::expectOutputString(CLI::color('yellow').$status.CLI::color('normal'));
+    }
+
+    /**
+     * @return void
+     */
+    public function testPrintFinish()
+    {
+        CLI::printFinish();
+        self::expectOutputString(CLI::color('green').CLI::color('bold').'Done.'.CLI::color('normal')."\n");
+    }
+
+    /**
+     * @return void
+     */
+    public function testPrintFinishWithCustomMessage()
+    {
+        $message = 'This is a custom message';
+        CLI::printFinish($message);
+        self::expectOutputString(CLI::color('green').CLI::color('bold').$message.CLI::color('normal')."\n");
+    }
 }
