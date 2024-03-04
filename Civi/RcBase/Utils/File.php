@@ -52,4 +52,24 @@ class File
 
         return $lines;
     }
+
+    /**
+     * Open file for reading
+     *
+     * @param string $filename File to open (path)
+     *
+     * @return false|resource
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public static function open(string $filename)
+    {
+        if (!is_readable($filename)) {
+            throw new InvalidArgumentException('file', "${filename} does not exist or is not readable");
+        }
+        if (($file = fopen($filename, 'r')) === false) {
+            throw new InvalidArgumentException('file', "${filename} could not open file for reading");
+        }
+
+        return $file;
+    }
 }
