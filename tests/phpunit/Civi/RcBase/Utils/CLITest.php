@@ -89,6 +89,16 @@ class CLITest extends HeadlessTestCase
     /**
      * @return void
      */
+    public function testPrintLine()
+    {
+        $msg = 'This is a test message without new line';
+        CLI::printLine($msg);
+        self::expectOutputString($msg."\n");
+    }
+
+    /**
+     * @return void
+     */
     public function testPrintError()
     {
         $errorMessage = 'This is an error message';
