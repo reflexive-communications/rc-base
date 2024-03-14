@@ -150,6 +150,18 @@ class CLI
     }
 
     /**
+     * Print a message to stdout and append a newline
+     *
+     * @param string $message Message to print
+     *
+     * @return void
+     */
+    public static function printLine(string $message = ''): void
+    {
+        self::print($message."\n");
+    }
+
+    /**
      * Print a message to stderr
      *
      * @param string $message Error message to print
@@ -170,7 +182,7 @@ class CLI
      */
     public static function printHeader(string $header): void
     {
-        self::print(self::color('yellow').$header.self::color('normal')."\n");
+        self::printLine(self::color('yellow').$header.self::color('normal'));
     }
 
     /**
@@ -194,6 +206,6 @@ class CLI
      */
     public static function printFinish(string $message = 'Done.'): void
     {
-        self::print(self::color('green').self::color('bold').$message.self::color('normal')."\n");
+        self::printLine(self::color('green').self::color('bold').$message.self::color('normal'));
     }
 }
