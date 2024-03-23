@@ -7,9 +7,11 @@ use Civi\Api4\Contact;
 use Civi\Api4\GroupContact;
 use Civi\RcBase\ApiWrapper\Create;
 use Civi\RcBase\ApiWrapper\Get;
+use Civi\RcBase\ApiWrapper\Update;
 use Civi\RcBase\Exception\DataBaseException;
 use Civi\RcBase\Exception\MissingArgumentException;
 use Civi\RcBase\HeadlessTestCase;
+use Civi\RcBase\Settings;
 use CRM_Contact_BAO_Contact;
 
 /**
@@ -185,5 +187,30 @@ class DBTest extends HeadlessTestCase
         $contact_id = PHPUnit::createIndividual();
         DB::deleteRecord('civicrm_contact', 'id', $contact_id);
         self::assertNull(Get::entityByID('Contact', $contact_id), 'Record not deleted');
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     * @throws \Civi\RcBase\Exception\MissingArgumentException
+     */
+    public function testPruneChangelog()
+    {
+        // Switch on detailed logging
+        $old_logging = Settings::get('logging');
+        Settings::save('logging', 1);
+
+        // Prepare
+        $contact_id = PHPUnit::createIndividual(0, ['first_name' => 'old name']);
+        Update::contact($contact_id, ['first_name' => 'new name']);
+
+        DB::pruneChangelog('civicrm_contact', 'id', $contact_id);
+        self::assertCount(0, DB::query('SELECT * FROM log_civicrm_contact WHERE id = %1', [1 => [$contact_id, 'Positive']]), 'Changelog not pruned');
+
+        // Restore logging setting
+        Settings::save('logging', $old_logging);
     }
 }

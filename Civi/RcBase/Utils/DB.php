@@ -225,4 +225,22 @@ class DB
             2 => [$id, 'Positive'],
         ]);
     }
+
+    /**
+     * Prune changelog entries for a record
+     *
+     * @param string $table Original table name (e.g. civicrm_contact)
+     * @param string $field Field name to match (e.g. id)
+     * @param int $id ID of record to prune
+     *
+     * @return void
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     */
+    public static function pruneChangelog(string $table, string $field, int $id): void
+    {
+        $changelog_table = "log_{$table}";
+        if (self::checkIfTableExists($changelog_table)) {
+            self::deleteRecord($changelog_table, $field, $id);
+        }
+    }
 }
