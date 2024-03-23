@@ -12,6 +12,7 @@ use Civi\RcBase\ApiWrapper\Get;
  *
  * Contact's all personal data will be deleted: name, addresses, correspondence details
  *
+ * @deprecated
  * @package  rc-base
  * @author   Sandor Semsey <sandor@es-progress.hu>
  * @license  AGPL-3.0
@@ -35,6 +36,7 @@ class Anonymize extends AbstractAction
      * @throws \Civi\RcBase\Exception\APIException
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      * @throws \Civi\RcBase\Exception\MissingArgumentException
+     * @deprecated
      */
     public function _run(Result $result): void
     {
