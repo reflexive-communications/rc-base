@@ -193,4 +193,36 @@ class DB
 
         return $results;
     }
+
+    /**
+     * Check if SQL table exists
+     *
+     * @param string $table Table name
+     *
+     * @return bool
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     */
+    public static function checkIfTableExists(string $table): bool
+    {
+        return count(self::query('SHOW TABLES LIKE %1', [1 => [$table, 'String']])) > 0;
+    }
+
+    /**
+     * Delete records from SQL table, where field matches value
+     * e.g. delete all emails for contact_id = 123
+     *
+     * @param string $table Table name
+     * @param string $field Name of field to match, typically 'id' or 'contact_id'
+     * @param int $id Field value to match
+     *
+     * @return void
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     */
+    public static function deleteRecord(string $table, string $field, int $id): void
+    {
+        self::query("DELETE FROM {$table} WHERE %1 = %2", [
+            1 => [$field, 'MysqlColumnNameOrAlias'],
+            2 => [$id, 'Positive'],
+        ]);
+    }
 }

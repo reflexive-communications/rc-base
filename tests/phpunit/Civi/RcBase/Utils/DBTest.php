@@ -6,6 +6,7 @@ use Civi\Api4\Activity;
 use Civi\Api4\Contact;
 use Civi\Api4\GroupContact;
 use Civi\RcBase\ApiWrapper\Create;
+use Civi\RcBase\ApiWrapper\Get;
 use Civi\RcBase\Exception\DataBaseException;
 use Civi\RcBase\Exception\MissingArgumentException;
 use Civi\RcBase\HeadlessTestCase;
@@ -160,5 +161,29 @@ class DBTest extends HeadlessTestCase
         self::assertSame($values['do_not_email'], $result[0]['do_not_email'], 'Wrong data returned');
         self::assertSame($values['gender_id'], $result[0]['gender_id'], 'Wrong data returned');
         self::assertNull($result[0]['external_identifier'], 'Wrong data returned');
+    }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     */
+    public function testCheckIfTableExists()
+    {
+        self::assertTrue(DB::checkIfTableExists('civicrm_contact'), 'Existing table not found');
+        self::assertTrue(DB::checkIfTableExists('civicrm_%'), 'Wildcard table not found');
+        self::assertFalse(DB::checkIfTableExists('non_existent_table'), 'Non-existent table found');
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     */
+    public function testDeleteRecord()
+    {
+        $contact_id = PHPUnit::createIndividual();
+        DB::deleteRecord('civicrm_contact', 'id', $contact_id);
+        self::assertNull(Get::entityByID('Contact', $contact_id), 'Record not deleted');
     }
 }
