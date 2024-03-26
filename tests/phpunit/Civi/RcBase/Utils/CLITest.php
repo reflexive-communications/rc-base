@@ -79,6 +79,21 @@ class CLITest extends HeadlessTestCase
     /**
      * @return void
      */
+    public function testColorWithUnknownTerminal()
+    {
+        // set TERM env var to unknown value
+        $old_term = getenv('TERM');
+        putenv('TERM=unknown');
+
+        self::assertSame('', CLI::color('bold'), 'Wrong color escape sequence on unknown terminal');
+
+        // restore TERM
+        putenv("TERM=$old_term");
+    }
+
+    /**
+     * @return void
+     */
     public function testPrint()
     {
         $msg = "This is a test message with new line\n";
