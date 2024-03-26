@@ -114,6 +114,12 @@ class CLI
      */
     public static function color(string $color): string
     {
+        // Check terminal supports colors
+        exec('tput longname >/dev/null 2>&1', $output, $exit_code);
+        if ($exit_code !== 0) {
+            return '';
+        }
+
         switch ($color) {
             case 'normal':
                 $arg = 'sgr0';
