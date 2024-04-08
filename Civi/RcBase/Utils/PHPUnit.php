@@ -4,7 +4,10 @@ namespace Civi\RcBase\Utils;
 
 use Civi\RcBase\ApiWrapper\Create;
 use Civi\RcBase\ApiWrapper\Get;
+use CRM_Core_Region;
+use CRM_Core_Resources;
 use CRM_Core_Session;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Utilities for unit-testing
@@ -133,5 +136,22 @@ class PHPUnit
         Create::email($contact_id, array_merge($default, $extra_email));
 
         return $contact_id;
+    }
+
+    /**
+     * Assert resource (CSS, JS) added to page
+     *
+     * @param array $expected Expected resources
+     *   Format: ['resource_name' => 'resource_type']
+     *
+     * @return void
+     */
+    public static function assertResourcesAdded(array $expected): void
+    {
+        $snippets = (array)CRM_Core_Region::instance(CRM_Core_Resources::DEFAULT_REGION)->getAll();
+        foreach ($expected as $name => $type) {
+            TestCase::assertArrayHasKey($name, $snippets, "Resource {$name} not found");
+            TestCase::assertSame($type, $snippets[$name]['type'], "Resource {$name} not of type {$type}");
+        }
     }
 }

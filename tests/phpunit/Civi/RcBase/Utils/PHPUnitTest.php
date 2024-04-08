@@ -2,9 +2,12 @@
 
 namespace Civi\RcBase\Utils;
 
+use Civi;
 use Civi\RcBase\ApiWrapper\Get;
 use Civi\RcBase\HeadlessTestCase;
 use CRM_Core_Session;
+use CRM_RcBase_ExtensionUtil as E;
+use PHPUnit\Framework\AssertionFailedError;
 
 /**
  * @group headless
@@ -87,5 +90,23 @@ class PHPUnitTest extends HeadlessTestCase
             'limit' => 1,
         ], 'signature_text');
         self::assertSame($values['signature_text'], $signature_text, 'Wrong signature_text returned');
+    }
+
+    /**
+     * @return void
+     */
+    public function testAssertResourcesAdded()
+    {
+        Civi::resources()->addScriptFile(E::LONG_NAME, 'test.js');
+        Civi::resources()->addStyleFile(E::LONG_NAME, 'test.css');
+
+        PHPUnit::assertResourcesAdded([
+            E::LONG_NAME.':test.js' => 'scriptFile',
+            E::LONG_NAME.':test.css' => 'styleFile',
+        ]);
+
+        // Check not added resource causes failure
+        self::expectException(AssertionFailedError::class);
+        PHPUnit::assertResourcesAdded([E::LONG_NAME.':not-added.css' => 'styleFile']);
     }
 }
