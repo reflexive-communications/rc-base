@@ -40,4 +40,37 @@ class UI
 
         return false;
     }
+
+    /**
+     * Remove menu item at path
+     *
+     * @param array $menu Menu array
+     * @param string $path Path
+     *
+     * @return array
+     */
+    public static function menuRemove(array $menu, string $path): array
+    {
+        if (empty($menu) || empty($path)) {
+            return $menu;
+        }
+
+        $path = explode('/', $path);
+        $first = array_shift($path);
+
+        foreach ($menu as $index => $entry) {
+            // First path part found
+            if ($entry['attributes']['name'] == $first) {
+                if (empty($path)) {
+                    // We arrived to the desired menu item
+                    unset($menu[$index]);
+                } else {
+                    // Recurse into remained parts
+                    $menu[$index]['child'] = self::menuRemove($entry['child'] ?? [], implode('/', $path));
+                }
+            }
+        }
+
+        return $menu;
+    }
 }
