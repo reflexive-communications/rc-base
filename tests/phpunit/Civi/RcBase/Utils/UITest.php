@@ -135,4 +135,53 @@ class UITest extends HeadlessTestCase
         self::assertSame(self::$menu, UI::menuRemove(self::$menu, 'menu-999'), 'Wrong menu after removing non-existing top-level menu');
         self::assertSame(self::$menu, UI::menuRemove(self::$menu, 'menu-1/submenu-999'), 'Wrong menu after removing non-existing submenu');
     }
+
+    /**
+     * @return void
+     */
+    public function testMenuUpdate()
+    {
+        // Top-level menu
+        $expected = [
+            1 => [
+                'attributes' => ['name' => 'menu-1'],
+                'child' => [
+                    ['attributes' => ['name' => 'submenu-11']],
+                    ['attributes' => ['name' => 'submenu-12']],
+                    [
+                        'attributes' => ['name' => 'submenu-13'],
+                        'child' => [
+                            ['attributes' => ['name' => 'sub-submenu-131']],
+                        ],
+                    ],
+                ],
+            ],
+            3 => ['attributes' => ['name' => 'menu-2', 'permission' => 'some permission']],
+            4 => ['attributes' => ['name' => 'menu-3']],
+        ];
+        self::assertSame($expected, UI::menuUpdate(self::$menu, 'menu-2', ['permission' => 'some permission']), 'Wrong menu after updating top-level menu');
+
+        // Submenu
+        $expected = [
+            1 => [
+                'attributes' => ['name' => 'menu-1'],
+                'child' => [
+                    ['attributes' => ['name' => 'submenu-11']],
+                    ['attributes' => ['name' => 'submenu-12']],
+                    [
+                        'attributes' => ['name' => 'submenu-13'],
+                        'child' => [
+                            ['attributes' => ['name' => 'sub-submenu-131-changed']],
+                        ],
+                    ],
+                ],
+            ],
+            3 => ['attributes' => ['name' => 'menu-2']],
+            4 => ['attributes' => ['name' => 'menu-3']],
+        ];
+        self::assertSame($expected, UI::menuUpdate(self::$menu, 'menu-1/submenu-13/sub-submenu-131', ['name' => 'sub-submenu-131-changed']), 'Wrong menu after updating submenu');
+
+        // Non-existing menu
+        self::assertSame(self::$menu, UI::menuUpdate(self::$menu, 'menu-1/submenu-99', ['permission' => 'some permission']), 'Wrong menu after updating non-existing menu');
+    }
 }
