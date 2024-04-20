@@ -139,7 +139,7 @@ class UITest extends HeadlessTestCase
     /**
      * @return void
      */
-    public function testMenuUpdate()
+    public function testMenuUpdateNonRecursive()
     {
         // Top-level menu
         $expected = [
@@ -183,5 +183,71 @@ class UITest extends HeadlessTestCase
 
         // Non-existing menu
         self::assertSame(self::$menu, UI::menuUpdate(self::$menu, 'menu-1/submenu-99', ['permission' => 'some permission']), 'Wrong menu after updating non-existing menu');
+    }
+
+    /**
+     * @return void
+     */
+    public function testMenuUpdateRecursive()
+    {
+        // Top-level menu with children
+        $expected = [
+            1 => [
+                'attributes' => ['name' => 'menu-1', 'permission' => 'some permission'],
+                'child' => [
+                    ['attributes' => ['name' => 'submenu-11', 'permission' => 'some permission']],
+                    ['attributes' => ['name' => 'submenu-12', 'permission' => 'some permission']],
+                    [
+                        'attributes' => ['name' => 'submenu-13', 'permission' => 'some permission'],
+                        'child' => [
+                            ['attributes' => ['name' => 'sub-submenu-131', 'permission' => 'some permission']],
+                        ],
+                    ],
+                ],
+            ],
+            3 => ['attributes' => ['name' => 'menu-2']],
+            4 => ['attributes' => ['name' => 'menu-3']],
+        ];
+        self::assertSame($expected, UI::menuUpdate(self::$menu, 'menu-1', ['permission' => 'some permission'], true), 'Wrong menu after updating top-level menu with children');
+
+        // Top-level menu without children
+        $expected = [
+            1 => [
+                'attributes' => ['name' => 'menu-1'],
+                'child' => [
+                    ['attributes' => ['name' => 'submenu-11']],
+                    ['attributes' => ['name' => 'submenu-12']],
+                    [
+                        'attributes' => ['name' => 'submenu-13'],
+                        'child' => [
+                            ['attributes' => ['name' => 'sub-submenu-131']],
+                        ],
+                    ],
+                ],
+            ],
+            3 => ['attributes' => ['name' => 'menu-2', 'permission' => 'some permission']],
+            4 => ['attributes' => ['name' => 'menu-3']],
+        ];
+        self::assertSame($expected, UI::menuUpdate(self::$menu, 'menu-2', ['permission' => 'some permission'], true), 'Wrong menu after updating top-level menu without children');
+
+        // Submenu
+        $expected = [
+            1 => [
+                'attributes' => ['name' => 'menu-1'],
+                'child' => [
+                    ['attributes' => ['name' => 'submenu-11']],
+                    ['attributes' => ['name' => 'submenu-12']],
+                    [
+                        'attributes' => ['name' => 'submenu-13', 'permission' => 'some permission'],
+                        'child' => [
+                            ['attributes' => ['name' => 'sub-submenu-131', 'permission' => 'some permission']],
+                        ],
+                    ],
+                ],
+            ],
+            3 => ['attributes' => ['name' => 'menu-2']],
+            4 => ['attributes' => ['name' => 'menu-3']],
+        ];
+        self::assertSame($expected, UI::menuUpdate(self::$menu, 'menu-1/submenu-13', ['permission' => 'some permission'], true), 'Wrong menu after updating submenu');
     }
 }
