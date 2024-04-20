@@ -80,10 +80,11 @@ class UI
      * @param array $menu Menu array
      * @param string $path Path
      * @param array $attributes New attributes
+     * @param bool $recursive Set attributes recursively to all children
      *
      * @return array
      */
-    public static function menuUpdate(array $menu, string $path, array $attributes): array
+    public static function menuUpdate(array $menu, string $path, array $attributes, bool $recursive = false): array
     {
         if (empty($menu) || empty($path)) {
             return $menu;
@@ -92,15 +93,29 @@ class UI
         $path = explode('/', $path);
         $first = array_shift($path);
 
+        $set_attributes_recursively = function ($menu) use ($attributes, &$set_attributes_recursively) {
+            foreach ($menu as $index => $item) {
+                $menu[$index]['attributes'] = array_merge($item['attributes'], $attributes);
+                if (isset($item['child'])) {
+                    $menu[$index]['child'] = $set_attributes_recursively($item['child']);
+                }
+            }
+
+            return $menu;
+        };
+
         foreach ($menu as $index => $entry) {
             // First path part found
             if ($entry['attributes']['name'] == $first) {
                 if (empty($path)) {
                     // We arrived to the desired menu item
                     $menu[$index]['attributes'] = array_merge($entry['attributes'], $attributes);
+                    if ($recursive && isset($entry['child'])) {
+                        $menu[$index]['child'] = $set_attributes_recursively($entry['child']);
+                    }
                 } else {
                     // Recurse into remained parts
-                    $menu[$index]['child'] = self::menuUpdate($entry['child'] ?? [], implode('/', $path), $attributes);
+                    $menu[$index]['child'] = self::menuUpdate($entry['child'] ?? [], implode('/', $path), $attributes, $recursive);
                 }
             }
         }
