@@ -29,7 +29,6 @@ class UI
         $first = array_shift($path);
 
         foreach ($menu as $entry) {
-            // First path part found
             if ($entry['attributes']['name'] == $first) {
                 // This is the last part or recurse into remained parts
                 if (empty($path) || self::menuExists($entry['child'] ?? [], implode('/', $path))) {
@@ -39,6 +38,38 @@ class UI
         }
 
         return false;
+    }
+
+    /**
+     * Get menu item at path
+     *
+     * @param array $menu Menu array
+     * @param string $path Path
+     *
+     * @return array
+     */
+    public static function menuGet(array $menu, string $path): array
+    {
+        if (empty($menu) || empty($path)) {
+            return [];
+        }
+
+        $path = explode('/', $path);
+        $first = array_shift($path);
+
+        foreach ($menu as $entry) {
+            if ($entry['attributes']['name'] == $first) {
+                if (empty($path)) {
+                    // We arrived to the desired menu item
+                    return $entry;
+                } else {
+                    // Recurse into remained parts
+                    return self::menuGet($entry['child'] ?? [], implode('/', $path));
+                }
+            }
+        }
+
+        return [];
     }
 
     /**
@@ -59,7 +90,6 @@ class UI
         $first = array_shift($path);
 
         foreach ($menu as $index => $entry) {
-            // First path part found
             if ($entry['attributes']['name'] == $first) {
                 if (empty($path)) {
                     // We arrived to the desired menu item
@@ -105,7 +135,6 @@ class UI
         };
 
         foreach ($menu as $index => $entry) {
-            // First path part found
             if ($entry['attributes']['name'] == $first) {
                 if (empty($path)) {
                     // We arrived to the desired menu item

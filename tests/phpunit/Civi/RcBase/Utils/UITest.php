@@ -52,6 +52,23 @@ class UITest extends HeadlessTestCase
     /**
      * @return void
      */
+    public function testMenuGet()
+    {
+        $expected = ['attributes' => ['name' => 'menu-2']];
+        self::assertSame($expected, UI::menuGet(self::$menu, 'menu-2'), 'Wrong menu item returned for top-level menu');
+
+        $expected = [
+            'attributes' => ['name' => 'submenu-13'],
+            'child' => [
+                ['attributes' => ['name' => 'sub-submenu-131']],
+            ],
+        ];
+        self::assertSame($expected, UI::menuGet(self::$menu, 'menu-1/submenu-13'), 'Wrong menu item returned for submenu');
+    }
+
+    /**
+     * @return void
+     */
     public function testMenuRemove()
     {
         // Top-level menu without children
