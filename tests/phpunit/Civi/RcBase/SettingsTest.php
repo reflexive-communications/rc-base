@@ -232,5 +232,19 @@ class SettingsTest extends HeadlessTestCase
             // Delete entry for next iteration
             Civi::cache('long')->delete($key);
         }
+
+        // Cache save
+        $key = 'cache-save';
+        $cache_save_counter = 0;
+        $get_value = function () use (&$cache_save_counter) {
+            return ++$cache_save_counter;
+        };
+
+        $value = Settings::cacheSave($key, $get_value);
+        self::assertSame(1, $value, 'Wrong cached value');
+        self::assertTrue(Settings::cacheHas($key), 'Cache should have key');
+
+        $value = Settings::cacheSave($key, $get_value);
+        self::assertSame(1, $value, 'get_value should not be called again');
     }
 }
