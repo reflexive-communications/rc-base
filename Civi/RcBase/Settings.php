@@ -235,4 +235,26 @@ class Settings
     {
         return Civi::cache($cache)->has($key);
     }
+
+    /**
+     * Produce value and cache it. Later return cached value.
+     * Wrap idiomatic use of cache has/get/set.
+     *
+     * @param string $key Cache key
+     * @param callable $get_value Function to get value if not in cache
+     * @param string $cache Cache to use
+     *
+     * @return mixed
+     */
+    public static function cacheSave(string $key, callable $get_value, string $cache = 'short')
+    {
+        if (!Settings::cacheHas($key, $cache)) {
+            $value = $get_value();
+            Settings::cacheSet($key, $value, $cache);
+        } else {
+            $value = Settings::cacheGet($key, $cache);
+        }
+
+        return $value;
+    }
 }
