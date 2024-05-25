@@ -2,6 +2,9 @@
 
 namespace Civi\RcBase\Utils;
 
+use CRM_Core_BAO_Navigation;
+use CRM_Utils_Hook;
+
 /**
  * Utilities for UI
  *
@@ -148,6 +151,24 @@ class UI
                 }
             }
         }
+
+        return $menu;
+    }
+
+    /**
+     * Get Navigation Menu.
+     *
+     * @return array
+     * @see CRM_Admin_Page_AJAX::navMenu()
+     */
+    public static function menuDump(): array
+    {
+        $menu = CRM_Core_BAO_Navigation::buildNavigationTree();
+        CRM_Core_BAO_Navigation::buildHomeMenu($menu);
+        CRM_Utils_Hook::navigationMenu($menu);
+        CRM_Core_BAO_Navigation::fixNavigationMenu($menu);
+        CRM_Core_BAO_Navigation::orderByWeight($menu);
+        CRM_Core_BAO_Navigation::filterByPermission($menu);
 
         return $menu;
     }

@@ -267,4 +267,14 @@ class UITest extends HeadlessTestCase
         ];
         self::assertSame($expected, UI::menuUpdate(self::$menu, 'menu-1/submenu-13', ['permission' => 'some permission'], true), 'Wrong menu after updating submenu');
     }
+
+    /**
+     * @return void
+     */
+    public function testMenuDump()
+    {
+        $menu = UI::menuDump();
+        self::assertTrue(UI::menuExists($menu, 'Home'), 'Home menu does not exist');
+        self::assertTrue(UI::menuExists($menu, 'Administer/System Settings'), 'Administer/System Settings menu does not exist');
+    }
 }
