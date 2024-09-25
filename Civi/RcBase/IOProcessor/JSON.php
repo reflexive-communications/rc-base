@@ -103,11 +103,12 @@ class JSON extends Base
      * Encode data to JSON
      *
      * @param mixed $data Object to encode
+     * @param int $flags JSON encode flags
      *
      * @return false|int|string JSON
      */
-    public static function encode($data)
+    public static function encode($data, int $flags = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
     {
-        return json_encode($data, JSON_UNESCAPED_UNICODE);
+        return json_encode($data, $flags);
     }
 }

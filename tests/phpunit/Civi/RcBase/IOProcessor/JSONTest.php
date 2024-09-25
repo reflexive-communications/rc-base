@@ -103,6 +103,7 @@ class JSONTest extends HeadlessTestCase
      */
     public function testEncode()
     {
+        // Default flags
         $data = [
             'string',
             '5',
@@ -114,10 +115,17 @@ class JSONTest extends HeadlessTestCase
             'field_2' => 'value_2',
             ['a', 'b', 'c'],
             'ÖÜÓŐÚÉÁŰÍ' => 'öüóőúéáűí',
+            'field_3' => 'no/escape/slash',
         ];
-        $json = '{"0":"string","1":"5","2":5,"3":-5,"4":1.1,"5":true,"field_1":"value_2","field_2":"value_2","6":["a","b","c"],"ÖÜÓŐÚÉÁŰÍ":"öüóőúéáűí"}';
+        $json = '{"0":"string","1":"5","2":5,"3":-5,"4":1.1,"5":true,"field_1":"value_2","field_2":"value_2","6":["a","b","c"],"ÖÜÓŐÚÉÁŰÍ":"öüóőúéáűí","field_3":"no/escape/slash"}';
+        self::assertSame($json, JSON::encode($data), 'Invalid JSON returned with default flags.');
 
-        $result = JSON::encode($data);
-        self::assertSame($json, $result, 'Invalid JSON returned.');
+        // Pass flags
+        $data = [
+            '&',
+            'field_3' => 'escape/slash',
+        ];
+        $json = '{"0":"\u0026","field_3":"escape\/slash"}';
+        self::assertSame($json, JSON::encode($data, JSON_HEX_AMP), 'Invalid JSON returned with non-default flags.');
     }
 }
