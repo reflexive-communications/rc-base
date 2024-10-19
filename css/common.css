@@ -1,3 +1,7 @@
 .rc-hidden {
     display: none !important;
 }
+
+.rc-code {
+    font-family: monospace;
+}
