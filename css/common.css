@@ -3,5 +3,5 @@
 }
 
 .rc-code {
-    font-family: monospace;
+    font-family: monospace !important;
 }
