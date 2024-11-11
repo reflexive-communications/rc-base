@@ -14,6 +14,106 @@ use Civi\RcBase\Utils\PHPUnit;
  */
 class CreateTest extends HeadlessTestCase
 {
+
+    protected static array $customFields;
+
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+
+        // Option groups for checkbox, radio and select fields
+        $option_group_id_checkbox = Create::entity('OptionGroup', ['name' => 'checkbox']);
+        Create::optionValue('checkbox', ['label' => 'option1']);
+        Create::optionValue('checkbox', ['label' => 'option2']);
+        Create::optionValue('checkbox', ['label' => 'option3']);
+        $option_group_id_radio = Create::entity('OptionGroup', ['name' => 'radio']);
+        Create::optionValue('radio', ['label' => 'option_A']);
+        Create::optionValue('radio', ['label' => 'option_B']);
+        Create::optionValue('radio', ['label' => 'option_C']);
+        $option_group_id_select = Create::entity('OptionGroup', ['name' => 'select']);
+        Create::optionValue('select', ['label' => 'one']);
+        Create::optionValue('select', ['label' => 'two']);
+        Create::optionValue('select', ['label' => 'three']);
+
+        // Custom fields
+        $custom_group_id = Create::entity('CustomGroup', ['title' => 'contact_info', 'extends' => 'Contact']);
+        Create::entity('CustomField', [
+            'custom_group_id' => $custom_group_id,
+            'label' => 'string_text',
+            'data_type' => 'String',
+            'html_type' => 'Text',
+        ]);
+        Create::entity('CustomField', [
+            'custom_group_id' => $custom_group_id,
+            'label' => 'string_checkbox',
+            'data_type' => 'String',
+            'html_type' => 'CheckBox',
+            'option_group_id' => $option_group_id_checkbox,
+        ]);
+        Create::entity('CustomField', [
+            'custom_group_id' => $custom_group_id,
+            'label' => 'string_radio',
+            'data_type' => 'String',
+            'html_type' => 'Radio',
+            'option_group_id' => $option_group_id_radio,
+        ]);
+        Create::entity('CustomField', [
+            'custom_group_id' => $custom_group_id,
+            'label' => 'string_select',
+            'data_type' => 'String',
+            'html_type' => 'Select',
+            'option_group_id' => $option_group_id_select,
+        ]);
+        Create::entity('CustomField', [
+            'custom_group_id' => $custom_group_id,
+            'label' => 'integer_text',
+            'data_type' => 'Int',
+            'html_type' => 'Text',
+        ]);
+        Create::entity('CustomField', [
+            'custom_group_id' => $custom_group_id,
+            'label' => 'yes_no',
+            'data_type' => 'Boolean',
+            'html_type' => 'Radio',
+        ]);
+        Create::entity('CustomField', [
+            'custom_group_id' => $custom_group_id,
+            'label' => 'date_yyyy-mm-dd',
+            'data_type' => 'Date',
+            'html_type' => 'Select Date',
+        ]);
+        Create::entity('CustomField', [
+            'custom_group_id' => $custom_group_id,
+            'label' => 'timestamp',
+            'data_type' => 'Date',
+            'html_type' => 'Select Date',
+        ]);
+        Create::entity('CustomField', [
+            'custom_group_id' => $custom_group_id,
+            'label' => 'link',
+            'data_type' => 'Link',
+            'html_type' => 'Link',
+        ]);
+        Create::entity('CustomField', [
+            'custom_group_id' => $custom_group_id,
+            'label' => 'note_textarea',
+            'data_type' => 'Memo',
+            'html_type' => 'TextArea',
+        ]);
+        self::$customFields = [
+            'string_text' => 'contact_info.string_text',
+            'string_checkbox' => 'contact_info.string_checkbox',
+            'string_radio' => 'contact_info.string_radio',
+            'string_select' => 'contact_info.string_select',
+            'integer_text' => 'contact_info.integer_text',
+            'yes_no' => 'contact_info.yes_no',
+            'date_yyyy-mm-dd' => 'contact_info.date_yyyy-mm-dd',
+            'timestamp' => 'contact_info.timestamp',
+            'link' => 'contact_info.link',
+            'note_textarea' => 'contact_info.note_textarea',
+        ];
+    }
+
     /**
      * @return void
      * @throws \API_Exception
@@ -22,29 +122,38 @@ class CreateTest extends HeadlessTestCase
      */
     public function testCreateEntity()
     {
-        $counter = PHPUnit::nextCounter();
+        $counter = PHPUnit::nextCounter().time();
         $values = [
             'contact_type' => 'Individual',
             'first_name' => 'user_'.$counter,
+            self::$customFields['string_text'] => 'Some text',
+            self::$customFields['string_checkbox'] => ['option1', 'option3'],
+            self::$customFields['string_radio'] => 'option_B',
+            self::$customFields['string_select'] => 'two',
+            self::$customFields['integer_text'] => 123,
+            self::$customFields['yes_no'] => true,
+            self::$customFields['date_yyyy-mm-dd'] => '2021-03-15',
+            self::$customFields['timestamp'] => '2021-03-15 12:34:56',
+            self::$customFields['link'] => 'https://example.com',
+            self::$customFields['note_textarea'] => "multi\nline\nnote",
         ];
 
         // Check contact not exists beforehand
-        $result = Contact::get()
-            ->addSelect('id')
-            ->addWhere('first_name', '=', $values['first_name'])
-            ->execute();
-        self::assertCount(0, $result, 'Contact should not be present');
+        $result = Get::entitySingle('Contact', [
+            'select' => ['*', 'custom.*'],
+            'where' => [['first_name', '=', $values['first_name']]],
+        ]);
+        self::assertNull($result, 'Contact should not be present');
 
         $contact_id = Create::entity('Contact', $values);
 
         // Check contact is present now and check ID also
-        $result = Contact::get()
-            ->addSelect('id')
-            ->addWhere('first_name', '=', $values['first_name'])
-            ->execute();
-        self::assertCount(1, $result, 'Failed to locate contact');
-        self::assertArrayHasKey('id', $result->first(), 'Id not returned');
-        self::assertSame($result->first()['id'], $contact_id, 'Wrong contact ID returned');
+        $result = Get::entitySingle('Contact', [
+            'select' => ['*', 'custom.*'],
+            'where' => [['first_name', '=', $values['first_name']]],
+        ]);
+        self::assertGreaterThan(0, count($result), 'Failed to locate contact');
+        self::assertSame($result['id'], $contact_id, 'Wrong contact ID returned');
     }
 
     /**
