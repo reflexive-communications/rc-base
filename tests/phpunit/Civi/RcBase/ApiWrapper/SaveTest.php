@@ -129,10 +129,11 @@ class SaveTest extends HeadlessTestCase
         self::assertSame(Get::GROUP_CONTACT_STATUS_ADDED, Get::groupContactStatus($contact_id, $group_id), 'Failed to add contact (removed)');
         self::assertSame($group_contact_id_original, $group_contact_id, 'Group contact ID has changed (removed)');
 
-        // Non-existent group
+        // Check invalid status
+        Update::entity('GroupContact', $group_contact_id, ['status' => 'invalid']);
         self::expectException(APIException::class);
-        self::expectExceptionMessage('DB Error: constraint violation');
-        Save::addContactToGroup($contact_id, $group_id + 1);
+        self::expectExceptionMessage('Invalid status returned');
+        Save::addContactToGroup($contact_id, $group_id);
     }
 
     /**
@@ -171,25 +172,16 @@ class SaveTest extends HeadlessTestCase
         Save::addContactToGroup($contact_id, $group_id_all);
         self::assertSame(Get::GROUP_CONTACT_STATUS_ADDED, Get::groupContactStatus($contact_id, $group_id_all), 'Failed to add contact (new)');
 
-        // Add contact manually to group (not present yet) - don't update cache
+        // Add contact manually to group (not present yet)
         Save::addContactToGroup($contact_id, $group_id_nobody);
-        self::assertSame(Get::GROUP_CONTACT_STATUS_ADDED, Get::groupContactStatus($contact_id, $group_id_nobody), 'Failed to add contact (added)');
-        // Check cache still holds old group membership
-        $groups_cache = CRM_Contact_BAO_GroupContactCache::contactGroup($contact_id);
-        self::assertCount(1, $groups_cache['group'], 'Contact not in single smart group');
-        self::assertEquals($group_id_all, $groups_cache['group'][0]['id'], 'Contact in wrong smart group');
-
-        // Add contact again - this time update cache
-        $group_contact_id = Save::addContactToGroup($contact_id, $group_id_nobody, false, true);
         self::assertSame(Get::GROUP_CONTACT_STATUS_ADDED, Get::groupContactStatus($contact_id, $group_id_nobody), 'Failed to add contact (added)');
         // Check cache has real group membership
         $groups_cache = CRM_Contact_BAO_GroupContactCache::contactGroup($contact_id);
         self::assertCount(2, $groups_cache['group'], 'Contact not in two smart groups');
 
-        // Check invalid status
-        Update::entity('GroupContact', $group_contact_id, ['status' => 'invalid']);
+        // Non-existent group
         self::expectException(APIException::class);
-        self::expectExceptionMessage('Invalid status returned');
-        Save::addContactToGroup($contact_id, $group_id_nobody);
+        self::expectExceptionMessage('DB Error: constraint violation');
+        Save::addContactToGroup($contact_id, $group_id_nobody + 1);
     }
 }
