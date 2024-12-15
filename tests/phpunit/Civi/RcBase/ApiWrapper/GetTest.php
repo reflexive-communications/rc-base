@@ -370,6 +370,33 @@ class GetTest extends HeadlessTestCase
 
     /**
      * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testIsSmartGroup()
+    {
+        // Create groups
+        $group_id_normal = Create::group(['title' => 'Normal group to check']);
+        $saved_search_id = Create::entity('SavedSearch');
+        $group_id_smart = Create::group([
+            'title' => 'Smart group to check',
+            'saved_search_id' => $saved_search_id,
+        ]);
+
+        self::assertTrue(Get::isSmartGroup($group_id_smart), 'Smart group not recognized');
+        self::assertFalse(Get::isSmartGroup($group_id_normal), 'Normal group recognized as smart group');
+
+        // Delete smart group as it interferes with other tests
+        Remove::entity('Group', $group_id_smart);
+
+        // Check invalid ID
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage('Invalid ID');
+        Get::isSmartGroup(-1);
+    }
+
+    /**
+     * @return void
      * @throws \CRM_Core_Exception
      * @throws \Civi\RcBase\Exception\APIException
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
