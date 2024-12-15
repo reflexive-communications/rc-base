@@ -326,6 +326,34 @@ class Get
     }
 
     /**
+     * Check if group is a smart group
+     *
+     * @param int $group_id Group ID
+     * @param bool $check_permissions Should we check permissions (ACLs)?
+     *
+     * @return bool
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public static function isSmartGroup(int $group_id, bool $check_permissions = false): bool
+    {
+        if ($group_id < 1) {
+            throw new InvalidArgumentException('ID', 'must be positive');
+        }
+
+        $group_id = self::entitySingle('Group', [
+            'select' => ['id'],
+            'where' => [
+                ['OR', [['saved_search_id', 'IS NOT NULL'], ['children', 'IS NOT NULL']]],
+                ['id', '=', $group_id],
+            ],
+            'limit' => 1,
+        ], 'id', $check_permissions);
+
+        return !is_null($group_id);
+    }
+
+    /**
      * Get group membership status for a contact
      *
      * @param int $contact_id Contact ID
