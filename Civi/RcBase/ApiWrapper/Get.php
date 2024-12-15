@@ -359,13 +359,13 @@ class Get
      * @param int $contact_id Contact ID
      * @param int $group_id Group ID
      * @param bool $check_permissions Should we check permissions (ACLs)?
-     * @param bool $smart_group Check group_contact_cache also
+     * @param bool $smart_group **DEPRECATED** Is this a smart group? Then check civicrm_group_contact_cache also
      *
      * @return int Status code
      * @throws \Civi\RcBase\Exception\APIException
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      * @throws \Civi\RcBase\Exception\DataBaseException
-     * @todo Change signature in v2
+     * @todo Change signature in v2: remove $smart_group
      */
     public static function groupContactStatus(int $contact_id, int $group_id, bool $check_permissions = false, bool $smart_group = false): int
     {
@@ -392,12 +392,11 @@ class Get
             case 'Pending':
                 return self::GROUP_CONTACT_STATUS_PENDING;
             case null:
-                // Skip checking smart groups
-                if (!$smart_group) {
+                if (!self::isSmartGroup($group_id, $check_permissions)) {
                     return self::GROUP_CONTACT_STATUS_NONE;
                 }
 
-                // Regenerate cache if expired
+                // This is a smart group --> regenerate cache if expired and check cache
                 CRM_Contact_BAO_GroupContactCache::check([$group_id]);
                 $sql = 'SELECT contact_id
                         FROM civicrm_group_contact_cache
