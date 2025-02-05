@@ -27,7 +27,7 @@ class CRM_RcBase_ExtensionUtil
      *   Translated text.
      * @see ts
      */
-    public static function ts($text, $params = [])
+    public static function ts($text, $params = []): string
     {
         if (!array_key_exists('domain', $params)) {
             $params['domain'] = [self::LONG_NAME, null];
@@ -47,7 +47,7 @@ class CRM_RcBase_ExtensionUtil
      *   Ex: 'http://example.org/sites/default/ext/org.example.foo'.
      *   Ex: 'http://example.org/sites/default/ext/org.example.foo/css/foo.css'.
      */
-    public static function url($file = null)
+    public static function url($file = null): string
     {
         if ($file === null) {
             return rtrim(CRM_Core_Resources::singleton()->getUrl(self::LONG_NAME), '/');
@@ -86,16 +86,15 @@ class CRM_RcBase_ExtensionUtil
     {
         return self::CLASS_PREFIX.'_'.str_replace('\\', '_', $suffix);
     }
-}
 
-use CRM_RcBase_ExtensionUtil as E;
+}
 
 /**
  * (Delegated) Implements hook_civicrm_config().
  *
  * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_config
  */
-function _rc_base_civix_civicrm_config(&$config = null)
+function _rc_base_civix_civicrm_config($config = null)
 {
     static $configured = false;
     if ($configured) {
@@ -103,19 +102,32 @@ function _rc_base_civix_civicrm_config(&$config = null)
     }
     $configured = true;
 
-    $template = CRM_Core_Smarty::singleton();
-
     $extRoot = __DIR__.DIRECTORY_SEPARATOR;
-    $extDir = $extRoot.'templates';
-
-    if (is_array($template->template_dir)) {
-        array_unshift($template->template_dir, $extDir);
-    } else {
-        $template->template_dir = [$extDir, $template->template_dir];
-    }
-
     $include_path = $extRoot.PATH_SEPARATOR.get_include_path();
     set_include_path($include_path);
+    // Based on <compatibility>, this does not currently require mixin/polyfill.php.
+}
+
+/**
+ * Implements hook_civicrm_install().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_install
+ */
+function _rc_base_civix_civicrm_install()
+{
+    _rc_base_civix_civicrm_config();
+    // Based on <compatibility>, this does not currently require mixin/polyfill.php.
+}
+
+/**
+ * (Delegated) Implements hook_civicrm_enable().
+ *
+ * @link https://docs.civicrm.org/dev/en/latest/hooks/hook_civicrm_enable
+ */
+function _rc_base_civix_civicrm_enable(): void
+{
+    _rc_base_civix_civicrm_config();
+    // Based on <compatibility>, this does not currently require mixin/polyfill.php.
 }
 
 /**
@@ -135,7 +147,7 @@ function _rc_base_civix_insert_navigation_menu(&$menu, $path, $item)
     if (empty($path)) {
         $menu[] = [
             'attributes' => array_merge([
-                'label' => CRM_Utils_Array::value('name', $item),
+                'label' => $item['name'] ?? null,
                 'active' => 1,
             ], $item),
         ];

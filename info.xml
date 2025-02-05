@@ -21,17 +21,17 @@
     <version>1.60.2</version>
     <develStage>stable</develStage>
     <compatibility>
-        <ver>5.48</ver>
+        <ver>5.76</ver>
     </compatibility>
     <classloader>
         <psr0 prefix="CRM_" path=""/>
         <psr4 prefix="Civi\" path="Civi"/>
     </classloader>
     <mixins>
-        <mixin>scan-classes@1.0.0</mixin>
+        <mixin>scan-classes@1</mixin>
     </mixins>
     <civix>
         <namespace>CRM/RcBase</namespace>
-        <format>22.12.1</format>
+        <format>24.09.1</format>
     </civix>
 </extension>

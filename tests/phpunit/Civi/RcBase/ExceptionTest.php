@@ -28,8 +28,7 @@ class ExceptionTest extends HeadlessTestCase
         }
 
         // Read last 25 lines from log file
-        $file_log = CRM_Core_Error::createDebugLogger();
-        $fp = fopen($file_log->_filename, 'r');
+        $fp = fopen(CRM_Core_Error::generateLogFileName(''), 'r');
         $lines = [];
         while (!feof($fp)) {
             $lines[] = fgets($fp);
