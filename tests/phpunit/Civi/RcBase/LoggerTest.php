@@ -21,13 +21,13 @@ class LoggerTest extends HeadlessTestCase
         $message = 'test message';
 
         // Clear log as it may contain messages from previous tests
-        $logger = CRM_Core_Error::createDebugLogger('debug');
-        File::truncate($logger->_filename);
+        $filename = CRM_Core_Error::generateLogFileName('debug');
+        File::truncate($filename);
 
         Civi::log('rc-base')->debug($message);
 
         // Check log
-        $lines = File::readLines($logger->_filename);
+        $lines = File::readLines($filename);
         self::assertCount(1, $lines, 'Wrong number of log messages');
         self::assertStringContainsString($message, $lines[0], 'Wrong log message');
     }
@@ -46,14 +46,13 @@ class LoggerTest extends HeadlessTestCase
         ];
 
         // Clear log as it may contain messages from previous tests
-        $logger = CRM_Core_Error::createDebugLogger($context['log_prefix']);
-        File::truncate($logger->_filename);
+        $filename = CRM_Core_Error::generateLogFileName($context['log_prefix']);
+        File::truncate($filename);
 
         Civi::log('rc-base')->error($message, $context);
 
         // Check log
-        $logger = CRM_Core_Error::createDebugLogger($context['log_prefix']);
-        $lines = File::readLines($logger->_filename);
+        $lines = File::readLines($filename);
         self::assertCount(1, $lines, 'Wrong number of log messages');
         self::assertStringContainsString("{$context['extension']} | {$message}".' | '.json_encode($context['details']), $lines[0], 'Wrong log message');
     }
