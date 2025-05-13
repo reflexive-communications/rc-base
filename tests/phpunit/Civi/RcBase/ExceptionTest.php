@@ -39,7 +39,7 @@ class ExceptionTest extends HeadlessTestCase
         fclose($fp);
 
         $log = implode('', $lines);
-        self::assertStringContainsString("[${extension}]", $log, 'Extension name not found in log');
+        self::assertStringContainsString("[{$extension}]", $log, 'Extension name not found in log');
         self::assertStringContainsString($previous_exception_msg, $log, 'Previous exception not found in log');
         self::assertStringContainsString($reason, $log, 'Reason not found in log');
         self::assertStringContainsString(APIException::ERROR_CODE, $log, 'Error code not found in log');

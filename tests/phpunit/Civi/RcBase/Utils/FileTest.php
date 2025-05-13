@@ -69,7 +69,7 @@ class FileTest extends HeadlessTestCase
     {
         $file = '/nonexistent/path/to/file';
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("${file} does not exist or is not readable");
+        $this->expectExceptionMessage("{$file} does not exist or is not readable");
         File::open($file);
     }
 
@@ -83,7 +83,7 @@ class FileTest extends HeadlessTestCase
         // Set file permissions to unreadable
         chmod($file, 0222);
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("${file} does not exist or is not readable");
+        $this->expectExceptionMessage("{$file} does not exist or is not readable");
         File::open($file);
     }
 }

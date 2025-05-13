@@ -47,10 +47,10 @@ class CRM_RcBase_Test_Utils
             throw new CRM_Core_Exception('Missing table name');
         }
 
-        $results = self::rawSqlQuery("SHOW TABLE STATUS WHERE name='${table_name}'");
+        $results = self::rawSqlQuery("SHOW TABLE STATUS WHERE name='{$table_name}'");
 
         if (count($results) < 1) {
-            throw new CRM_Core_Exception("Table ${table_name} not found in DB");
+            throw new CRM_Core_Exception("Table {$table_name} not found in DB");
         }
 
         return (int)$results[0]['Auto_increment'];
@@ -84,34 +84,34 @@ class CRM_RcBase_Test_Utils
         $select_string = '';
         if (!empty($select)) {
             $select_string = implode(',', $select);
-            $select_string = "+s '${select_string}'";
+            $select_string = "+s '{$select_string}'";
         }
 
         $where_string = '';
         foreach ($where as $item) {
-            $where_string .= "+w '${item}' ";
+            $where_string .= "+w '{$item}' ";
         }
 
-        $command = "api4 ${entity}.get ${select_string} ${where_string}";
+        $command = "api4 {$entity}.get {$select_string} {$where_string}";
 
         // Run command
         $result = cv($command);
 
         // Check results
         if (!is_array($result)) {
-            throw new CRM_Core_Exception("Not an array returned from '${command}'");
+            throw new CRM_Core_Exception("Not an array returned from '{$command}'");
         }
 
         // Check each record
         foreach ($result as $record) {
             if (!is_array($result)) {
-                throw new CRM_Core_Exception("Not an array returned from '${command}'");
+                throw new CRM_Core_Exception("Not an array returned from '{$command}'");
             }
 
             // Check if selected fields are present
             foreach ($select as $item) {
                 if (!array_key_exists($item, $record)) {
-                    throw new CRM_Core_Exception("${item} not returned");
+                    throw new CRM_Core_Exception("{$item} not returned");
                 }
             }
         }
@@ -141,20 +141,20 @@ class CRM_RcBase_Test_Utils
         ];
         $values_json = json_encode($values);
 
-        $command = "api4 ${entity}.create '${values_json}'";
+        $command = "api4 {$entity}.create '{$values_json}'";
 
         // Run command
         $result = cv($command);
 
         // Check results
         if (!is_array($result)) {
-            throw new CRM_Core_Exception("Not an array returned from '${command}'");
+            throw new CRM_Core_Exception("Not an array returned from '{$command}'");
         }
         if (count($result) != 1) {
-            throw new CRM_Core_Exception("Not one result returned from '${command}'");
+            throw new CRM_Core_Exception("Not one result returned from '{$command}'");
         }
         if (!is_array($result[0])) {
-            throw new CRM_Core_Exception("Not an array returned from '${command}'");
+            throw new CRM_Core_Exception("Not an array returned from '{$command}'");
         }
         if (!array_key_exists('id', $result[0])) {
             throw new CRM_Core_Exception('ID not found.');
