@@ -9,8 +9,8 @@ namespace Civi\RcBase\IOProcessor;
  * stream_wrapper_unregister("php");
  * stream_wrapper_register("php", "\Civi\RcBase\IOProcessor\MockPhpStream");
  * // Write & read data
- * file_put_contents("php://${stream}", "data");
- * $data = file_get_contents("php://${stream}");
+ * file_put_contents("php://{$stream}", "data");
+ * $data = file_get_contents("php://{$stream}");
  * // Restore original wrapper
  * stream_wrapper_restore("php");
  */

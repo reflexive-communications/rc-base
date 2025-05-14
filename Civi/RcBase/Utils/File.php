@@ -24,7 +24,7 @@ class File
     public static function truncate(string $filename): void
     {
         if (($fp = fopen($filename, 'w')) === false) {
-            throw new InvalidArgumentException('file', "Failed to truncate file ${filename}");
+            throw new InvalidArgumentException('file', "Failed to truncate file {$filename}");
         }
         fclose($fp);
     }
@@ -42,7 +42,7 @@ class File
         $lines = [];
 
         if (($fp = fopen($filename, 'r')) === false) {
-            throw new InvalidArgumentException('file', "Failed to read file ${filename}");
+            throw new InvalidArgumentException('file', "Failed to read file {$filename}");
         }
 
         while (($buffer = fgets($fp)) !== false) {
@@ -64,10 +64,10 @@ class File
     public static function open(string $filename)
     {
         if (!is_readable($filename)) {
-            throw new InvalidArgumentException('file', "${filename} does not exist or is not readable");
+            throw new InvalidArgumentException('file', "{$filename} does not exist or is not readable");
         }
         if (($file = fopen($filename, 'r')) === false) {
-            throw new InvalidArgumentException('file', "${filename} could not open file for reading");
+            throw new InvalidArgumentException('file', "{$filename} could not open file for reading");
         }
 
         return $file;

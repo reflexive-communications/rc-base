@@ -59,7 +59,7 @@ class SmtpConfigTest extends HeadlessTestCase
 
         self::assertCount(1, $smtp_configs, 'Failed to get configs');
         foreach (GetSmtpConfig::CONFIGS_MAP as $name => $civi_name) {
-            self::assertArrayHasKey($name, $smtp_configs[0], "Missing config: ${name}");
+            self::assertArrayHasKey($name, $smtp_configs[0], "Missing config: {$name}");
             self::assertEquals(self::DEFAULT_SMTP_CONFIG[$civi_name], $smtp_configs[0][$name]);
         }
     }
@@ -74,7 +74,7 @@ class SmtpConfigTest extends HeadlessTestCase
                 ->setConfig($name)
                 ->execute();
             self::assertCount(1, $smtp_configs, 'Failed to get configs');
-            self::assertArrayHasKey($name, $smtp_configs[0], "Missing config: ${name}");
+            self::assertArrayHasKey($name, $smtp_configs[0], "Missing config: {$name}");
             self::assertEquals(self::DEFAULT_SMTP_CONFIG[$civi_name], $smtp_configs[0][$name]);
         }
     }

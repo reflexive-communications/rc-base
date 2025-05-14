@@ -53,7 +53,7 @@ class CLI
         // Parse long options
         while (true) {
             $option = array_shift($options_long);
-            $option = preg_replace('/[^a-zA-Z0-9:-]/', '', $option);
+            $option = preg_replace('/[^a-zA-Z0-9:-]/', '', $option ?? '');
             if ($option === '' || $option === null) {
                 break;
             }

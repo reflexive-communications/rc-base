@@ -124,7 +124,7 @@ class Config extends Base
             } elseif (is_null($value)) {
                 $value = 'null';
             }
-            $result[] = "${key}=${value}";
+            $result[] = "{$key}={$value}";
         }
 
         return implode("\n", $result);
