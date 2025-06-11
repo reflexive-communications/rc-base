@@ -26,6 +26,9 @@ class Logger extends CRM_Core_Error_Log implements AutoServiceInterface
      *      'extension' => 'my-extension',         <-- extension where message originated from
      *      'details' => ['foo' => 'bar']          <-- extra free form data to log
      *  ]
+     *
+     * @example \Civi::service('log.rc-base')->debug('This is a debug message', ['details' => $params]);
+     * @example \Civi::service('log.rc-base')->info('This is an info message', ['extension' => 'my-extension', 'details' => ['foo' => 'bar']]);
      */
     public function log($level, $message, array $context = []): void
     {
