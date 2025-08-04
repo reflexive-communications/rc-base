@@ -7,6 +7,7 @@ use Civi\Api4\Contact;
 use Civi\Api4\GroupContact;
 use Civi\RcBase\ApiWrapper\Create;
 use Civi\RcBase\ApiWrapper\Get;
+use Civi\RcBase\ApiWrapper\Remove;
 use Civi\RcBase\ApiWrapper\Update;
 use Civi\RcBase\Exception\DataBaseException;
 use Civi\RcBase\Exception\MissingArgumentException;
@@ -212,5 +213,37 @@ class DBTest extends HeadlessTestCase
 
         // Restore logging setting
         Settings::save('logging', $old_logging);
+    }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testProcedureDeleteOrphans()
+    {
+        // Create orphaned records
+        DB::query('ALTER TABLE civicrm_email DROP FOREIGN KEY FK_civicrm_email_contact_id');
+        for ($i = 0; $i < 5; $i++) {
+            $contact_id = PHPUnit::createIndividualWithEmail();
+            Remove::entity('Contact', $contact_id);
+        }
+
+        // Try to add FK back - should fail
+        try {
+            DB::query('ALTER TABLE civicrm_email ADD CONSTRAINT FK_civicrm_email_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE');
+        } catch (DataBaseException $ex) {
+            self::assertStringContainsString('DB Error: constraint violation', $ex->getMessage(), 'Unexpected error message');
+        }
+
+        DB::query('CALL civicrm_delete_orphans("civicrm_email", "contact_id", "civicrm_contact", "id", @affected)');
+        $result = DB::query('SELECT @affected');
+        self::assertCount(1, $result, 'Wrong number of result rows');
+        self::assertEquals(5, $result[0]['@affected'], 'Wrong number of affected rows');
+
+        // Add back FK - should work now
+        DB::query('ALTER TABLE civicrm_email ADD CONSTRAINT FK_civicrm_email_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE');
     }
 }

@@ -33,7 +33,7 @@ class CRM_RcBase_UpgraderTest extends HeadlessTestCase
         $installer = new CRM_RcBase_Upgrader();
         $installer->install();
 
-        self::assertCount(1, self::getRoutine('noop'), 'SQL procedure "noop" not found');
+        self::assertCount(1, self::getRoutine('civicrm_delete_orphans'), 'SQL procedure "civicrm_delete_orphans" not found');
     }
 
     /**
@@ -45,7 +45,7 @@ class CRM_RcBase_UpgraderTest extends HeadlessTestCase
         $installer = new CRM_RcBase_Upgrader();
         $installer->uninstall();
 
-        self::assertEmpty(self::getRoutine('noop'), 'SQL procedure "noop" not removed');
+        self::assertEmpty(self::getRoutine('civicrm_delete_orphans'), 'SQL procedure "civicrm_delete_orphans" not removed');
     }
 
     /**
@@ -56,15 +56,15 @@ class CRM_RcBase_UpgraderTest extends HeadlessTestCase
     {
         // Simulate state before update
         $installer = new CRM_RcBase_Upgrader();
-        $installer->executeSqlFile(E::path('sql/uninstall.sql'));
+        \Civi\RcBase\Utils\DB::query('DROP PROCEDURE IF EXISTS civicrm_delete_orphans');
+        self::assertEmpty(self::getRoutine('civicrm_delete_orphans'), 'SQL procedure "civicrm_delete_orphans" not removed');
 
         self::assertTrue($installer->upgrade_1620(), 'Upgrade failed');
-
-        self::assertCount(1, self::getRoutine('noop'), 'SQL procedure "noop" not found');
+        self::assertCount(1, self::getRoutine('civicrm_delete_orphans'), 'SQL procedure "civicrm_delete_orphans" not found');
 
         // Run upgrade again --> now nothing to do
         $installer->upgrade_1620();
         self::assertTrue($installer->upgrade_1620(), 'No-op upgrade failed');
-        self::assertCount(1, self::getRoutine('noop'), 'SQL procedure "noop" not found');
+        self::assertCount(1, self::getRoutine('civicrm_delete_orphans'), 'SQL procedure "civicrm_delete_orphans" not found');
     }
 }
