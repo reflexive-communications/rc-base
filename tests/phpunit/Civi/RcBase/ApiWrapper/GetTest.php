@@ -370,6 +370,33 @@ class GetTest extends HeadlessTestCase
 
     /**
      * @return void
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testIsSmartGroup()
+    {
+        // Create groups
+        $group_id_normal = Create::group(['title' => 'Normal group to check']);
+        $saved_search_id = Create::entity('SavedSearch');
+        $group_id_smart = Create::group([
+            'title' => 'Smart group to check',
+            'saved_search_id' => $saved_search_id,
+        ]);
+
+        self::assertTrue(Get::isSmartGroup($group_id_smart), 'Smart group not recognized');
+        self::assertFalse(Get::isSmartGroup($group_id_normal), 'Normal group recognized as smart group');
+
+        // Delete smart group as it interferes with other tests
+        Remove::entity('Group', $group_id_smart);
+
+        // Check invalid ID
+        self::expectException(InvalidArgumentException::class);
+        self::expectExceptionMessage('Invalid ID');
+        Get::isSmartGroup(-1);
+    }
+
+    /**
+     * @return void
      * @throws \CRM_Core_Exception
      * @throws \Civi\RcBase\Exception\APIException
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
@@ -378,8 +405,7 @@ class GetTest extends HeadlessTestCase
     public function testGroupContactStatusWithNormalGroup()
     {
         // Create group, contact
-        $group_data = ['title' => 'Group contact test group'];
-        $group_id = Create::group($group_data);
+        $group_id = Create::group(['title' => 'Group contact test group']);
         $contact_id = PHPUnit::createIndividual();
 
         // Check new contact
@@ -434,13 +460,13 @@ class GetTest extends HeadlessTestCase
         $groups_cache = CRM_Contact_BAO_GroupContactCache::contactGroup($contact_id);
         self::assertCount(1, $groups_cache['group'], 'Contact not in single smart group');
         self::assertEquals($group_id_all, $groups_cache['group'][0]['id'], 'Contact in wrong smart group');
-        self::assertSame(Get::GROUP_CONTACT_STATUS_NONE, Get::groupContactStatus($contact_id, $group_id_nobody, false, true), 'Wrong value returned for new contact when contact not in group');
+        self::assertSame(Get::GROUP_CONTACT_STATUS_NONE, Get::groupContactStatus($contact_id, $group_id_nobody), 'Wrong value returned for new contact when contact not in group');
 
         // Check new contact (added to group by search)
         $groups_cache = CRM_Contact_BAO_GroupContactCache::contactGroup($contact_id);
         self::assertCount(1, $groups_cache['group'], 'Contact not in single smart group');
         self::assertEquals($group_id_all, $groups_cache['group'][0]['id'], 'Contact in wrong smart group');
-        self::assertSame(Get::GROUP_CONTACT_STATUS_ADDED, Get::groupContactStatus($contact_id, $group_id_all, false, true), 'Wrong value returned for new contact when contact in group');
+        self::assertSame(Get::GROUP_CONTACT_STATUS_ADDED, Get::groupContactStatus($contact_id, $group_id_all), 'Wrong value returned for new contact when contact in group');
 
         // Add contact to group manually
         $group_contact_id = Create::entity('GroupContact', ['group_id' => $group_id_all, 'contact_id' => $contact_id]);
@@ -448,7 +474,7 @@ class GetTest extends HeadlessTestCase
         $groups_cache = CRM_Contact_BAO_GroupContactCache::contactGroup($contact_id);
         self::assertCount(1, $groups_cache['group'], 'Contact not in single smart group');
         self::assertEquals($group_id_all, $groups_cache['group'][0]['id'], 'Contact in wrong smart group');
-        self::assertSame(Get::GROUP_CONTACT_STATUS_ADDED, Get::groupContactStatus($contact_id, $group_id_all, false, true), 'Wrong value returned for added contact');
+        self::assertSame(Get::GROUP_CONTACT_STATUS_ADDED, Get::groupContactStatus($contact_id, $group_id_all), 'Wrong value returned for added contact');
 
         // Set to pending
         Update::entity('GroupContact', $group_contact_id, ['status' => 'Pending']);
@@ -456,14 +482,14 @@ class GetTest extends HeadlessTestCase
         $groups_cache = CRM_Contact_BAO_GroupContactCache::contactGroup($contact_id);
         self::assertCount(1, $groups_cache['group'], 'Contact not in single smart group');
         self::assertEquals($group_id_all, $groups_cache['group'][0]['id'], 'Contact in wrong smart group');
-        self::assertSame(Get::GROUP_CONTACT_STATUS_PENDING, Get::groupContactStatus($contact_id, $group_id_all, false, true), 'Wrong value returned for pending contact');
+        self::assertSame(Get::GROUP_CONTACT_STATUS_PENDING, Get::groupContactStatus($contact_id, $group_id_all), 'Wrong value returned for pending contact');
 
         // Remove contact
         Update::entity('GroupContact', $group_contact_id, ['status' => 'Removed']);
         CRM_Contact_BAO_GroupContactCache::invalidateGroupContactCache($group_id_all);
         $groups_cache = CRM_Contact_BAO_GroupContactCache::contactGroup($contact_id);
         self::assertSame([], $groups_cache, 'Contact not removed from smart group');
-        self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id_all, false, true), 'Wrong value returned for removed contact');
+        self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id_all), 'Wrong value returned for removed contact');
 
         // Check invalid status
         Update::entity('GroupContact', $group_contact_id, ['status' => 'invalid']);
