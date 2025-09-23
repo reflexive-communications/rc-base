@@ -8,11 +8,11 @@
  */
 class CRM_RcBase_ExtensionUtil
 {
-    public const SHORT_NAME = 'rc_base';
+    const SHORT_NAME = 'rc_base';
 
-    public const LONG_NAME = 'rc-base';
+    const LONG_NAME = 'rc-base';
 
-    public const CLASS_PREFIX = 'CRM_RcBase';
+    const CLASS_PREFIX = 'CRM_RcBase';
 
     /**
      * Translate a string using the extension's domain.
@@ -87,6 +87,45 @@ class CRM_RcBase_ExtensionUtil
         return self::CLASS_PREFIX.'_'.str_replace('\\', '_', $suffix);
     }
 
+    /**
+     * @return \CiviMix\Schema\SchemaHelperInterface
+     */
+    public static function schema()
+    {
+        if (!isset($GLOBALS['CiviMixSchema'])) {
+            pathload()->loadPackage('civimix-schema@5', true);
+        }
+
+        return $GLOBALS['CiviMixSchema']->getHelper(static::LONG_NAME);
+    }
+
+}
+
+pathload()->addSearchDir(__DIR__.'/mixin/lib');
+spl_autoload_register('_rc_base_civix_class_loader', true, true);
+
+function _rc_base_civix_class_loader($class)
+{
+    if ($class === 'CRM_RcBase_DAO_Base') {
+        if (version_compare(CRM_Utils_System::version(), '5.74.beta', '>=')) {
+            class_alias('CRM_Core_DAO_Base', 'CRM_RcBase_DAO_Base');
+            // ^^ Materialize concrete names -- encourage IDE's to pick up on this association.
+        } else {
+            $realClass = 'CiviMix\\Schema\\RcBase\\DAO';
+            class_alias($realClass, $class);
+            // ^^ Abstract names -- discourage IDE's from picking up on this association.
+        }
+
+        return;
+    }
+
+    // This allows us to tap-in to the installation process (without incurring real file-reads on typical requests).
+    if (strpos($class, 'CiviMix\\Schema\\RcBase\\') === 0) {
+        // civimix-schema@5 is designed for backported use in download/activation workflows,
+        // where new revisions may become dynamically available.
+        pathload()->loadPackage('civimix-schema@5', true);
+        CiviMix\Schema\loadClass($class);
+    }
 }
 
 /**
