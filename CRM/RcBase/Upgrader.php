@@ -41,7 +41,7 @@ class CRM_RcBase_Upgrader extends CRM_Extension_Upgrader_Base
      */
     public function install(): void
     {
-        self::installProcedure(E::path('sql/delete-orphans.sql'));
+        self::installProcedure(E::path('sql/orphans-delete.sql'));
     }
 
     /**
@@ -64,7 +64,7 @@ class CRM_RcBase_Upgrader extends CRM_Extension_Upgrader_Base
      */
     public function upgrade_1620(): bool
     {
-        self::installProcedure(E::path('sql/delete-orphans.sql'));
+        self::installProcedure(E::path('sql/orphans-delete.sql'));
 
         return true;
     }
@@ -77,7 +77,7 @@ class CRM_RcBase_Upgrader extends CRM_Extension_Upgrader_Base
      */
     public function upgrade_1622(): bool
     {
-        self::installProcedure(E::path('sql/delete-orphans.sql'));
+        self::installProcedure(E::path('sql/orphans-delete.sql'));
 
         return true;
     }

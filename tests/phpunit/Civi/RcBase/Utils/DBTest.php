@@ -238,6 +238,7 @@ class DBTest extends HeadlessTestCase
         // Try to add FK back - should fail
         try {
             DB::query('ALTER TABLE civicrm_email ADD CONSTRAINT FK_civicrm_email_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE');
+            self::fail('Expected exception not thrown');
         } catch (DataBaseException $ex) {
             self::assertStringContainsString('DB Error: constraint violation', $ex->getMessage(), 'Unexpected error message');
         }
