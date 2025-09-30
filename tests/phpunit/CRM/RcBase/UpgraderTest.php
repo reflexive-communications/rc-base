@@ -52,7 +52,7 @@ class CRM_RcBase_UpgraderTest extends HeadlessTestCase
      * @return void
      * @throws \Civi\RcBase\Exception\DataBaseException
      */
-    public function testUpgrade1620()
+    public function testUpgrade162x()
     {
         // Simulate state before update
         $installer = new CRM_RcBase_Upgrader();
@@ -63,8 +63,8 @@ class CRM_RcBase_UpgraderTest extends HeadlessTestCase
         self::assertCount(1, self::getRoutine('civicrm_delete_orphans'), 'SQL procedure "civicrm_delete_orphans" not found');
 
         // Run upgrade again --> now nothing to do
-        $installer->upgrade_1620();
-        self::assertTrue($installer->upgrade_1620(), 'No-op upgrade failed');
+        $installer->upgrade_1622();
+        self::assertTrue($installer->upgrade_1622(), 'No-op upgrade failed');
         self::assertCount(1, self::getRoutine('civicrm_delete_orphans'), 'SQL procedure "civicrm_delete_orphans" not found');
     }
 }

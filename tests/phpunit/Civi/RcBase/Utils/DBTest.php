@@ -230,6 +230,9 @@ class DBTest extends HeadlessTestCase
             $contact_id = PHPUnit::createIndividualWithEmail();
             Remove::entity('Contact', $contact_id);
         }
+        DB::query('INSERT INTO civicrm_email (email, contact_id) VALUES ("multiple.email.same.contact@example.com", 9999)');
+        DB::query('INSERT INTO civicrm_email (email, contact_id) VALUES ("multiple.email.same.contact@example.com", 9999)');
+        // This should not be counted as orphan since contact_id is NULL (which may be allowed)
         DB::query('INSERT INTO civicrm_email (email, contact_id) VALUES ("contact_id.is.null@example.com", NULL)');
 
         // Try to add FK back - should fail
@@ -242,7 +245,7 @@ class DBTest extends HeadlessTestCase
         DB::query('CALL civicrm_delete_orphans("civicrm_email", "contact_id", "civicrm_contact", "id", @affected)');
         $result = DB::query('SELECT @affected');
         self::assertCount(1, $result, 'Wrong number of result rows');
-        self::assertEquals(6, $result[0]['@affected'], 'Wrong number of affected rows');
+        self::assertEquals(7, $result[0]['@affected'], 'Wrong number of affected rows');
 
         // Add back FK - should work now
         DB::query('ALTER TABLE civicrm_email ADD CONSTRAINT FK_civicrm_email_contact_id FOREIGN KEY (contact_id) REFERENCES civicrm_contact(id) ON DELETE CASCADE');
