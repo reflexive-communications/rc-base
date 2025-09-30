@@ -25,7 +25,8 @@ BEGIN
     CREATE TEMPORARY TABLE tmp_orphans (id BIGINT PRIMARY KEY);
     SET @sql = CONCAT(
         'INSERT INTO tmp_orphans (id) ',
-        'SELECT orig.`', orig_field, '` FROM `', orig_table, '` orig ',
+        'SELECT DISTINCT orig.`', orig_field,
+        '` FROM `', orig_table, '` orig ',
         'LEFT JOIN `', ref_table, '` ref ON orig.`', orig_field, '` = ref.`', ref_field, '` ',
         'WHERE ref.`', ref_field, '` IS NULL');
     PREPARE stmt FROM @sql;

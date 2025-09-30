@@ -68,4 +68,17 @@ class CRM_RcBase_Upgrader extends CRM_Extension_Upgrader_Base
 
         return true;
     }
+
+    /**
+     * Update SQL procedures.
+     *
+     * @return bool
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     */
+    public function upgrade_1622(): bool
+    {
+        self::installProcedure(E::path('sql/delete-orphans.sql'));
+
+        return true;
+    }
 }
