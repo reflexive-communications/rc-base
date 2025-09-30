@@ -256,4 +256,60 @@ class DBTest extends HeadlessTestCase
         self::assertCount(1, $result, 'Wrong number of result rows');
         self::assertEquals(0, $result[0]['@affected'], 'Wrong number of affected rows');
     }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     * @throws \Civi\RcBase\Exception\APIException
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     * @throws \Civi\RcBase\Exception\InvalidArgumentException
+     */
+    public function testProcedureSetNullOrphans()
+    {
+        // Create orphaned records
+        DB::query('ALTER TABLE civicrm_group DROP FOREIGN KEY FK_civicrm_group_created_id');
+        DB::query('ALTER TABLE civicrm_contact DROP FOREIGN KEY FK_civicrm_contact_employer_id');
+        $contact_id = PHPUnit::createIndividual();
+        for ($i = 0; $i < 5; $i++) {
+            Create::group(['title' => "Orphan created_id #{$i}", 'created_id' => $contact_id]);
+        }
+        PHPUnit::createIndividual(0, ['first_name' => 'self-referenced orphan', 'employer_id' => $contact_id]);
+        Remove::entity('Contact', $contact_id);
+
+        // Try to add FK back - should fail
+        try {
+            DB::query('ALTER TABLE civicrm_group ADD CONSTRAINT FK_civicrm_group_created_id FOREIGN KEY (created_id) REFERENCES civicrm_contact(id) ON DELETE SET NULL');
+            self::fail('Expected exception not thrown');
+        } catch (DataBaseException $ex) {
+            self::assertStringContainsString('DB Error: constraint violation', $ex->getMessage(), 'Unexpected error message');
+        }
+        try {
+            DB::query('ALTER TABLE civicrm_contact ADD CONSTRAINT FK_civicrm_contact_employer_id FOREIGN KEY (employer_id) REFERENCES civicrm_contact(id) ON DELETE SET NULL');
+            self::fail('Expected exception not thrown');
+        } catch (DataBaseException $ex) {
+            self::assertStringContainsString('DB Error: constraint violation', $ex->getMessage(), 'Unexpected error message');
+        }
+
+        DB::query('CALL civicrm_setnull_orphans("civicrm_group", "created_id", "civicrm_contact", "id", @affected)');
+        $result = DB::query('SELECT @affected');
+        self::assertCount(1, $result, 'Wrong number of result rows for civicrm_group');
+        self::assertEquals(5, $result[0]['@affected'], 'Wrong number of affected rows for civicrm_group');
+        DB::query('CALL civicrm_setnull_orphans("civicrm_contact", "employer_id", "civicrm_contact", "id", @affected)');
+        $result = DB::query('SELECT @affected');
+        self::assertCount(1, $result, 'Wrong number of result rows for civicrm_contact');
+        self::assertEquals(1, $result[0]['@affected'], 'Wrong number of affected rows for civicrm_contact');
+
+        // Add back FK - should work now
+        DB::query('ALTER TABLE civicrm_group ADD CONSTRAINT FK_civicrm_group_created_id FOREIGN KEY (created_id) REFERENCES civicrm_contact(id) ON DELETE SET NULL');
+        DB::query('ALTER TABLE civicrm_contact ADD CONSTRAINT FK_civicrm_contact_employer_id FOREIGN KEY (employer_id) REFERENCES civicrm_contact(id) ON DELETE SET NULL');
+
+        DB::query('CALL civicrm_setnull_orphans("civicrm_group", "created_id", "civicrm_contact", "id", @affected)');
+        $result = DB::query('SELECT @affected');
+        self::assertCount(1, $result, 'Wrong number of result rows for civicrm_group');
+        self::assertEquals(0, $result[0]['@affected'], 'Wrong number of affected rows for civicrm_group');
+        DB::query('CALL civicrm_setnull_orphans("civicrm_contact", "employer_id", "civicrm_contact", "id", @affected)');
+        $result = DB::query('SELECT @affected');
+        self::assertCount(1, $result, 'Wrong number of result rows for civicrm_contact');
+        self::assertEquals(0, $result[0]['@affected'], 'Wrong number of affected rows for civicrm_contact');
+    }
 }

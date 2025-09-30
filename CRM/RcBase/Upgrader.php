@@ -42,6 +42,7 @@ class CRM_RcBase_Upgrader extends CRM_Extension_Upgrader_Base
     public function install(): void
     {
         self::installProcedure(E::path('sql/orphans-delete.sql'));
+        self::installProcedure(E::path('sql/orphans-setnull.sql'));
     }
 
     /**
@@ -54,6 +55,7 @@ class CRM_RcBase_Upgrader extends CRM_Extension_Upgrader_Base
     public function uninstall(): void
     {
         self::dropProcedure('civicrm_delete_orphans');
+        self::dropProcedure('civicrm_setnull_orphans');
     }
 
     /**
@@ -78,6 +80,19 @@ class CRM_RcBase_Upgrader extends CRM_Extension_Upgrader_Base
     public function upgrade_1622(): bool
     {
         self::installProcedure(E::path('sql/orphans-delete.sql'));
+
+        return true;
+    }
+
+    /**
+     * Install SQL procedures.
+     *
+     * @return bool
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     */
+    public function upgrade_1623(): bool
+    {
+        self::installProcedure(E::path('sql/orphans-setnull.sql'));
 
         return true;
     }
