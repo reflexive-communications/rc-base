@@ -1,7 +1,6 @@
 <?php
 
 use Civi\RcBase\HeadlessTestCase;
-use CRM_RcBase_ExtensionUtil as E;
 
 /**
  * @group headless
@@ -34,6 +33,7 @@ class CRM_RcBase_UpgraderTest extends HeadlessTestCase
         $installer->install();
 
         self::assertCount(1, self::getRoutine('civicrm_delete_orphans'), 'SQL procedure "civicrm_delete_orphans" not found');
+        self::assertCount(1, self::getRoutine('civicrm_setnull_orphans'), 'SQL procedure "civicrm_setnull_orphans" not found');
     }
 
     /**
@@ -46,6 +46,7 @@ class CRM_RcBase_UpgraderTest extends HeadlessTestCase
         $installer->uninstall();
 
         self::assertEmpty(self::getRoutine('civicrm_delete_orphans'), 'SQL procedure "civicrm_delete_orphans" not removed');
+        self::assertEmpty(self::getRoutine('civicrm_setnull_orphans'), 'SQL procedure "civicrm_setnull_orphans" not removed');
     }
 
     /**
@@ -57,14 +58,17 @@ class CRM_RcBase_UpgraderTest extends HeadlessTestCase
         // Simulate state before update
         $installer = new CRM_RcBase_Upgrader();
         \Civi\RcBase\Utils\DB::query('DROP PROCEDURE IF EXISTS civicrm_delete_orphans');
+        \Civi\RcBase\Utils\DB::query('DROP PROCEDURE IF EXISTS civicrm_setnull_orphans');
         self::assertEmpty(self::getRoutine('civicrm_delete_orphans'), 'SQL procedure "civicrm_delete_orphans" not removed');
+        self::assertEmpty(self::getRoutine('civicrm_setnull_orphans'), 'SQL procedure "civicrm_setnull_orphans" not removed');
 
         self::assertTrue($installer->upgrade_1620(), 'Upgrade failed');
         self::assertCount(1, self::getRoutine('civicrm_delete_orphans'), 'SQL procedure "civicrm_delete_orphans" not found');
 
-        // Run upgrade again --> now nothing to do
-        $installer->upgrade_1622();
-        self::assertTrue($installer->upgrade_1622(), 'No-op upgrade failed');
+        self::assertTrue($installer->upgrade_1622(), 'Upgrade failed');
         self::assertCount(1, self::getRoutine('civicrm_delete_orphans'), 'SQL procedure "civicrm_delete_orphans" not found');
+
+        self::assertTrue($installer->upgrade_1623(), 'Upgrade failed');
+        self::assertCount(1, self::getRoutine('civicrm_setnull_orphans'), 'SQL procedure "civicrm_setnull_orphans" not found');
     }
 }
