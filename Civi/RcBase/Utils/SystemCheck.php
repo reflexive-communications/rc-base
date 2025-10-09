@@ -19,6 +19,7 @@ class SystemCheck
      *
      * @return void
      * @throws \CRM_Core_Exception
+     * @deprecated use \Civi\RcBase\Utils\SystemCheck::lowerSeverity() instead
      */
     public static function changeSeverity($messages, string $level, array $checks): void
     {
