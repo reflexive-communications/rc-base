@@ -59,4 +59,28 @@ class SystemCheckTest extends HeadlessTestCase
         self::assertFalse(in_array('check_info', $checks), 'check_info should not be present');
         self::assertTrue(in_array('other_check_error', $checks), 'other_check_error should be present');
     }
+
+    /**
+     * @return void
+     * @throws \CRM_Core_Exception
+     */
+    public function testLowerSeverity()
+    {
+        $messages = [];
+        $messages[] = new CRM_Utils_Check_Message('check_error', '', '', LogLevel::ERROR);
+        $messages[] = new CRM_Utils_Check_Message('check_info', '', '', LogLevel::INFO);
+        $messages[] = new CRM_Utils_Check_Message('other_check_error', '', '', LogLevel::ERROR);
+
+        SystemCheck::lowerSeverity($messages, LogLevel::NOTICE, ['check_error', 'check_info']);
+
+        $expectation = [
+            'check_error' => LogLevel::NOTICE,
+            'check_info' => LogLevel::INFO,
+            'other_check_error' => LogLevel::ERROR,
+        ];
+        foreach ($messages as $message) {
+            $check = $message->getName();
+            self::assertSame($expectation[$check], $message->getSeverity(), "Wrong severity level for {$check}");
+        }
+    }
 }
