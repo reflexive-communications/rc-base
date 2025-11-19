@@ -107,14 +107,14 @@ class Remove
      * @param int $contact_id Contact ID
      * @param int $group_id Group ID
      * @param bool $check_permissions Should we check permissions (ACLs)?
-     * @param bool $smart_group Update group_contact_cache also
+     * @param bool $smart_group *DEPRECATED** Update group_contact_cache also
      *
      * @return int Number of affected contacts (1 if contact was in group before, 0 if wasn't)
      * @throws \Civi\RcBase\Exception\APIException
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      * @throws \Civi\RcBase\Exception\MissingArgumentException
      * @throws \Civi\RcBase\Exception\DataBaseException
-     * @todo Change signature in v2
+     * @todo Change signature in v2: remove $smart_group
      */
     public static function contactFromGroup(int $contact_id, int $group_id, bool $check_permissions = false, bool $smart_group = false): int
     {
@@ -126,12 +126,11 @@ class Remove
 
         switch ($status) {
             case Get::GROUP_CONTACT_STATUS_NONE:
-                $values = [
+                Create::entity('GroupContact', [
                     'group_id' => $group_id,
                     'contact_id' => $contact_id,
                     'status' => 'Removed',
-                ];
-                Create::entity('GroupContact', $values, $check_permissions);
+                ], $check_permissions);
 
                 $affected_rows = 1;
                 break;
@@ -149,7 +148,17 @@ class Remove
                     'limit' => 1,
                 ];
                 $group_contact_id = Get::entitySingle('GroupContact', $params, 'id', $check_permissions);
-                Update::entity('GroupContact', $group_contact_id, ['status' => 'Removed'], $check_permissions);
+                if (is_null($group_contact_id)) {
+                    // Status is added, but no record in group_contact table --> this is a smart group, add removed manually
+                    Create::entity('GroupContact', [
+                        'group_id' => $group_id,
+                        'contact_id' => $contact_id,
+                        'status' => 'Removed',
+                    ], $check_permissions);
+                } else {
+                    // This is a normal group, update status
+                    Update::entity('GroupContact', $group_contact_id, ['status' => 'Removed'], $check_permissions);
+                }
 
                 $affected_rows = 1;
                 break;
@@ -157,8 +166,8 @@ class Remove
                 throw new APIException('GroupContact', 'get', "Invalid status returned: {$status}");
         }
 
-        // Update cache manually if cache is not expired yet --> so cache will be accurate even until regeneration
-        if ($smart_group && CRM_Contact_BAO_GroupContactCache::check([$group_id])) {
+        // Update cache manually if smart group cache is not expired yet --> so cache will be accurate even until regeneration
+        if (Get::isSmartGroup($group_id, $check_permissions) && !CRM_Contact_BAO_GroupContactCache::shouldGroupBeRefreshed($group_id)) {
             // Check record present
             $sql = 'SELECT contact_id
                     FROM civicrm_group_contact_cache

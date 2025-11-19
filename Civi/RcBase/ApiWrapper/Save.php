@@ -64,14 +64,14 @@ class Save
      * @param int $contact_id Contact ID
      * @param int $group_id Group ID
      * @param bool $check_permissions Should we check permissions (ACLs)?
-     * @param bool $smart_group Update group_contact_cache also
+     * @param bool $smart_group *DEPRECATED** Update group_contact_cache also
      *
      * @return int Group contact ID
      * @throws \Civi\RcBase\Exception\APIException
      * @throws \Civi\RcBase\Exception\InvalidArgumentException
      * @throws \Civi\RcBase\Exception\MissingArgumentException
      * @throws \Civi\RcBase\Exception\DataBaseException
-     * @todo Change signature in v2
+     * @todo Change signature in v2: remove $smart_group
      */
     public static function addContactToGroup(int $contact_id, int $group_id, bool $check_permissions = false, bool $smart_group = false): int
     {
@@ -114,10 +114,10 @@ class Save
                 throw new APIException('GroupContact', 'get', "Invalid status returned: {$status}");
         }
 
-        // Update cache manually if cache is not expired yet --> so cache will be accurate even until regeneration
-        if ($smart_group && CRM_Contact_BAO_GroupContactCache::check([$group_id])) {
+        // Update cache manually if smart group cache is not expired yet --> so cache will be accurate even until regeneration
+        if (Get::isSmartGroup($group_id, $check_permissions) && !CRM_Contact_BAO_GroupContactCache::shouldGroupBeRefreshed($group_id)) {
             // Check record present
-            $sql = 'SELECT contact_id
+            $sql = 'SELECT id
                     FROM civicrm_group_contact_cache
                     WHERE contact_id = %1 AND group_id = %2
                     LIMIT 1';
@@ -125,14 +125,26 @@ class Save
                 1 => [$contact_id, 'Positive'],
                 2 => [$group_id, 'Positive'],
             ]);
+            $group_contact_id = $group_contact_cache[0]['id'] ?? 0;
 
             // Add to cache
-            if (empty($group_contact_cache)) {
+            if (empty($group_contact_id)) {
                 $sql = 'INSERT INTO civicrm_group_contact_cache (id, group_id, contact_id) VALUES (NULL, %2, %1)';
                 DB::query($sql, [
                     1 => [$contact_id, 'Positive'],
                     2 => [$group_id, 'Positive'],
                 ]);
+
+                // Now there is a record in cache, we can return the ID
+                $sql = 'SELECT id
+                    FROM civicrm_group_contact_cache
+                    WHERE contact_id = %1 AND group_id = %2
+                    LIMIT 1';
+                $group_contact_cache = DB::query($sql, [
+                    1 => [$contact_id, 'Positive'],
+                    2 => [$group_id, 'Positive'],
+                ]);
+                $group_contact_id = $group_contact_cache[0]['id'] ?? 0;
             }
         }
 

@@ -125,16 +125,8 @@ class RemoveTest extends HeadlessTestCase
         self::assertSame(1, Remove::contactFromGroup($contact_id, $group_id_nobody), 'Wrong number of affected contacts (not added by search)');
         self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id_nobody), 'Failed to remove contact (not added by search)');
 
-        // Remove contact manually from group (added by search) - don't update cache
+        // Remove contact manually from group (added by search)
         self::assertSame(1, Remove::contactFromGroup($contact_id, $group_id_all), 'Wrong number of affected contacts (added by search)');
-        self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id_all), 'Failed to remove contact (added by search)');
-        // Check cache still holds old group membership
-        $groups_cache = CRM_Contact_BAO_GroupContactCache::contactGroup($contact_id);
-        self::assertCount(1, $groups_cache['group'], 'Contact not in single smart group');
-        self::assertEquals($group_id_all, $groups_cache['group'][0]['id'], 'Contact in wrong smart group');
-
-        // Remove contact again - this time update cache
-        self::assertSame(0, Remove::contactFromGroup($contact_id, $group_id_all, false, true), 'Wrong number of affected contacts (added by search)');
         self::assertSame(Get::GROUP_CONTACT_STATUS_REMOVED, Get::groupContactStatus($contact_id, $group_id_all), 'Failed to remove contact (added by search)');
         // Check cache has real group membership
         $groups_cache = CRM_Contact_BAO_GroupContactCache::contactGroup($contact_id);
