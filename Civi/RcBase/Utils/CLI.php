@@ -171,47 +171,51 @@ class CLI
      * Print a message to stderr
      *
      * @param string $message Error message to print
+     * @param bool $color Colored output
      *
      * @return void
      */
-    public static function printError(string $message): void
+    public static function printError(string $message, bool $color = true): void
     {
-        fwrite(STDERR, self::color('red').self::color('bold').$message.self::color('normal')."\n");
+        fwrite(STDERR, ($color ? self::color('red').self::color('bold').$message.self::color('normal') : $message)."\n");
     }
 
     /**
      * Print a header
      *
      * @param string $header Header to print
+     * @param bool $color Colored output
      *
      * @return void
      */
-    public static function printHeader(string $header): void
+    public static function printHeader(string $header, bool $color = true): void
     {
-        self::printLine(self::color('yellow').$header.self::color('normal'));
+        self::printLine($color ? self::color('yellow').$header.self::color('normal') : $header);
     }
 
     /**
      * Print a status message
      *
      * @param string $status Status message
+     * @param bool $color Colored output
      *
      * @return void
      */
-    public static function printStatus(string $status): void
+    public static function printStatus(string $status, bool $color = true): void
     {
-        self::print(self::color('yellow').$status.self::color('normal'));
+        self::print($color ? self::color('yellow').$status.self::color('normal') : $status);
     }
 
     /**
      * Print OK status message
      *
      * @param string $message Message to print
+     * @param bool $color Colored output
      *
      * @return void
      */
-    public static function printFinish(string $message = 'Done.'): void
+    public static function printFinish(string $message = 'Done.', bool $color = true): void
     {
-        self::printLine(self::color('green').self::color('bold').$message.self::color('normal'));
+        self::printLine($color ? self::color('green').self::color('bold').$message.self::color('normal') : $message);
     }
 }

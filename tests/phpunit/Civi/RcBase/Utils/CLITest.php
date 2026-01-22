@@ -135,6 +135,16 @@ class CLITest extends HeadlessTestCase
     /**
      * @return void
      */
+    public function testPrintHeaderWithoutColor()
+    {
+        $header = 'This is a header without color';
+        CLI::printHeader($header, false);
+        self::expectOutputString("{$header}\n");
+    }
+
+    /**
+     * @return void
+     */
     public function testPrintStatus()
     {
         $status = 'This is a status message';
@@ -145,10 +155,30 @@ class CLITest extends HeadlessTestCase
     /**
      * @return void
      */
+    public function testPrintStatusWithoutColor()
+    {
+        $status = 'This is a status message without color';
+        CLI::printStatus($status, false);
+        self::expectOutputString($status);
+    }
+
+    /**
+     * @return void
+     */
     public function testPrintFinish()
     {
         CLI::printFinish();
         self::expectOutputString(CLI::color('green').CLI::color('bold').'Done.'.CLI::color('normal')."\n");
+    }
+
+    /**
+     * @return void
+     */
+    public function testPrintFinishWithoutColor()
+    {
+        $message = 'Ready without color';
+        CLI::printFinish($message, false);
+        self::expectOutputString("{$message}\n");
     }
 
     /**
