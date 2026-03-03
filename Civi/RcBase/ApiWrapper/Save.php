@@ -128,7 +128,7 @@ class Save
 
             // Add to cache
             if (empty($group_contact_cache)) {
-                $sql = 'INSERT INTO civicrm_group_contact_cache (id, group_id, contact_id) VALUES (NULL, %2, %1)';
+                $sql = 'INSERT INTO civicrm_group_contact_cache (group_id, contact_id) VALUES (%2, %1)';
                 DB::query($sql, [
                     1 => [$contact_id, 'Positive'],
                     2 => [$group_id, 'Positive'],
