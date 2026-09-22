@@ -2,7 +2,11 @@
 
 [![CI](https://github.com/reflexive-communications/rc-base/actions/workflows/main.yml/badge.svg)](https://github.com/reflexive-communications/rc-base/actions/workflows/main.yml)
 
-This extension does nothing, it's only required by some other extensions. It contains shared components, libraries.
+This extension contains shared components, libraries, and CRM-wide defaults required by other extensions.
+
+**CRM-wide defaults**
+
+- New contacts are created with `No Bulk Emails (User Opt Out)` enabled. A consent workflow must explicitly disable the opt-out before bulk email can be sent to the contact.
 
 **New API actions**
 
