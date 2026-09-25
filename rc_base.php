@@ -2,6 +2,7 @@
 
 require_once 'rc_base.civix.php';
 
+use Civi\RcBase\AdvancedSearchCriteria;
 use Civi\RcBase\ContactDefaults;
 
 /**
@@ -12,6 +13,7 @@ use Civi\RcBase\ContactDefaults;
 function rc_base_civicrm_config(&$config): void
 {
     _rc_base_civix_civicrm_config($config);
+    AdvancedSearchCriteria::addResources();
 }
 
 /**
