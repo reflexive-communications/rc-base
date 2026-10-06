@@ -331,4 +331,50 @@ class DBTest extends HeadlessTestCase
         self::assertCount(1, $result, 'Wrong number of result rows for civicrm_contact');
         self::assertEquals(0, $result[0]['@affected'], 'Wrong number of affected rows for civicrm_contact');
     }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     */
+    public function testProcedureExecuteSql()
+    {
+        // DB_mysqli doesn't call mysqli_next_result() after executing a stored procedure, which can cause issues with subsequent queries.
+        // We need to call it manually in the test to avoid errors.
+        // @see \DB_result::nextResult()
+        // @see https://stackoverflow.com/questions/3632075/why-is-mysqli-giving-a-commands-out-of-sync-error
+        global $_DB_DATAOBJECT;
+
+        // Literal SQL statement
+        $result = DB::query('CALL rc_execute("SELECT \'literal\' AS expected", @affected)');
+        mysqli_next_result($_DB_DATAOBJECT['CONNECTIONS'][array_key_first($_DB_DATAOBJECT['CONNECTIONS'])]->connection);
+        self::assertCount(1, $result, 'Wrong number of result rows');
+        self::assertSame('literal', $result[0]['expected'], 'Wrong value returned');
+
+        // SQL statement with MySQL CONCAT placeholders
+        $result = DB::query('CALL rc_execute(CONCAT("SELECT id FROM ", "civicrm_contact", " ORDER BY id LIMIT 2"), @affected)');
+        mysqli_next_result($_DB_DATAOBJECT['CONNECTIONS'][array_key_first($_DB_DATAOBJECT['CONNECTIONS'])]->connection);
+        self::assertGreaterThan(0, count($result), 'Wrong number of result rows');
+        self::assertLessThanOrEqual(2, count($result), 'Wrong number of result rows');
+        self::assertSame('1', $result[0]['id'], 'Wrong value returned');
+
+        // SQL statement with MySQL CONCAT_WS placeholders and variables
+        DB::query('SET @table = "civicrm_contact"');
+        DB::query('SET @condition_1 = "id > 0"');
+        DB::query('SET @condition_2 = "id < 100"');
+        $result = DB::query('CALL rc_execute(CONCAT_WS(" ", "SELECT id AS contact_id FROM", @table, "WHERE", CONCAT(@condition_1, " AND ", @condition_2), "LIMIT 1"), @affected)');
+        mysqli_next_result($_DB_DATAOBJECT['CONNECTIONS'][array_key_first($_DB_DATAOBJECT['CONNECTIONS'])]->connection);
+        self::assertCount(1, $result, 'Wrong number of result rows');
+        self::assertSame('1', $result[0]['contact_id'], 'Wrong value returned');
+
+        // SQL insert
+        DB::query('CALL rc_execute("INSERT INTO civicrm_contact (first_name) VALUES (\'Test Contact\')", @affected)');
+        mysqli_next_result($_DB_DATAOBJECT['CONNECTIONS'][array_key_first($_DB_DATAOBJECT['CONNECTIONS'])]->connection);
+        $affected = DB::query('SELECT @affected');
+        self::assertSame('1', $affected[0]['@affected'], 'Wrong number of affected rows');
+
+        // Empty parameter should throw exception
+        self::expectException(DataBaseException::class);
+        self::expectExceptionMessage('DB Error: unknown error');
+        DB::query('CALL rc_execute("", @affected)');
+    }
 }

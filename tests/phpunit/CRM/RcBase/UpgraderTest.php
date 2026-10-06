@@ -32,6 +32,7 @@ class CRM_RcBase_UpgraderTest extends HeadlessTestCase
         $installer = new CRM_RcBase_Upgrader();
         $installer->install();
 
+        self::assertCount(1, self::getRoutine('rc_execute'), 'SQL procedure "rc_execute" not found');
         self::assertCount(1, self::getRoutine('civicrm_delete_orphans'), 'SQL procedure "civicrm_delete_orphans" not found');
         self::assertCount(1, self::getRoutine('civicrm_setnull_orphans'), 'SQL procedure "civicrm_setnull_orphans" not found');
     }
@@ -45,6 +46,7 @@ class CRM_RcBase_UpgraderTest extends HeadlessTestCase
         $installer = new CRM_RcBase_Upgrader();
         $installer->uninstall();
 
+        self::assertEmpty(self::getRoutine('rc_execute'), 'SQL procedure "rc_execute" not removed');
         self::assertEmpty(self::getRoutine('civicrm_delete_orphans'), 'SQL procedure "civicrm_delete_orphans" not removed');
         self::assertEmpty(self::getRoutine('civicrm_setnull_orphans'), 'SQL procedure "civicrm_setnull_orphans" not removed');
     }
@@ -70,5 +72,19 @@ class CRM_RcBase_UpgraderTest extends HeadlessTestCase
 
         self::assertTrue($installer->upgrade_1623(), 'Upgrade failed');
         self::assertCount(1, self::getRoutine('civicrm_setnull_orphans'), 'SQL procedure "civicrm_setnull_orphans" not found');
+    }
+
+    /**
+     * @return void
+     * @throws \Civi\RcBase\Exception\DataBaseException
+     */
+    public function testUpgrade1640()
+    {
+        // Simulate state before update
+        $installer = new CRM_RcBase_Upgrader();
+        \Civi\RcBase\Utils\DB::query('DROP PROCEDURE IF EXISTS rc_execute');
+
+        self::assertTrue($installer->upgrade_1640(), 'Upgrade failed');
+        self::assertCount(1, self::getRoutine('rc_execute'), 'SQL procedure "rc_execute" not found');
     }
 }
