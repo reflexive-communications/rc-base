@@ -17,15 +17,15 @@ class ContactDefaults
     ];
 
     /**
-     * Enforce No Bulk Emails for every newly created contact.
-     *
      * @param string $operation
      * @param string $objectName
      * @param array $params
+     *
+     * @return void
      */
     public static function applyNoBulkDefault(string $operation, string $objectName, array &$params): void
     {
-        if ($operation !== 'create' || !in_array($objectName, self::CONTACT_TYPES, true)) {
+        if ($operation !== 'create' || !in_array($objectName, self::CONTACT_TYPES, true) || array_key_exists('is_opt_out', $params)) {
             return;
         }
 

@@ -6,7 +6,7 @@ This extension contains shared components, libraries, and CRM-wide defaults requ
 
 **CRM-wide defaults**
 
-- New contacts are created with `No Bulk Emails (User Opt Out)` enabled. A consent workflow must explicitly disable the opt-out before bulk email can be sent to the contact.
+- New contacts default to `No Bulk Emails (User Opt Out)` when no value is specified. An explicitly supplied opt-out value is preserved.
 
 **New API actions**
 
