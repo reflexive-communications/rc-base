@@ -332,6 +332,16 @@ class DBTest extends HeadlessTestCase
         self::assertEquals(0, $result[0]['@affected'], 'Wrong number of affected rows for civicrm_contact');
     }
 
+    public function testProcedureValidateString()
+    {
+        DB::query('CALL rc_validate_not_empty("test_input", "test_value")');
+
+        // Empty parameter should throw exception
+        self::expectException(DataBaseException::class);
+        self::expectExceptionMessage('DB Error: unknown error');
+        DB::query('CALL rc_validate_not_empty("   ", @affected)');
+    }
+
     /**
      * @return void
      * @throws \Civi\RcBase\Exception\DataBaseException
