@@ -372,9 +372,9 @@ class DBTest extends HeadlessTestCase
         $affected = DB::query('SELECT @affected');
         self::assertSame('1', $affected[0]['@affected'], 'Wrong number of affected rows');
 
-        // Empty parameter should throw exception
+        // NULL parameter should throw exception
         self::expectException(DataBaseException::class);
         self::expectExceptionMessage('DB Error: unknown error');
-        DB::query('CALL rc_execute("", @affected)');
+        DB::query('CALL rc_execute(NULL, @affected)');
     }
 }
