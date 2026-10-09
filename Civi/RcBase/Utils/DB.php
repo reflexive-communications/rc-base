@@ -70,7 +70,9 @@ class DB
         try {
             return CRM_Core_DAO::executeQuery($sql, $params)->fetchAll();
         } catch (Throwable $ex) {
-            throw new DataBaseException($ex->getMessage(), $ex);
+            $cause = $ex instanceof \PEAR_Exception ? $ex->getCause() : null;
+            $message = $cause instanceof \DB_Error ? $cause->getUserInfo() : $ex->getMessage();
+            throw new DataBaseException($message, $ex);
         }
     }
 
